@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="Ozik">
 <meta name="theme-color" content="#faf6f0">
 <title>Ozik · 스탬프 카드</title>
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Ozik Stamp&quot;,&quot;short_name&quot;:&quot;Ozik&quot;,&quot;start_url&quot;:&quot;./ozik.html&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#faf6f0&quot;,&quot;theme_color&quot;:&quot;#6b4c35&quot;}">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -21,66 +20,72 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--text);}
 
-.pager{display:flex;width:600%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
-.page{width:16.666%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+.pager{display:flex;width:700%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
+.page{width:14.2857%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
 
-/* ── LANG SELECT ── */
-#p-lang{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:var(--bg);}
+/* LANG */
+#p-lang{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
 .lang-logo{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--brown);letter-spacing:4px;margin-bottom:6px;}
-.lang-cat{font-size:48px;margin-bottom:12px;}
-.lang-sub{font-size:11px;color:var(--text-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;}
-.lang-title{font-size:14px;color:var(--text-light);margin-bottom:20px;}
+.lang-cat{font-size:48px;margin-bottom:10px;}
+.lang-sub{font-size:11px;color:var(--text-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:36px;}
 .lang-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;}
 .lang-btn{background:#fff;border:1.5px solid var(--brown-pale);border-radius:14px;padding:15px 20px;font-family:'Noto Sans KR',sans-serif;font-size:15px;color:var(--text);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px;}
 .lang-btn:active{background:var(--brown);color:#fff;border-color:var(--brown);}
 .lang-flag{font-size:22px;}
 
-/* ── PIN ── */
-#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:var(--bg);}
+/* PIN */
+#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
 .ozik-logo{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:var(--brown);letter-spacing:4px;margin-bottom:4px;}
 .ozik-sub{font-size:11px;color:var(--text-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
-.ozik-cat{font-size:36px;margin-bottom:28px;}
-.pin-label{font-size:12px;color:var(--text-light);margin-bottom:14px;letter-spacing:1px;text-align:center;}
-.pin-dots{display:flex;gap:12px;margin-bottom:24px;}
+.ozik-cat{font-size:36px;margin-bottom:24px;}
+.pin-label{font-size:12px;color:var(--text-light);margin-bottom:14px;text-align:center;}
+.pin-dots{display:flex;gap:12px;margin-bottom:22px;}
 .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--brown-pale);transition:all 0.2s;}
 .pin-dot.on{background:var(--brown);border-color:var(--brown);}
 .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:240px;}
-.pin-btn{background:#fff;color:var(--text);border:1px solid var(--brown-pale);border-radius:12px;padding:17px;font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.pin-btn{background:#fff;color:var(--text);border:1px solid var(--brown-pale);border-radius:12px;padding:16px;font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .pin-btn:active{background:var(--brown);color:#fff;border-color:var(--brown);}
 .pin-btn.del{font-size:14px;color:var(--text-light);}
 .pin-err{margin-top:12px;font-size:12px;color:#c0392b;opacity:0;transition:opacity 0.3s;min-height:18px;text-align:center;}
 .pin-err.show{opacity:1;}
-.guest-btn{margin-top:20px;background:transparent;border:none;font-size:13px;color:var(--text-light);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.guest-btn{margin-top:18px;background:var(--brown-pale);border:none;border-radius:12px;padding:12px 24px;font-size:13px;color:var(--brown);cursor:pointer;font-weight:500;}
 
-/* ── CUSTOMER CARD ── */
+/* PHONE INPUT */
+#p-phone{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
+.phone-cat{font-size:40px;margin-bottom:12px;}
+.phone-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--brown);margin-bottom:6px;text-align:center;}
+.phone-sub{font-size:13px;color:var(--text-light);margin-bottom:28px;text-align:center;line-height:1.5;}
+.phone-inp{width:100%;max-width:280px;background:#fff;border:1.5px solid var(--brown-pale);border-radius:14px;padding:14px 18px;font-size:18px;color:var(--text);outline:none;margin-bottom:10px;text-align:center;font-family:'Noto Sans KR',sans-serif;letter-spacing:2px;}
+.phone-inp:focus{border-color:var(--brown);}
+.phone-inp::placeholder{color:var(--brown-pale);font-size:14px;letter-spacing:0;}
+.phone-submit{width:100%;max-width:280px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px;}
+.phone-back{font-size:12px;color:var(--text-light);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* CUSTOMER CARD */
 #p-card{background:var(--bg);}
 .top-bar{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;}
 .top-bar-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);letter-spacing:3px;}
-.top-bar-right{display:flex;align-items:center;gap:10px;}
 .lang-mini{font-size:11px;color:var(--text-light);cursor:pointer;background:#fff;border:1px solid var(--brown-pale);border-radius:20px;padding:4px 10px;}
 .card-body-wrap{padding:0 16px 60px;}
 
 .stamp-card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 4px 24px rgba(107,76,53,0.08);margin-bottom:14px;border:1px solid var(--brown-pale);}
 .sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
 .sc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);}
-.sc-name{font-size:12px;color:var(--text-light);margin-bottom:14px;}
 .sc-count{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);}
 .sc-count-sub{font-size:11px;color:var(--text-light);}
-
-.stamp-section-label{font-size:10px;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:12px;}
-.stamp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:4px;}
+.sc-name{font-size:12px;color:var(--text-light);margin-bottom:14px;}
+.ssl{font-size:10px;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;margin-top:12px;}
+.stamp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:2px;}
 .stamp{aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--brown-pale);display:flex;align-items:center;justify-content:center;font-size:16px;background:#fff;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);position:relative;}
 .stamp.empty{opacity:0.3;}
 .stamp.filled{border:none;transform:scale(1.06);box-shadow:0 3px 10px rgba(107,76,53,0.15);}
-.stamp.n{background:linear-gradient(135deg,#e8d5c0,#c4956a);}
-.stamp.t10{background:linear-gradient(135deg,#f5d78a,#d4a843);box-shadow:0 3px 12px rgba(212,168,67,0.35);}
-.stamp.t20{background:linear-gradient(135deg,#a8c5aa,#7a9e7e);box-shadow:0 3px 12px rgba(122,158,126,0.35);}
-.free-badge{position:absolute;top:-5px;right:-3px;font-size:7px;padding:1px 4px;border-radius:8px;font-weight:700;color:#fff;}
-.free-badge.gold{background:#d4a843;}
-.free-badge.green{background:#7a9e7e;}
-
+.stamp.sn{background:linear-gradient(135deg,#e8d5c0,#c4956a);}
+.stamp.s10{background:linear-gradient(135deg,#f5d78a,#d4a843);box-shadow:0 3px 12px rgba(212,168,67,0.35);}
+.stamp.s20{background:linear-gradient(135deg,#a8c5aa,#7a9e7e);box-shadow:0 3px 12px rgba(122,158,126,0.35);}
+.fbadge{position:absolute;top:-5px;right:-3px;font-size:7px;padding:1px 4px;border-radius:8px;font-weight:700;color:#fff;}
+.fbadge.gold{background:#d4a843;}
+.fbadge.green{background:#7a9e7e;}
 .divider{border:none;border-top:1.5px dashed var(--brown-pale);margin:14px 0;}
-
 .reward-row{display:flex;gap:8px;margin-bottom:14px;}
 .reward-badge{flex:1;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
 .reward-badge.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);border:1px solid #f5d78a;}
@@ -88,87 +93,86 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .rb-icon{font-size:18px;}
 .rb-n{font-size:9px;color:var(--text-light);margin-bottom:1px;}
 .rb-v{font-size:11px;font-weight:700;color:var(--text);}
+.prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text-light);margin-bottom:5px;}
+.prog-bar{background:var(--brown-pale);border-radius:20px;height:5px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--brown-light),var(--brown));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 
-.progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text-light);margin-bottom:5px;}
-.progress-bar{background:var(--brown-pale);border-radius:20px;height:5px;overflow:hidden;}
-.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--brown-light),var(--brown));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
-
-/* QR 카드 */
 .qr-card{background:#fff;border-radius:16px;padding:16px;text-align:center;border:1px solid var(--brown-pale);margin-bottom:14px;}
 .qr-card-title{font-size:10px;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 .qr-img{width:130px;height:130px;display:block;margin:0 auto 8px;}
-.qr-id-text{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--brown);letter-spacing:2px;margin-bottom:6px;}
+.qr-phone{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--brown);letter-spacing:2px;margin-bottom:4px;}
 .qr-hint{font-size:10px;color:var(--text-light);}
 
-/* 홈화면 추가 배너 */
 .add-home-banner{background:linear-gradient(135deg,#fef3d0,#fff9f3);border-radius:12px;padding:12px 14px;border:1px solid #f5d78a;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;}
 .ah-icon{font-size:20px;flex-shrink:0;}
 .ah-text{font-size:11px;color:var(--text-light);line-height:1.5;}
 .ah-text strong{color:var(--brown);display:block;margin-bottom:2px;}
 .ah-close{background:transparent;border:none;color:var(--text-light);font-size:16px;cursor:pointer;margin-left:auto;flex-shrink:0;padding:0 4px;}
 
-/* ── STAFF PAGE ── */
+/* STAFF */
 #p-staff{background:var(--bg);}
 .staff-nav{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--brown-pale);}
 .staff-nav-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);letter-spacing:2px;}
 .back-btn{background:transparent;border:1px solid var(--brown-pale);border-radius:10px;padding:6px 14px;color:var(--text-light);font-size:12px;cursor:pointer;}
 .staff-wrap{padding:16px 16px 60px;}
-
+.sec-label{font-size:10px;letter-spacing:2px;color:var(--text-light);text-transform:uppercase;margin-bottom:10px;font-weight:500;}
 .search-row{display:flex;gap:8px;margin-bottom:14px;}
-.search-inp{flex:1;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:12px 16px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);outline:none;}
+.search-inp{flex:1;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:12px 16px;font-size:14px;color:var(--text);outline:none;font-family:'Noto Sans KR',sans-serif;}
 .search-inp::placeholder{color:var(--text-light);}
 .search-btn{background:var(--brown);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;}
 
 .result-card{background:#fff;border-radius:16px;padding:16px;border:1px solid var(--brown-pale);margin-bottom:14px;display:none;}
 .result-card.show{display:block;}
 .rc-name{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--brown);margin-bottom:2px;}
-.rc-id{font-size:11px;color:var(--text-light);margin-bottom:10px;}
+.rc-info{font-size:11px;color:var(--text-light);margin-bottom:10px;}
 .rc-mini-grid{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
 .rc-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;}
 .rc-dot.on{background:var(--brown-light);color:#fff;}
 .rc-dot.off{background:var(--brown-pale);}
 .rc-dot.g{background:var(--gold);}
 .rc-dot.gr{background:var(--green);color:#fff;}
-
-.stamp-btn{width:100%;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.stamp-btn{width:100%;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;}
 .stamp-btn:disabled{opacity:0.35;cursor:not-allowed;}
 .reward-btn{width:100%;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;display:none;}
 .reward-btn.show{display:block;}
 .reward-btn.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);color:var(--text);}
 .reward-btn.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);color:var(--text);}
 
-.sec-label{font-size:10px;letter-spacing:2px;color:var(--text-light);text-transform:uppercase;margin-bottom:10px;font-weight:500;}
-.new-customer-btn{width:100%;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:13px;color:var(--text-light);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;margin-bottom:22px;}
+.new-cust-btn{width:100%;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:13px;color:var(--text-light);font-size:13px;cursor:pointer;margin-bottom:22px;}
 
-.history-list{display:flex;flex-direction:column;gap:6px;}
-.hi-item{background:#fff;border-radius:10px;padding:11px 14px;border:1px solid var(--brown-pale);display:flex;align-items:center;justify-content:space-between;}
-.hi-name{font-size:13px;font-weight:500;}
-.hi-id{font-size:11px;color:var(--text-light);}
-.hi-stamps{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);}
+/* 고객 명단 테이블 */
+.customer-table{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--brown-pale);}
+.ct-head{display:grid;grid-template-columns:1fr 1.2fr auto;padding:10px 14px;background:var(--brown-pale);font-size:10px;letter-spacing:1px;color:var(--text-light);text-transform:uppercase;gap:8px;}
+.ct-row{display:grid;grid-template-columns:1fr 1.2fr auto;padding:11px 14px;border-top:1px solid var(--brown-pale);gap:8px;align-items:center;cursor:pointer;transition:background 0.15s;}
+.ct-row:hover{background:#fdf8f3;}
+.ct-name{font-size:13px;font-weight:500;color:var(--text);}
+.ct-phone{font-size:11px;color:var(--text-light);}
+.ct-stamps{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown);text-align:right;}
+.ct-stamps span{font-size:10px;color:var(--text-light);}
 
-/* ── NEW CUSTOMER ── */
-#p-new{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+/* NEW CUSTOMER */
+#p-new{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
 .new-cat{font-size:52px;margin-bottom:14px;}
 .new-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--brown);margin-bottom:6px;text-align:center;}
-.new-sub{font-size:13px;color:var(--text-light);margin-bottom:28px;text-align:center;line-height:1.5;}
-.name-inp{width:100%;max-width:280px;background:#fff;border:1.5px solid var(--brown-pale);border-radius:14px;padding:14px 18px;font-size:16px;color:var(--text);outline:none;margin-bottom:10px;text-align:center;font-family:'Noto Sans KR',sans-serif;}
-.name-inp:focus{border-color:var(--brown);}
-.name-inp::placeholder{color:var(--brown-pale);}
-.create-btn{width:100%;max-width:280px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:500;cursor:pointer;}
+.new-sub{font-size:13px;color:var(--text-light);margin-bottom:24px;text-align:center;line-height:1.5;}
+.field-wrap{width:100%;max-width:280px;margin-bottom:10px;}
+.field-label{font-size:10px;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.field-inp{width:100%;background:#fff;border:1.5px solid var(--brown-pale);border-radius:12px;padding:13px 16px;font-size:15px;color:var(--text);outline:none;font-family:'Noto Sans KR',sans-serif;}
+.field-inp:focus{border-color:var(--brown);}
+.field-inp::placeholder{color:var(--brown-pale);}
+.create-btn{width:100%;max-width:280px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;}
 .back-link{margin-top:14px;font-size:12px;color:var(--text-light);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 
-/* ── REWARD PAGE ── */
-#p-reward{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+/* REWARD */
+#p-reward{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
 .rw-icon{font-size:64px;margin-bottom:14px;}
 .rw-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--brown);margin-bottom:8px;}
-.rw-desc{font-size:14px;color:var(--text-light);line-height:1.7;margin-bottom:28px;}
+.rw-desc{font-size:14px;color:var(--text-light);line-height:1.7;margin-bottom:28px;white-space:pre-line;}
 .rw-btn{background:var(--brown);color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:15px;font-weight:500;cursor:pointer;}
 
-/* TOAST */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.gold{background:var(--gold);color:var(--text);}
-.toast.green{background:var(--green);}
 </style>
 </head>
 <body>
@@ -179,7 +183,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   <div class="lang-logo">OZIK</div>
   <div class="lang-cat">🐱</div>
   <div class="lang-sub">Café · Sevilla</div>
-  <div class="lang-title" id="lt">언어를 선택하세요</div>
   <div class="lang-btns">
     <button class="lang-btn" onclick="setLang('ko')"><span class="lang-flag">🇰🇷</span>한국어</button>
     <button class="lang-btn" onclick="setLang('es')"><span class="lang-flag">🇪🇸</span>Español</button>
@@ -198,30 +201,30 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
   </div>
   <div class="pin-pad">
-    <button class="pin-btn" onclick="enterPin('1')">1</button>
-    <button class="pin-btn" onclick="enterPin('2')">2</button>
-    <button class="pin-btn" onclick="enterPin('3')">3</button>
-    <button class="pin-btn" onclick="enterPin('4')">4</button>
-    <button class="pin-btn" onclick="enterPin('5')">5</button>
-    <button class="pin-btn" onclick="enterPin('6')">6</button>
-    <button class="pin-btn" onclick="enterPin('7')">7</button>
-    <button class="pin-btn" onclick="enterPin('8')">8</button>
-    <button class="pin-btn" onclick="enterPin('9')">9</button>
-    <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
-    <button class="pin-btn" onclick="enterPin('0')">0</button>
-    <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
+    <button class="pin-btn" onclick="ep('1')">1</button><button class="pin-btn" onclick="ep('2')">2</button><button class="pin-btn" onclick="ep('3')">3</button>
+    <button class="pin-btn" onclick="ep('4')">4</button><button class="pin-btn" onclick="ep('5')">5</button><button class="pin-btn" onclick="ep('6')">6</button>
+    <button class="pin-btn" onclick="ep('7')">7</button><button class="pin-btn" onclick="ep('8')">8</button><button class="pin-btn" onclick="ep('9')">9</button>
+    <button class="pin-btn del" onclick="ep('del')">⌫</button><button class="pin-btn" onclick="ep('0')">0</button><button class="pin-btn del" onclick="ep('clr')">✕</button>
   </div>
   <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
-  <button class="guest-btn" id="guest-btn" onclick="goToCustomer()">내 스탬프 보기 →</button>
+  <button class="guest-btn" id="guest-btn" onclick="goTo(2)">📱 내 스탬프 보기</button>
 </div>
 
-<!-- PAGE 2: CUSTOMER CARD -->
+<!-- PAGE 2: PHONE INPUT -->
+<div class="page" id="p-phone">
+  <div class="phone-cat">🐱</div>
+  <div class="phone-title" id="phone-title">전화번호로 접속</div>
+  <div class="phone-sub" id="phone-sub">등록된 전화번호를 입력하세요<br>처음이라면 직원에게 등록을 요청하세요</div>
+  <input class="phone-inp" id="phone-inp" type="tel" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)" onkeydown="if(event.key==='Enter') findByPhone()">
+  <button class="phone-submit" id="phone-submit" onclick="findByPhone()">스탬프 카드 열기</button>
+  <div class="phone-back" onclick="goTo(1)" id="phone-back">← 뒤로</div>
+</div>
+
+<!-- PAGE 3: CUSTOMER CARD -->
 <div class="page" id="p-card">
   <div class="top-bar">
     <div class="top-bar-logo">OZIK</div>
-    <div class="top-bar-right">
-      <div class="lang-mini" onclick="goTo(0)">🌐 언어</div>
-    </div>
+    <div class="lang-mini" onclick="goTo(0)">🌐</div>
   </div>
   <div class="card-body-wrap">
     <div class="stamp-card">
@@ -230,93 +233,87 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
         <div class="sc-count"><span id="stamp-count">0</span><span class="sc-count-sub"> / 20</span></div>
       </div>
       <div class="sc-name" id="sc-name">🐱</div>
-
-      <div class="stamp-section-label" id="ssl1">1 - 10</div>
+      <div class="ssl" id="ssl1">1 - 10</div>
       <div class="stamp-grid" id="sg1"></div>
-      <div class="stamp-section-label" id="ssl2">11 - 20</div>
+      <div class="ssl" id="ssl2">11 - 20</div>
       <div class="stamp-grid" id="sg2"></div>
-
       <div class="divider"></div>
-
       <div class="reward-row">
-        <div class="reward-badge r10">
-          <div class="rb-icon">☕</div>
-          <div><div class="rb-n" id="r10n">10번째</div><div class="rb-v" id="r10v">음료 무료</div></div>
-        </div>
-        <div class="reward-badge r20">
-          <div class="rb-icon">🍚</div>
-          <div><div class="rb-n" id="r20n">20번째</div><div class="rb-v" id="r20v">Kingbap 무료</div></div>
-        </div>
+        <div class="reward-badge r10"><div class="rb-icon">☕</div><div><div class="rb-n" id="r10n">10번째</div><div class="rb-v" id="r10v">음료 무료</div></div></div>
+        <div class="reward-badge r20"><div class="rb-icon">🍚</div><div><div class="rb-n" id="r20n">20번째</div><div class="rb-v" id="r20v">Kingbap 무료</div></div></div>
       </div>
-
-      <div class="progress-label">
-        <span id="prog-label">다음 리워드까지</span>
-        <span id="prog-count">10개 남음</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-label"><span id="prog-label">다음 리워드까지</span><span id="prog-count">10개 남음</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
     </div>
-
     <div class="qr-card">
       <div class="qr-card-title" id="qr-title">내 QR 코드</div>
       <img class="qr-img" id="customer-qr" src="" alt="QR">
-      <div class="qr-id-text" id="cid-display">------</div>
+      <div class="qr-phone" id="qr-phone-display">-</div>
       <div class="qr-hint" id="qr-hint">직원에게 스캔을 요청하세요</div>
     </div>
-
     <div class="add-home-banner" id="add-home-banner">
       <div class="ah-icon">📱</div>
-      <div class="ah-text">
-        <strong id="ah-title">홈 화면에 추가하면 앱처럼!</strong>
-        <span id="ah-desc">Safari → 공유 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"</span>
-      </div>
+      <div class="ah-text"><strong id="ah-title">홈 화면에 추가하면 앱처럼!</strong><span id="ah-desc">Safari → 공유 → "홈 화면에 추가"</span></div>
       <button class="ah-close" onclick="document.getElementById('add-home-banner').style.display='none'">×</button>
     </div>
   </div>
 </div>
 
-<!-- PAGE 3: STAFF -->
+<!-- PAGE 4: STAFF -->
 <div class="page" id="p-staff">
   <div class="staff-nav">
     <div class="staff-nav-title">OZIK · <span id="staff-label">직원</span></div>
     <button class="back-btn" onclick="goTo(0)" id="back-lbl">← 나가기</button>
   </div>
   <div class="staff-wrap">
-    <div class="sec-label" id="search-label">고객 ID 조회</div>
+    <div class="sec-label" id="search-label">전화번호로 고객 조회</div>
     <div class="search-row">
-      <input class="search-inp" id="search-inp" placeholder="OZ-0001">
-      <button class="search-btn" id="search-btn-lbl" onclick="searchCustomer()">조회</button>
+      <input class="search-inp" id="search-inp" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this)">
+      <button class="search-btn" id="search-btn-lbl" onclick="staffSearch()">조회</button>
     </div>
 
     <div class="result-card" id="result-card">
       <div class="rc-name" id="rc-name">-</div>
-      <div class="rc-id" id="rc-id">-</div>
+      <div class="rc-info" id="rc-info">-</div>
       <div class="rc-mini-grid" id="rc-grid"></div>
       <button class="stamp-btn" id="stamp-btn" onclick="addStamp()">🐱 스탬프 적립</button>
-      <button class="reward-btn r10" id="reward-btn-10" onclick="useReward(10)">☕ 음료 무료 리워드 사용</button>
-      <button class="reward-btn r20" id="reward-btn-20" onclick="useReward(20)">🍚 Kingbap 무료 리워드 사용</button>
+      <button class="reward-btn r10" id="rb10" onclick="useReward(10)">☕ 음료 무료 리워드 사용</button>
+      <button class="reward-btn r20" id="rb20" onclick="useReward(20)">🍚 Kingbap 무료 리워드 사용</button>
     </div>
 
     <div class="sec-label" id="new-label">신규 고객</div>
-    <button class="new-customer-btn" id="new-btn" onclick="goTo(4)">+ 신규 고객 등록</button>
+    <button class="new-cust-btn" id="new-btn" onclick="goTo(5)">+ 신규 고객 등록</button>
 
-    <div class="sec-label" id="history-label">고객 목록</div>
-    <div class="history-list" id="history-list">
-      <div style="color:var(--text-light);font-size:13px;padding:12px;text-align:center;">불러오는 중...</div>
+    <div class="sec-label" id="list-label">고객 명단</div>
+    <div class="customer-table">
+      <div class="ct-head">
+        <div id="th-name">이름</div>
+        <div id="th-phone">전화번호</div>
+        <div id="th-stamps">스탬프</div>
+      </div>
+      <div id="customer-list"><div style="padding:14px;text-align:center;color:var(--text-light);font-size:13px;">불러오는 중...</div></div>
     </div>
   </div>
 </div>
 
-<!-- PAGE 4: NEW CUSTOMER -->
+<!-- PAGE 5: NEW CUSTOMER -->
 <div class="page" id="p-new">
   <div class="new-cat">🐱</div>
-  <div class="new-title" id="new-title">처음 오셨나요?</div>
-  <div class="new-sub" id="new-sub">이름을 입력하면<br>스탬프 카드가 발급됩니다</div>
-  <input class="name-inp" id="name-inp" placeholder="이름 · Nombre · Name" maxlength="20">
+  <div class="new-title" id="new-title">신규 고객 등록</div>
+  <div class="new-sub" id="new-sub">이름과 전화번호를 입력하면<br>스탬프 카드가 발급됩니다</div>
+  <div class="field-wrap">
+    <div class="field-label" id="fl-name">이름</div>
+    <input class="field-inp" id="name-inp" placeholder="홍길동" maxlength="20">
+  </div>
+  <div class="field-wrap">
+    <div class="field-label" id="fl-phone">전화번호</div>
+    <input class="field-inp" id="new-phone-inp" type="tel" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)">
+  </div>
   <button class="create-btn" id="create-btn" onclick="createCustomer()">카드 발급하기</button>
-  <div class="back-link" onclick="goTo(3)" id="back-link">← 돌아가기</div>
+  <div class="back-link" onclick="goTo(4)" id="back-link">← 돌아가기</div>
 </div>
 
-<!-- PAGE 5: REWARD -->
+<!-- PAGE 6: REWARD -->
 <div class="page" id="p-reward">
   <div class="rw-icon" id="rw-icon">🎉</div>
   <div class="rw-title" id="rw-title">축하합니다!</div>
@@ -338,92 +335,109 @@ firebase.initializeApp({
   appId:"1:106296714974:web:26b9b708ddb6116347444f"
 });
 const db=firebase.database();
+const STAFF_PIN='0927';
 
-// ── 다국어 ──
 const T={
   ko:{
-    pinLabel:'직원 PIN 입력', guestBtn:'내 스탬프 보기 →', pinErr:'PIN이 올바르지 않습니다',
+    pinLabel:'직원 PIN 입력', guestBtn:'📱 내 스탬프 보기', pinErr:'PIN이 올바르지 않습니다',
+    phoneTitle:'전화번호로 접속', phoneSub:'등록된 전화번호를 입력하세요\n처음이라면 직원에게 등록을 요청하세요',
+    phoneSubmit:'스탬프 카드 열기', phoneBack:'← 뒤로', phoneNotFound:'등록되지 않은 번호입니다',
     scTitle:'스탬프 카드', ssl1:'1 - 10번째', ssl2:'11 - 20번째',
     r10n:'10번째', r10v:'음료 무료', r20n:'20번째', r20v:'Kingbap 무료',
     progLabel:'다음 리워드까지', progLeft:'개 남음', allDone:'모든 리워드 달성! 🎉',
     qrTitle:'내 QR 코드', qrHint:'직원에게 스캔을 요청하세요',
-    ahTitle:'홈 화면에 추가하면 앱처럼!',
-    ahDesc:'Safari → 공유 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"',
-    staffLabel:'직원', backLbl:'← 나가기', searchLabel:'고객 ID 조회',
-    searchBtn:'조회', newLabel:'신규 고객', histLabel:'고객 목록',
-    newBtn:'+ 신규 고객 등록', newTitle:'처음 오셨나요?',
-    newSub:'이름을 입력하면\n스탬프 카드가 발급됩니다', createBtn:'카드 발급하기',
-    backLink:'← 돌아가기', stampBtn:'🐱 스탬프 적립',
-    rw10title:'음료 무료!', rw10desc:'10번째 스탬프 달성!\n음료 1잔이 무료입니다 ☕',
-    rw20title:'Kingbap 무료!', rw20desc:'20번째 스탬프 달성!\nKingbap 1인 무료 시식권입니다 🍚',
-    rwBtn:'확인', toastStamp:'님 스탬프 적립!', toastReward:'리워드 사용 완료',
-    toastCreated:'카드 발급 완료! ID: ', toastNotFound:'고객을 찾을 수 없습니다',
-    toastName:'이름을 입력해주세요', newCustPlaceholder:'이름 · Nombre · Name',
-    langLabel:'언어를 선택하세요', stampsOf:'스탬프', loading:'불러오는 중...'
+    ahTitle:'홈 화면에 추가하면 앱처럼!', ahDesc:'Safari → 공유 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"',
+    staffLabel:'직원', backLbl:'← 나가기', searchLabel:'전화번호로 고객 조회',
+    searchBtn:'조회', newLabel:'신규 고객', listLabel:'고객 명단',
+    newBtn:'+ 신규 고객 등록', newTitle:'신규 고객 등록',
+    newSub:'이름과 전화번호를 입력하면\n스탬프 카드가 발급됩니다',
+    flName:'이름', flPhone:'전화번호', createBtn:'카드 발급하기', backLink:'← 돌아가기',
+    stampBtn:'🐱 스탬프 적립',
+    thName:'이름', thPhone:'전화번호', thStamps:'스탬프',
+    rw10t:'음료 무료!', rw10d:'10번째 스탬프 달성!\n음료 1잔이 무료입니다 ☕',
+    rw20t:'Kingbap 무료!', rw20d:'20번째 스탬프 달성!\nKingbap 1인 무료 시식권입니다 🍚',
+    rwBtn:'확인', toastStamp:'님 스탬프 적립! 🐱', toastReward:'리워드 사용 완료 ✓',
+    toastCreated:'카드 발급 완료! ', toastName:'이름을 입력해주세요',
+    toastPhone:'전화번호를 입력해주세요', loading:'불러오는 중...'
   },
   es:{
-    pinLabel:'Ingresa el PIN del personal', guestBtn:'Ver mis sellos →', pinErr:'PIN incorrecto',
-    scTitle:'Tarjeta de sellos', ssl1:'1 - 10', ssl2:'11 - 20',
+    pinLabel:'Ingresa el PIN del personal', guestBtn:'📱 Ver mis sellos', pinErr:'PIN incorrecto',
+    phoneTitle:'Acceso con teléfono', phoneSub:'Ingresa tu número registrado\nSi es tu primera vez, pídele al personal que te registre',
+    phoneSubmit:'Abrir mi tarjeta', phoneBack:'← Volver', phoneNotFound:'Número no registrado',
+    scTitle:'Tarjeta de sellos', ssl1:'Sellos 1-10', ssl2:'Sellos 11-20',
     r10n:'Sello 10', r10v:'Bebida gratis', r20n:'Sello 20', r20v:'Kingbap gratis',
-    progLabel:'Hasta el próximo premio', progLeft:' restantes', allDone:'¡Todos los premios desbloqueados! 🎉',
+    progLabel:'Hasta el próximo premio', progLeft:' restantes', allDone:'¡Todos los premios! 🎉',
     qrTitle:'Mi código QR', qrHint:'Muéstraselo al personal',
-    ahTitle:'¡Añade a pantalla de inicio como app!',
-    ahDesc:'Safari → Compartir → "Añadir a inicio" / Chrome → Menú → "Instalar app"',
-    staffLabel:'Personal', backLbl:'← Salir', searchLabel:'Buscar cliente por ID',
-    searchBtn:'Buscar', newLabel:'Nuevo cliente', histLabel:'Lista de clientes',
-    newBtn:'+ Registrar nuevo cliente', newTitle:'¿Primera visita?',
-    newSub:'Escribe tu nombre para\nobtener tu tarjeta de sellos', createBtn:'Obtener tarjeta',
-    backLink:'← Volver', stampBtn:'🐱 Añadir sello',
-    rw10title:'¡Bebida gratis!', rw10desc:'¡Sello 10 conseguido!\nTu bebida es gratis ☕',
-    rw20title:'¡Kingbap gratis!', rw20desc:'¡Sello 20 conseguido!\nKingbap gratis para 1 persona 🍚',
-    rwBtn:'OK', toastStamp:' — ¡sello añadido!', toastReward:'Premio canjeado',
-    toastCreated:'¡Tarjeta creada! ID: ', toastNotFound:'Cliente no encontrado',
-    toastName:'Escribe tu nombre', newCustPlaceholder:'Nombre · 이름 · Name',
-    langLabel:'Elige tu idioma', stampsOf:'sellos', loading:'Cargando...'
+    ahTitle:'¡Añade a pantalla de inicio!', ahDesc:'Safari → Compartir → "Añadir a inicio"',
+    staffLabel:'Personal', backLbl:'← Salir', searchLabel:'Buscar cliente por teléfono',
+    searchBtn:'Buscar', newLabel:'Nuevo cliente', listLabel:'Lista de clientes',
+    newBtn:'+ Registrar nuevo cliente', newTitle:'Registro de cliente',
+    newSub:'Escribe nombre y teléfono\npara obtener tu tarjeta',
+    flName:'Nombre', flPhone:'Teléfono', createBtn:'Crear tarjeta', backLink:'← Volver',
+    stampBtn:'🐱 Añadir sello',
+    thName:'Nombre', thPhone:'Teléfono', thStamps:'Sellos',
+    rw10t:'¡Bebida gratis!', rw10d:'¡Sello 10 conseguido!\nTu bebida es gratis ☕',
+    rw20t:'¡Kingbap gratis!', rw20d:'¡Sello 20 conseguido!\nKingbap gratis para 1 persona 🍚',
+    rwBtn:'OK', toastStamp:' — ¡sello añadido! 🐱', toastReward:'Premio canjeado ✓',
+    toastCreated:'¡Tarjeta creada! ', toastName:'Escribe tu nombre',
+    toastPhone:'Escribe tu teléfono', loading:'Cargando...'
   },
   en:{
-    pinLabel:'Enter staff PIN', guestBtn:'View my stamps →', pinErr:'Incorrect PIN',
-    scTitle:'Stamp Card', ssl1:'Stamps 1 - 10', ssl2:'Stamps 11 - 20',
+    pinLabel:'Enter staff PIN', guestBtn:'📱 View my stamps', pinErr:'Incorrect PIN',
+    phoneTitle:'Access with phone number', phoneSub:'Enter your registered phone number\nFirst time? Ask staff to register you',
+    phoneSubmit:'Open my stamp card', phoneBack:'← Back', phoneNotFound:'Phone number not found',
+    scTitle:'Stamp Card', ssl1:'Stamps 1-10', ssl2:'Stamps 11-20',
     r10n:'10th stamp', r10v:'Free drink', r20n:'20th stamp', r20v:'Free Kingbap',
     progLabel:'Until next reward', progLeft:' left', allDone:'All rewards unlocked! 🎉',
     qrTitle:'My QR code', qrHint:'Show this to the staff',
-    ahTitle:'Add to home screen for app-like use!',
-    ahDesc:'Safari → Share → "Add to Home Screen" / Chrome → Menu → "Install app"',
-    staffLabel:'Staff', backLbl:'← Exit', searchLabel:'Search customer by ID',
-    searchBtn:'Search', newLabel:'New customer', histLabel:'Customer list',
-    newBtn:'+ Register new customer', newTitle:'First visit?',
-    newSub:'Enter your name to get\nyour stamp card', createBtn:'Get my card',
-    backLink:'← Back', stampBtn:'🐱 Add stamp',
-    rw10title:'Free drink!', rw10desc:'10th stamp achieved!\nYou get a free drink ☕',
-    rw20title:'Free Kingbap!', rw20desc:'20th stamp achieved!\nFree Kingbap for 1 person 🍚',
-    rwBtn:'OK', toastStamp:' — stamp added!', toastReward:'Reward used',
-    toastCreated:'Card created! ID: ', toastNotFound:'Customer not found',
-    toastName:'Please enter your name', newCustPlaceholder:'Name · 이름 · Nombre',
-    langLabel:'Choose language', stampsOf:'stamps', loading:'Loading...'
+    ahTitle:'Add to home screen for app-like use!', ahDesc:'Safari → Share → "Add to Home Screen"',
+    staffLabel:'Staff', backLbl:'← Exit', searchLabel:'Search customer by phone',
+    searchBtn:'Search', newLabel:'New customer', listLabel:'Customer list',
+    newBtn:'+ Register new customer', newTitle:'New customer registration',
+    newSub:'Enter name and phone number\nto get a stamp card',
+    flName:'Name', flPhone:'Phone number', createBtn:'Create card', backLink:'← Back',
+    stampBtn:'🐱 Add stamp',
+    thName:'Name', thPhone:'Phone', thStamps:'Stamps',
+    rw10t:'Free drink!', rw10d:'10th stamp achieved!\nYou get a free drink ☕',
+    rw20t:'Free Kingbap!', rw20d:'20th stamp achieved!\nFree Kingbap for 1 person 🍚',
+    rwBtn:'OK', toastStamp:' — stamp added! 🐱', toastReward:'Reward used ✓',
+    toastCreated:'Card created! ', toastName:'Please enter name',
+    toastPhone:'Please enter phone number', loading:'Loading...'
   }
 };
 
-let lang='ko', pinBuf='', currentPage=0, searchedId=null, rewardFrom=2;
-const STAFF_PIN='0927';
+let lang='ko', pinBuf='', currentPage=0, searchedPhone=null, rewardFrom=3;
 
 // URL 체크
-const urlId=new URLSearchParams(location.search).get('id');
+const urlPhone=new URLSearchParams(location.search).get('p');
 const urlLang=new URLSearchParams(location.search).get('lang');
 if(urlLang && T[urlLang]) lang=urlLang;
-
-if(urlId){ setLang(lang, false); loadCard(urlId); goTo(2); }
+if(urlPhone){ applyLang(); loadCard(urlPhone); goTo(3); }
 else { goTo(0); }
 
-function goTo(n){ currentPage=n; document.getElementById('pager').style.transform=`translateX(-${n*(100/6)}%)`; }
+function goTo(n){ currentPage=n; document.getElementById('pager').style.transform=`translateX(-${n*(100/7)}%)`; }
 
-function setLang(l, toPin=true){
-  lang=l;
-  const t=T[l];
-  // PIN 페이지
+// 전화번호 포맷
+function fmtPhone(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length<=3) el.value=v;
+  else if(v.length<=7) el.value=v.slice(0,3)+'-'+v.slice(3);
+  else el.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+}
+
+function phoneKey(p){ return 'phone_'+p.replace(/\D/g,''); }
+
+// 언어 설정
+function setLang(l){ lang=l; applyLang(); goTo(1); }
+function applyLang(){
+  const t=T[lang];
   document.getElementById('pin-label').textContent=t.pinLabel;
   document.getElementById('guest-btn').textContent=t.guestBtn;
   document.getElementById('pin-err').textContent=t.pinErr;
-  // 카드 페이지
+  document.getElementById('phone-title').textContent=t.phoneTitle;
+  document.getElementById('phone-sub').textContent=t.phoneSub;
+  document.getElementById('phone-submit').textContent=t.phoneSubmit;
+  document.getElementById('phone-back').textContent=t.phoneBack;
   document.getElementById('sc-title').textContent=t.scTitle;
   document.getElementById('ssl1').textContent=t.ssl1;
   document.getElementById('ssl2').textContent=t.ssl2;
@@ -435,32 +449,28 @@ function setLang(l, toPin=true){
   document.getElementById('qr-hint').textContent=t.qrHint;
   document.getElementById('ah-title').textContent=t.ahTitle;
   document.getElementById('ah-desc').textContent=t.ahDesc;
-  // 직원 페이지
   document.getElementById('staff-label').textContent=t.staffLabel;
   document.getElementById('back-lbl').textContent=t.backLbl;
   document.getElementById('search-label').textContent=t.searchLabel;
   document.getElementById('search-btn-lbl').textContent=t.searchBtn;
   document.getElementById('new-label').textContent=t.newLabel;
-  document.getElementById('history-label').textContent=t.histLabel;
+  document.getElementById('list-label').textContent=t.listLabel;
   document.getElementById('new-btn').textContent=t.newBtn;
   document.getElementById('stamp-btn').textContent=t.stampBtn;
-  // 신규 고객
+  document.getElementById('th-name').textContent=t.thName;
+  document.getElementById('th-phone').textContent=t.thPhone;
+  document.getElementById('th-stamps').textContent=t.thStamps;
   document.getElementById('new-title').textContent=t.newTitle;
   document.getElementById('new-sub').textContent=t.newSub;
+  document.getElementById('fl-name').textContent=t.flName;
+  document.getElementById('fl-phone').textContent=t.flPhone;
   document.getElementById('create-btn').textContent=t.createBtn;
   document.getElementById('back-link').textContent=t.backLink;
-  document.getElementById('name-inp').placeholder=t.newCustPlaceholder;
-  document.getElementById('history-list').innerHTML=`<div style="color:var(--text-light);font-size:13px;padding:12px;text-align:center;">${t.loading}</div>`;
-  if(toPin) goTo(1);
-}
-
-function goToCustomer(){
-  const id=prompt(lang==='ko'?'고객 ID를 입력하세요 (예: OZ-0001)':lang==='es'?'Ingresa tu ID (ej: OZ-0001)':'Enter your ID (e.g. OZ-0001)');
-  if(id && id.trim()){ loadCard(id.trim().toUpperCase()); goTo(2); }
+  document.getElementById('rw-btn').textContent=t.rwBtn;
 }
 
 // PIN
-function enterPin(v){
+function ep(v){
   if(v==='del') pinBuf=pinBuf.slice(0,-1);
   else if(v==='clr') pinBuf='';
   else if(pinBuf.length<4) pinBuf+=v;
@@ -468,78 +478,76 @@ function enterPin(v){
   if(pinBuf.length===4){
     if(pinBuf===STAFF_PIN){
       pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');
-      goTo(3); listenHistory();
+      goTo(4); listenCustomerList();
     } else {
-      const e=document.getElementById('pin-err'); e.classList.add('show');
-      setTimeout(()=>{ e.classList.remove('show'); pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on'); },2000);
+      document.getElementById('pin-err').classList.add('show');
+      setTimeout(()=>{ document.getElementById('pin-err').classList.remove('show'); pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on'); },2000);
     }
   }
 }
 
-// 고객 카드 로드
-function loadCard(id){
-  document.getElementById('cid-display').textContent=id;
-  const link=location.origin+location.pathname+'?id='+id+'&lang='+lang;
+// 고객: 전화번호로 카드 열기
+async function findByPhone(){
+  const phone=document.getElementById('phone-inp').value.trim();
+  if(!phone){ showToast(T[lang].toastPhone); return; }
+  const key=phoneKey(phone);
+  const snap=await db.ref('ozik_customers/'+key).once('value');
+  if(!snap.exists()){ showToast(T[lang].phoneNotFound); return; }
+  loadCard(phone);
+  goTo(3);
+}
+
+function loadCard(phone){
+  const key=phoneKey(phone);
+  const link=location.origin+location.pathname+'?p='+encodeURIComponent(phone)+'&lang='+lang;
+  document.getElementById('qr-phone-display').textContent=phone;
   document.getElementById('customer-qr').src='https://api.qrserver.com/v1/create-qr-code/?size=130x130&data='+encodeURIComponent(link);
-  db.ref('ozik_customers/'+id).on('value', snap=>{
-    if(!snap.exists()){ renderStamps(0,''); return; }
+  db.ref('ozik_customers/'+key).on('value',snap=>{
+    if(!snap.exists()) return;
     const c=snap.val();
     document.getElementById('sc-name').textContent='🐱 '+c.name;
-    renderStamps(c.stamps||0, c.name);
+    renderStamps(c.stamps||0);
   });
 }
 
-function renderStamps(total, name){
+function renderStamps(total){
   const t=T[lang];
   document.getElementById('stamp-count').textContent=total;
-  // 그리드 1
-  const g1=document.getElementById('sg1'); g1.innerHTML='';
-  for(let i=1;i<=10;i++){
-    const el=document.createElement('div');
-    const filled=total>=i;
-    el.className='stamp '+(filled?(i===10?'filled t10':'filled n'):'empty');
-    el.textContent=filled?(i===10?'☕':'🐱'):'';
-    el.style.position='relative';
-    if(i===10){
-      const b=document.createElement('div');
-      b.className='free-badge gold'; b.textContent='FREE'; el.appendChild(b);
+  ['sg1','sg2'].forEach((id,gi)=>{
+    const g=document.getElementById(id); g.innerHTML='';
+    for(let i=1;i<=10;i++){
+      const n=gi*10+i;
+      const filled=total>=n;
+      const el=document.createElement('div');
+      el.className='stamp '+(filled?(n===10?'filled s10':n===20?'filled s20':'filled sn'):'empty');
+      el.textContent=filled?(n===10?'☕':n===20?'🍚':'🐱'):'';
+      el.style.position='relative';
+      if(n===10||n===20){
+        const b=document.createElement('div');
+        b.className='fbadge '+(n===10?'gold':'green'); b.textContent='FREE'; el.appendChild(b);
+      }
+      g.appendChild(el);
     }
-    g1.appendChild(el);
-  }
-  // 그리드 2
-  const g2=document.getElementById('sg2'); g2.innerHTML='';
-  for(let i=11;i<=20;i++){
-    const el=document.createElement('div');
-    const filled=total>=i;
-    el.className='stamp '+(filled?(i===20?'filled t20':'filled n'):'empty');
-    el.textContent=filled?(i===20?'🍚':'🐱'):'';
-    el.style.position='relative';
-    if(i===20){
-      const b=document.createElement('div');
-      b.className='free-badge green'; b.textContent='FREE'; el.appendChild(b);
-    }
-    g2.appendChild(el);
-  }
-  // 진행바
-  const next=total<10?10:total<20?20:20;
-  const base=total<10?0:10;
-  const pct=Math.min(((total-base)/(next-base))*100,100);
-  document.getElementById('prog-fill').style.width=(total>=20?100:pct)+'%';
+  });
+  const next=total<10?10:20, base=total<10?0:10;
+  const pct=total>=20?100:Math.min(((total-base)/(next-base))*100,100);
+  document.getElementById('prog-fill').style.width=pct+'%';
   const remain=total>=20?0:next-total;
   document.getElementById('prog-label').textContent=total>=20?t.allDone:t.progLabel;
   document.getElementById('prog-count').textContent=total>=20?'':remain+t.progLeft;
 }
 
-// 직원: 고객 조회
-async function searchCustomer(){
-  const id=document.getElementById('search-inp').value.trim().toUpperCase();
-  if(!id){ showToast(T[lang].toastNotFound); return; }
-  const snap=await db.ref('ozik_customers/'+id).once('value');
+// 직원: 전화번호로 조회
+async function staffSearch(){
+  const phone=document.getElementById('search-inp').value.trim();
+  if(!phone){ showToast(T[lang].toastPhone); return; }
+  const key=phoneKey(phone);
+  const snap=await db.ref('ozik_customers/'+key).once('value');
   const rc=document.getElementById('result-card');
-  if(!snap.exists()){ showToast(T[lang].toastNotFound); rc.classList.remove('show'); return; }
-  const c=snap.val(); searchedId=id;
+  if(!snap.exists()){ showToast(T[lang].phoneNotFound); rc.classList.remove('show'); return; }
+  const c=snap.val(); searchedPhone=phone;
   document.getElementById('rc-name').textContent=c.name;
-  document.getElementById('rc-id').textContent=id+' · '+c.stamps+' / 20 '+T[lang].stampsOf;
+  document.getElementById('rc-info').textContent=phone+' · '+c.stamps+'/20';
   const g=document.getElementById('rc-grid'); g.innerHTML='';
   for(let i=0;i<20;i++){
     const el=document.createElement('div');
@@ -547,78 +555,79 @@ async function searchCustomer(){
     el.textContent=i<c.stamps?(i===9?'☕':i===19?'🍚':'🐱'):'·';
     g.appendChild(el);
   }
-  const rb10=document.getElementById('reward-btn-10');
-  const rb20=document.getElementById('reward-btn-20');
-  rb10.className='reward-btn r10'+(c.stamps>=10?' show':'');
-  rb20.className='reward-btn r20'+(c.stamps>=20?' show':'');
+  document.getElementById('rb10').className='reward-btn r10'+(c.stamps>=10?' show':'');
+  document.getElementById('rb20').className='reward-btn r20'+(c.stamps>=20?' show':'');
   rc.classList.add('show');
 }
 
 // 스탬프 적립
 async function addStamp(){
-  if(!searchedId) return;
+  if(!searchedPhone) return;
   const btn=document.getElementById('stamp-btn'); btn.disabled=true;
-  const snap=await db.ref('ozik_customers/'+searchedId).once('value');
-  const c=snap.val();
-  const ns=(c.stamps||0)+1;
-  await db.ref('ozik_customers/'+searchedId).update({stamps:ns, lastStamp:new Date().toISOString()});
+  const key=phoneKey(searchedPhone);
+  const snap=await db.ref('ozik_customers/'+key).once('value');
+  const c=snap.val(), ns=(c.stamps||0)+1;
+  await db.ref('ozik_customers/'+key).update({stamps:ns,lastStamp:new Date().toISOString()});
   showToast(c.name+T[lang].toastStamp);
-  if(ns===10){ rewardFrom=3; showReward('☕',T[lang].rw10title,T[lang].rw10desc); }
-  else if(ns===20){ rewardFrom=3; showReward('🍚',T[lang].rw20title,T[lang].rw20desc,'green'); }
-  await searchCustomer();
+  if(ns===10){ rewardFrom=4; showReward('☕',T[lang].rw10t,T[lang].rw10d); }
+  else if(ns===20){ rewardFrom=4; showReward('🍚',T[lang].rw20t,T[lang].rw20d); }
+  await staffSearch();
   btn.disabled=false;
 }
 
 // 리워드 사용
 async function useReward(n){
-  if(!searchedId) return;
-  const snap=await db.ref('ozik_customers/'+searchedId).once('value');
+  if(!searchedPhone) return;
+  const key=phoneKey(searchedPhone);
+  const snap=await db.ref('ozik_customers/'+key).once('value');
   const c=snap.val();
-  const ns=Math.max(0,(c.stamps||0)-n);
-  await db.ref('ozik_customers/'+searchedId).update({stamps:ns});
+  await db.ref('ozik_customers/'+key).update({stamps:Math.max(0,(c.stamps||0)-n)});
   showToast(T[lang].toastReward,'gold');
-  await searchCustomer();
+  await staffSearch();
 }
 
-function showReward(icon,title,desc,type=''){
-  document.getElementById('rw-icon').textContent=icon;
-  document.getElementById('rw-title').textContent=title;
-  document.getElementById('rw-desc').textContent=desc;
-  document.getElementById('rw-btn').textContent=T[lang].rwBtn;
-  goTo(5);
-}
+// 리워드 화면
+function showReward(icon,title,desc){ document.getElementById('rw-icon').textContent=icon; document.getElementById('rw-title').textContent=title; document.getElementById('rw-desc').textContent=desc; goTo(6); }
 function afterReward(){ goTo(rewardFrom); }
 
 // 신규 고객 등록
 async function createCustomer(){
   const name=document.getElementById('name-inp').value.trim();
+  const phone=document.getElementById('new-phone-inp').value.trim();
   if(!name){ showToast(T[lang].toastName); return; }
-  const snap=await db.ref('ozik_counter').once('value');
-  const n=(snap.val()||0)+1;
-  const id='OZ-'+String(n).padStart(4,'0');
-  await db.ref('ozik_counter').set(n);
-  await db.ref('ozik_customers/'+id).set({id,name,stamps:0,createdAt:new Date().toISOString()});
+  if(!phone){ showToast(T[lang].toastPhone); return; }
+  const key=phoneKey(phone);
+  await db.ref('ozik_customers/'+key).set({name,phone,stamps:0,createdAt:new Date().toISOString()});
   document.getElementById('name-inp').value='';
-  showToast(T[lang].toastCreated+id,'gold');
-  document.getElementById('search-inp').value=id;
-  goTo(3);
-  setTimeout(()=>searchCustomer(),400);
+  document.getElementById('new-phone-inp').value='';
+  showToast(T[lang].toastCreated+name,'gold');
+  document.getElementById('search-inp').value=phone;
+  goTo(4);
+  setTimeout(()=>staffSearch(),400);
 }
 
-// 고객 목록
-function listenHistory(){
+// 고객 명단 (실시간)
+function listenCustomerList(){
   db.ref('ozik_customers').on('value',snap=>{
-    const list=document.getElementById('history-list');
-    if(!snap.exists()){ list.innerHTML=`<div style="color:var(--text-light);font-size:13px;padding:12px;text-align:center;">${T[lang].loading}</div>`; return; }
+    const list=document.getElementById('customer-list');
+    if(!snap.exists()){ list.innerHTML=`<div style="padding:14px;text-align:center;color:var(--text-light);font-size:13px;">${T[lang].loading}</div>`; return; }
     const arr=[];
     snap.forEach(s=>arr.push(s.val()));
     arr.sort((a,b)=>(b.stamps||0)-(a.stamps||0));
-    list.innerHTML=arr.slice(0,20).map(c=>`
-      <div class="hi-item">
-        <div><div class="hi-name">${c.name}</div><div class="hi-id">${c.id}</div></div>
-        <div class="hi-stamps">${c.stamps||0}<span style="font-size:11px;color:var(--text-light);">/20</span></div>
+    list.innerHTML=arr.map(c=>`
+      <div class="ct-row" onclick="quickLoad('${c.phone}')">
+        <div><div class="ct-name">${c.name}</div></div>
+        <div class="ct-phone">${c.phone||'-'}</div>
+        <div class="ct-stamps">${c.stamps||0}<span>/20</span></div>
       </div>`).join('');
   });
+}
+
+// 명단에서 바로 클릭해서 조회
+function quickLoad(phone){
+  document.getElementById('search-inp').value=phone;
+  staffSearch();
+  window.scrollTo(0,0);
 }
 
 function showToast(msg,type=''){
