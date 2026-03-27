@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kingbap · 음료 쿠폰</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+:root {
+  --red: #bf3022;
+  --red-dark: #8f2218;
+  --gold: #d4a843;
+  --cream: #f7f2ea;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; min-height:100vh; color:#fff; }
+
+/* SCREENS */
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* LOADING */
+#screen-loading {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:16px;
+}
+.loading-logo { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:4px; }
+.loading-logo span { color:var(--gold); }
+.spinner { width:32px; height:32px; border-radius:50%; border:3px solid #222; border-top-color:var(--red); animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* PIN */
+#screen-pin { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; }
+.pin-logo { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:4px; margin-bottom:4px; }
+.pin-logo span { color:var(--gold); }
+.pin-sub { font-size:11px; color:#444; letter-spacing:2px; text-transform:uppercase; margin-bottom:40px; }
+.pin-title { font-size:13px; color:#555; margin-bottom:20px; }
+.pin-dots { display:flex; gap:12px; margin-bottom:28px; }
+.pin-dot { width:16px; height:16px; border-radius:50%; border:2px solid #2a2a2a; transition:all 0.2s; }
+.pin-dot.on { background:var(--red); border-color:var(--red); }
+.pin-pad { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:260px; }
+.pin-btn { background:#1a1a1a; color:#fff; border:1px solid #252525; border-radius:14px; padding:20px; font-size:22px; font-family:'Bebas Neue',sans-serif; cursor:pointer; transition:all 0.15s; }
+.pin-btn:active { background:var(--red); transform:scale(0.95); }
+.pin-btn.del { font-size:16px; color:#555; }
+.pin-err { margin-top:16px; font-size:12px; color:var(--red); opacity:0; transition:opacity 0.3s; min-height:20px; }
+.pin-err.show { opacity:1; }
+
+/* ISSUER */
+.top-nav { background:#0d0d0d; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1a1a1a; position:sticky; top:0; z-index:50; }
+.nav-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; }
+.nav-title span { color:var(--gold); }
+.role-badge { font-size:10px; letter-spacing:1.5px; padding:5px 12px; border-radius:20px; border:1px solid #2a2a2a; color:#555; font-weight:500; }
+.role-badge.guide    { border-color:var(--gold); color:var(--gold); }
+.role-badge.annyeong { border-color:#4a9eff; color:#4a9eff; }
+.role-badge.chalcak  { border-color:#a78bfa; color:#a78bfa; }
+
+.body-wrap { padding:20px 16px 60px; }
+.sec-label { font-size:10px; letter-spacing:2px; color:#3a3a3a; text-transform:uppercase; margin-bottom:12px; font-weight:500; }
+
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:24px; }
+.stat-box { background:#1a1a1a; border:1px solid #1e1e1e; border-radius:12px; padding:14px; text-align:center; }
+.stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:#fff; }
+.stat-val.red { color:var(--red); }
+.stat-val.gold { color:var(--gold); }
+.stat-lbl { font-size:9px; color:#3a3a3a; letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+
+.btn-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px; }
+.sel-btn { background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:14px 8px; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; transition:all 0.2s; }
+.sel-btn .ico { font-size:22px; }
+.sel-btn .lbl { font-size:11px; font-weight:600; color:#555; text-align:center; line-height:1.3; }
+.sel-btn.on-gold { border-color:var(--gold); background:rgba(212,168,67,0.07); }
+.sel-btn.on-gold .lbl { color:var(--gold); }
+.sel-btn.on-red { border-color:var(--red); background:rgba(191,48,34,0.08); }
+.sel-btn.on-red .lbl { color:#ff7a6b; }
+
+.note-inp { width:100%; background:#1a1a1a; border:1px solid #252525; border-radius:12px; padding:14px 16px; color:#fff; font-family:'Noto Sans KR',sans-serif; font-size:14px; outline:none; margin-bottom:20px; }
+.note-inp::placeholder { color:#2e2e2e; }
+
+.issue-btn { width:100%; background:var(--red); border:none; border-radius:16px; padding:18px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; color:#fff; cursor:pointer; transition:all 0.2s; box-shadow:0 8px 30px rgba(191,48,34,0.3); }
+.issue-btn:active { transform:scale(0.98); }
+.issue-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+.issued-wrap { margin-top:28px; }
+.issued-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.issued-item { background:#1a1a1a; border:1px solid #1e1e1e; border-radius:12px; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; }
+.issued-item.used { opacity:0.38; }
+.ii-code { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--gold); }
+.ii-meta { font-size:11px; color:#3a3a3a; margin-top:2px; }
+.ii-right { display:flex; align-items:center; gap:6px; }
+.status-badge { font-size:10px; font-weight:600; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+.status-badge.valid { background:rgba(191,48,34,0.12); color:#ff7a6b; border:1px solid rgba(191,48,34,0.25); }
+.status-badge.done  { background:#1e1e1e; color:#333; border:1px solid #252525; }
+.qr-btn { background:transparent; border:1px solid #252525; border-radius:8px; padding:5px 10px; color:#444; font-size:11px; cursor:pointer; transition:all 0.2s; }
+.qr-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* COUPON VIEW */
+#screen-coupon { min-height:100vh; background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:28px 16px 50px; }
+.coupon-top-lbl { font-size:10px; letter-spacing:2px; color:#333; text-transform:uppercase; margin-bottom:20px; }
+
+.coupon-card { width:100%; max-width:340px; background:var(--cream); border-radius:24px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,0.6); margin-bottom:20px; }
+.card-top { background:var(--red); padding:26px 24px 22px; position:relative; overflow:hidden; }
+.card-top::before { content:''; position:absolute; top:-50px; right:-40px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.05); }
+.card-top::after  { content:''; position:absolute; bottom:-35px; left:20px; width:100px; height:100px; border-radius:50%; background:rgba(0,0,0,0.07); }
+.brand-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; position:relative; z-index:1; }
+.brand-ico { width:42px; height:42px; background:#fff; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+.brand-name { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:3px; color:#fff; line-height:1; }
+.brand-sub  { font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:1.5px; }
+.card-title { position:relative; z-index:1; font-family:'Noto Serif KR',serif; font-size:19px; font-weight:700; color:#fff; line-height:1.4; }
+.card-title em { color:#ffd060; font-style:normal; }
+
+.notch { display:flex; align-items:center; height:22px; background:var(--cream); position:relative; }
+.notch::before { content:''; position:absolute; left:-11px; width:22px; height:22px; border-radius:50%; background:#0d0d0d; }
+.notch::after  { content:''; position:absolute; right:-11px; width:22px; height:22px; border-radius:50%; background:#0d0d0d; }
+.notch-line { flex:1; margin:0 14px; border-top:2px dashed #d8d0c2; }
+
+.card-body { padding:18px 22px 20px; }
+.benefit-area { text-align:center; margin-bottom:16px; }
+.benefit-badge { display:inline-block; background:var(--red); color:#fff; font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:2px; padding:3px 14px; border-radius:20px; margin-bottom:10px; }
+.benefit-main { font-family:'Noto Serif KR',serif; font-size:20px; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
+.benefit-es   { font-size:12px; color:#999; font-style:italic; }
+
+.qr-area { background:#fff; border-radius:14px; padding:16px; text-align:center; margin-bottom:14px; border:1px solid #ede8df; position:relative; }
+.qr-area.used-state { background:#f2f2f2; }
+.code-lbl  { font-size:10px; color:#bbb; letter-spacing:1px; margin-bottom:4px; }
+.code-text { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; color:#1a1a1a; margin-bottom:10px; }
+#coupon-qr-box { display:inline-block; }
+
+.used-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.93); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+.uo-icon { font-size:38px; }
+.uo-text { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:#bbb; }
+.uo-sub  { font-size:11px; color:#ccc; }
+
+.meta-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+.meta-tag  { background:#f0ece4; border-radius:20px; padding:4px 10px; font-size:11px; color:#888; display:flex; align-items:center; gap:4px; }
+.meta-dot  { width:5px; height:5px; border-radius:50%; background:var(--red); }
+
+.how-box { background:#fff8f0; border-radius:10px; padding:12px 14px; }
+.how-title { font-size:10px; letter-spacing:1.5px; color:var(--red); text-transform:uppercase; font-weight:700; margin-bottom:8px; }
+.how-steps { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.how-steps li { font-size:12px; color:#555; line-height:1.4; display:flex; gap:8px; align-items:flex-start; }
+.step-num { background:var(--red); color:#fff; font-size:9px; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+.card-footer { background:#1e1e1e; padding:12px 22px; display:flex; align-items:center; justify-content:space-between; }
+.footer-logo  { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; color:#3a3a3a; }
+.footer-terms { font-size:9px; color:#3a3a3a; text-align:right; line-height:1.5; }
+
+.verify-wrap { width:100%; max-width:340px; }
+.verify-btn  { width:100%; background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:15px; color:#444; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
+.verify-btn:hover { border-color:var(--red); color:var(--red); }
+.verify-hint { font-size:11px; color:#2a2a2a; text-align:center; }
+
+/* QR MODAL */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.modal-bg.show { opacity:1; pointer-events:all; }
+.modal-box { background:#1a1a1a; border-radius:20px; padding:28px 24px; text-align:center; border:1px solid #2a2a2a; max-width:300px; width:90%; transform:scale(0.85); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.modal-bg.show .modal-box { transform:scale(1); }
+.modal-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--gold); margin-bottom:4px; }
+.modal-code  { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:4px; color:#fff; margin-bottom:14px; }
+#modal-qr-box { display:inline-block; background:#fff; padding:10px; border-radius:10px; margin-bottom:12px; }
+.modal-status { font-size:11px; padding:4px 12px; border-radius:20px; display:inline-block; margin-bottom:10px; }
+.modal-status.valid { background:rgba(191,48,34,0.12); color:#ff7a6b; border:1px solid rgba(191,48,34,0.25); }
+.modal-status.used  { background:#1e1e1e; color:#333; border:1px solid #252525; }
+.modal-meta { font-size:11px; color:#333; margin-bottom:14px; }
+.modal-close { background:#111; border:1px solid #2a2a2a; border-radius:10px; padding:10px 24px; color:#444; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; cursor:pointer; }
+
+/* PIN MODAL */
+.pin-modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.88); display:flex; align-items:center; justify-content:center; z-index:250; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.pin-modal-bg.show { opacity:1; pointer-events:all; }
+.pm-box { background:#1a1a1a; border-radius:20px; padding:30px 24px; text-align:center; border:1px solid #2a2a2a; max-width:280px; width:90%; transform:scale(0.85); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.pin-modal-bg.show .pm-box { transform:scale(1); }
+.pm-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:#fff; margin-bottom:4px; }
+.pm-sub   { font-size:12px; color:#444; margin-bottom:20px; }
+.pm-dots  { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+.pm-dot   { width:13px; height:13px; border-radius:50%; border:2px solid #2a2a2a; transition:all 0.2s; }
+.pm-dot.on { background:var(--red); border-color:var(--red); }
+.pm-pad   { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:220px; margin:0 auto 12px; }
+.pm-btn   { background:#111; color:#fff; border:1px solid #1e1e1e; border-radius:12px; padding:16px; font-size:20px; font-family:'Bebas Neue',sans-serif; cursor:pointer; transition:all 0.15s; }
+.pm-btn:active { background:var(--red); transform:scale(0.95); }
+.pm-btn.del { font-size:14px; color:#444; }
+.pm-cancel { background:transparent; border:none; color:#333; font-size:13px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; }
+.pm-err    { font-size:11px; color:var(--red); margin-top:8px; opacity:0; transition:opacity 0.3s; min-height:16px; }
+.pm-err.show { opacity:1; }
+
+/* VERIFY SUCCESS */
+.success-bg { position:fixed; inset:0; background:rgba(0,0,0,0.92); display:flex; align-items:center; justify-content:center; z-index:300; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.success-bg.show { opacity:1; pointer-events:all; }
+.success-box { background:#1a1a1a; border-radius:24px; padding:36px 28px; text-align:center; border:1px solid var(--gold); max-width:300px; width:90%; transform:scale(0.8); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.success-bg.show .success-box { transform:scale(1); }
+.success-icon  { font-size:50px; margin-bottom:12px; }
+.success-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:var(--gold); margin-bottom:8px; }
+.success-desc  { font-size:14px; color:#777; line-height:1.6; margin-bottom:20px; }
+.success-close { background:var(--gold); color:#1a1a1a; border:none; border-radius:12px; padding:13px 32px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; cursor:pointer; }
+
+/* TOAST */
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:#1e1e1e; color:#fff; padding:12px 22px; border-radius:30px; font-size:13px; font-weight:500; box-shadow:0 8px 30px rgba(0,0,0,0.5); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:999; border:1px solid #2a2a2a; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.ok  { border-color:var(--gold); color:var(--gold); }
+.toast.err { border-color:var(--red); color:#ff7a6b; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="screen-loading" class="screen active">
+  <div class="loading-logo">COMMA <span>FAMILY</span></div>
+  <div class="spinner"></div>
+</div>
+
+<!-- PIN -->
+<div id="screen-pin" class="screen">
+  <div class="pin-logo">COMMA <span>FAMILY</span></div>
+  <div class="pin-sub">Kingbap · 음료 쿠폰 시스템</div>
+  <div class="pin-title">발급자 PIN 입력</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="enterPin('1')">1</button>
+    <button class="pin-btn" onclick="enterPin('2')">2</button>
+    <button class="pin-btn" onclick="enterPin('3')">3</button>
+    <button class="pin-btn" onclick="enterPin('4')">4</button>
+    <button class="pin-btn" onclick="enterPin('5')">5</button>
+    <button class="pin-btn" onclick="enterPin('6')">6</button>
+    <button class="pin-btn" onclick="enterPin('7')">7</button>
+    <button class="pin-btn" onclick="enterPin('8')">8</button>
+    <button class="pin-btn" onclick="enterPin('9')">9</button>
+    <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
+    <button class="pin-btn" onclick="enterPin('0')">0</button>
+    <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
+  </div>
+  <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
+</div>
+
+<!-- ISSUER -->
+<div id="screen-issuer" class="screen">
+  <div class="top-nav">
+    <div class="nav-title">COMMA <span>FAMILY</span></div>
+    <div class="role-badge" id="role-badge">발급자</div>
+  </div>
+  <div class="body-wrap">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">총 발급</div></div>
+      <div class="stat-box"><div class="stat-val red" id="s-valid">0</div><div class="stat-lbl">미사용</div></div>
+      <div class="stat-box"><div class="stat-val gold" id="s-used">0</div><div class="stat-lbl">사용완료</div></div>
+    </div>
+
+    <div class="sec-label">발급자 구분</div>
+    <div class="btn-grid" style="margin-bottom:24px">
+      <div class="sel-btn on-gold" id="rb-guide"    onclick="selRole('guide')">   <div class="ico">🗺️</div><div class="lbl">가이드</div></div>
+      <div class="sel-btn"         id="rb-annyeong" onclick="selRole('annyeong')"><div class="ico">🏠</div><div class="lbl">안녕세비야</div></div>
+      <div class="sel-btn"         id="rb-chalcak"  onclick="selRole('chalcak')"> <div class="ico">📸</div><div class="lbl">찰칵세비야</div></div>
+    </div>
+
+    <div class="sec-label">쿠폰 경로</div>
+    <div class="btn-grid" style="margin-bottom:24px">
+      <div class="sel-btn on-red" id="sb-tour"       onclick="selSrc('tour')">       <div class="ico">🎫</div><div class="lbl">가이드 투어</div></div>
+      <div class="sel-btn"        id="sb-guesthouse" onclick="selSrc('guesthouse')"> <div class="ico">🛏️</div><div class="lbl">민박 투숙</div></div>
+      <div class="sel-btn"        id="sb-snap"       onclick="selSrc('snap')">       <div class="ico">📷</div><div class="lbl">스냅 촬영</div></div>
+    </div>
+
+    <div class="sec-label">메모 (선택)</div>
+    <input class="note-inp" id="note-inp" placeholder="예: 투어 그룹 A, 체크인 3/27 ...">
+
+    <button class="issue-btn" id="issue-btn" onclick="issueCoupon()">🎟️ 쿠폰 발급하기</button>
+
+    <div class="issued-wrap">
+      <div class="sec-label">발급 내역 (실시간)</div>
+      <div class="issued-list" id="issued-list"><div style="color:#2a2a2a;font-size:13px;padding:16px;text-align:center;">불러오는 중...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COUPON VIEW -->
+<div id="screen-coupon" class="screen">
+  <div class="coupon-top-lbl">📲 Kingbap · 음료 무료 쿠폰</div>
+  <div class="coupon-card">
+    <div class="card-top">
+      <div class="brand-row">
+        <div class="brand-ico">🍚</div>
+        <div><div class="brand-name">KINGBAP</div><div class="brand-sub">KOREAN CUP RICE · SEVILLA</div></div>
+      </div>
+      <div class="card-title">Comma Family 특별 혜택<br><em>음료 1잔 무료 🥤</em></div>
+    </div>
+    <div class="notch"><div class="notch-line"></div></div>
+    <div class="card-body">
+      <div class="benefit-area">
+        <div class="benefit-badge">DRINK COUPON</div>
+        <div class="benefit-main">🥤 음료 무료 업그레이드</div>
+        <div class="benefit-es">Bebida gratis con tu pedido</div>
+      </div>
+      <div class="qr-area" id="qr-area">
+        <div class="code-lbl">COUPON CODE</div>
+        <div class="code-text" id="c-code">------</div>
+        <div id="coupon-qr-box"></div>
+      </div>
+      <div class="meta-tags" id="c-meta"></div>
+      <div class="how-box">
+        <div class="how-title">이용 방법 · Cómo usar</div>
+        <ul class="how-steps">
+          <li><span class="step-num">1</span>Kingbap 방문 후 주문하세요</li>
+          <li><span class="step-num">2</span>이 화면을 직원에게 보여주세요</li>
+          <li><span class="step-num">3</span>컵밥 주문 시 음료 1잔 무료!</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="footer-logo">COMMA FAMILY</div>
+      <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
+    </div>
+  </div>
+  <div class="verify-wrap">
+    <button class="verify-btn" id="verify-btn" onclick="openPinModal()">✓ 킹밥 직원 사용 처리</button>
+    <div class="verify-hint">킹밥 직원만 누르세요 · Solo para el personal de Kingbap</div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-bg" id="qr-modal" onclick="closeQrModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">쿠폰 QR</div>
+    <div class="modal-code" id="m-code">------</div>
+    <div id="modal-qr-box"></div>
+    <div class="modal-status valid" id="m-status">유효</div>
+    <div class="modal-meta" id="m-meta"></div>
+    <button class="modal-close" onclick="closeQrModal()">닫기</button>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="pin-modal-bg" id="pin-modal">
+  <div class="pm-box">
+    <div class="pm-title">직원 확인</div>
+    <div class="pm-sub">킹밥 직원 PIN 입력</div>
+    <div class="pm-dots">
+      <div class="pm-dot" id="pmd0"></div><div class="pm-dot" id="pmd1"></div>
+      <div class="pm-dot" id="pmd2"></div><div class="pm-dot" id="pmd3"></div>
+    </div>
+    <div class="pm-pad">
+      <button class="pm-btn" onclick="pmPin('1')">1</button>
+      <button class="pm-btn" onclick="pmPin('2')">2</button>
+      <button class="pm-btn" onclick="pmPin('3')">3</button>
+      <button class="pm-btn" onclick="pmPin('4')">4</button>
+      <button class="pm-btn" onclick="pmPin('5')">5</button>
+      <button class="pm-btn" onclick="pmPin('6')">6</button>
+      <button class="pm-btn" onclick="pmPin('7')">7</button>
+      <button class="pm-btn" onclick="pmPin('8')">8</button>
+      <button class="pm-btn" onclick="pmPin('9')">9</button>
+      <button class="pm-btn del" onclick="pmPin('del')">⌫</button>
+      <button class="pm-btn" onclick="pmPin('0')">0</button>
+      <button class="pm-btn del" onclick="pmPin('clr')">✕</button>
+    </div>
+    <div class="pm-err" id="pm-err"></div>
+    <button class="pm-cancel" onclick="closePinModal()">취소</button>
+  </div>
+</div>
+
+<!-- VERIFY SUCCESS -->
+<div class="success-bg" id="success-bg">
+  <div class="success-box">
+    <div class="success-icon">🥤</div>
+    <div class="success-title">사용 완료!</div>
+    <div class="success-desc">음료 무료 쿠폰이 사용되었습니다.<br>쿠폰이 소멸됩니다.<br><br><span style="color:#444;font-size:12px">Cupón utilizado correctamente</span></div>
+    <button class="success-close" onclick="confirmUse()">확인 · OK</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const PINS = { guide:'1111', annyeong:'2222', chalcak:'3333', kingbap:'0000' };
+const ROLE_LBL = { guide:'가이드', annyeong:'안녕세비야', chalcak:'찰칵세비야' };
+const SRC_LBL  = { tour:'가이드 투어', guesthouse:'민박 투숙', snap:'스냅 촬영' };
+
+// ── FIREBASE INIT ──
+firebase.initializeApp({
+  apiKey:            "AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
+  authDomain:        "comma-family.firebaseapp.com",
+  databaseURL:       "https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "comma-family",
+  storageBucket:     "comma-family.firebasestorage.app",
+  messagingSenderId: "106296714974",
+  appId:             "1:106296714974:web:26b9b708ddb6116347444f"
+});
+const db = firebase.database();
+
+// ── STATE ──
+let curRole = 'guide', curSrc = 'tour';
+let pinBuf = '', pmBuf = '';
+let curCouponId = null, pendingVerify = false;
+
+// ── INIT ──
+const urlCouponId = new URLSearchParams(location.search).get('c');
+if (urlCouponId) {
+  showCouponView(urlCouponId);
+} else {
+  showScreen('screen-pin');
+}
+
+// ── SCREEN ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── MAIN PIN ──
+function enterPin(v) {
+  if (v==='del') pinBuf = pinBuf.slice(0,-1);
+  else if (v==='clr') pinBuf = '';
+  else if (pinBuf.length < 4) pinBuf += v;
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('on', i<pinBuf.length);
+  if (pinBuf.length===4) {
+    const role = Object.keys(PINS).find(r => r!=='kingbap' && PINS[r]===pinBuf);
+    if (role) { curRole=role; unlockIssuer(role); }
+    else {
+      const e=document.getElementById('pin-err');
+      e.textContent='PIN이 올바르지 않습니다';
+      e.classList.add('show');
+      setTimeout(()=>e.classList.remove('show'),2000);
+      pinBuf='';
+      for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');
+    }
+  }
+}
+
+function unlockIssuer(role) {
+  showScreen('screen-issuer');
+  const b=document.getElementById('role-badge');
+  b.textContent=ROLE_LBL[role]; b.className='role-badge '+role;
+  selRole(role);
+  listenCoupons();
+}
+
+// ── ROLE / SRC ──
+function selRole(r) {
+  curRole=r;
+  ['guide','annyeong','chalcak'].forEach(id=>
+    document.getElementById('rb-'+id).className='sel-btn'+(id===r?' on-gold':''));
+}
+function selSrc(s) {
+  curSrc=s;
+  ['tour','guesthouse','snap'].forEach(id=>
+    document.getElementById('sb-'+id).className='sel-btn'+(id===s?' on-red':''));
+}
+
+// ── ISSUE ──
+async function issueCoupon() {
+  const btn=document.getElementById('issue-btn');
+  btn.disabled=true;
+  const code='KB-'+Date.now().toString(36).toUpperCase().slice(-6);
+  const note=document.getElementById('note-inp').value.trim();
+  try {
+    await db.ref('coupons/'+code).set({
+      code, role:curRole, source:curSrc, note,
+      issuedAt:new Date().toISOString(), used:false, usedAt:null
+    });
+    document.getElementById('note-inp').value='';
+    showToast('✓ 발급 완료! '+code,'ok');
+    openQrModal(code);
+  } catch(e) {
+    showToast('발급 실패 · Error','err');
+  }
+  btn.disabled=false;
+}
+
+// ── LISTEN COUPONS ──
+function listenCoupons() {
+  db.ref('coupons').on('value', snap => {
+    const data=snap.val()||{};
+    const all=Object.values(data);
+    document.getElementById('s-total').textContent=all.length;
+    document.getElementById('s-valid').textContent=all.filter(c=>!c.used).length;
+    document.getElementById('s-used').textContent=all.filter(c=>c.used).length;
+    const list=document.getElementById('issued-list');
+    if(!all.length){ list.innerHTML='<div style="color:#2a2a2a;font-size:13px;padding:16px;text-align:center;">발급된 쿠폰이 없습니다</div>'; return; }
+    list.innerHTML=all.sort((a,b)=>b.issuedAt.localeCompare(a.issuedAt)).slice(0,20).map(c=>`
+      <div class="issued-item ${c.used?'used':''}">
+        <div><div class="ii-code">${c.code}</div><div class="ii-meta">${ROLE_LBL[c.role]||c.role} · ${SRC_LBL[c.source]||c.source}${c.note?' · '+c.note:''}</div></div>
+        <div class="ii-right">
+          <span class="status-badge ${c.used?'done':'valid'}">${c.used?'사용됨':'유효'}</span>
+          <button class="qr-btn" onclick="openQrModal('${c.code}')">QR</button>
+        </div>
+      </div>`).join('');
+  });
+}
+
+// ── QR MODAL ──
+async function openQrModal(code) {
+  const snap=await db.ref('coupons/'+code).once('value');
+  if(!snap.exists()) return;
+  const c=snap.val();
+  document.getElementById('m-code').textContent=code;
+  document.getElementById('m-status').textContent=c.used?'사용됨':'유효';
+  document.getElementById('m-status').className='modal-status '+(c.used?'used':'valid');
+  document.getElementById('m-meta').textContent=(ROLE_LBL[c.role]||c.role)+' · '+(SRC_LBL[c.source]||c.source)+(c.note?' · '+c.note:'');
+  const el=document.getElementById('modal-qr-box'); el.innerHTML='';
+  new QRCode(el,{text:location.origin+location.pathname+'?c='+code,width:160,height:160,colorDark:'#1a1a1a',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById('qr-modal').classList.add('show');
+}
+function closeQrModal(){ document.getElementById('qr-modal').classList.remove('show'); }
+
+// ── COUPON VIEW ──
+function showCouponView(code) {
+  showScreen('screen-coupon');
+  curCouponId=code;
+  document.getElementById('c-code').textContent=code;
+  db.ref('coupons/'+code).on('value', snap => {
+    if(!snap.exists()){
+      document.getElementById('c-code').textContent='유효하지 않음';
+      document.getElementById('qr-area').innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;text-align:center;">존재하지 않는 쿠폰입니다</div>';
+      document.getElementById('verify-btn').style.display='none';
+      return;
+    }
+    const c=snap.val();
+    const qrBox=document.getElementById('coupon-qr-box'); qrBox.innerHTML='';
+    new QRCode(qrBox,{text:location.origin+location.pathname+'?c='+code,width:150,height:150,colorDark:'#1a1a1a',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+    const issued=new Date(c.issuedAt);
+    const ds=issued.getFullYear()+'.'+(issued.getMonth()+1).toString().padStart(2,'0')+'.'+issued.getDate().toString().padStart(2,'0');
+    document.getElementById('c-meta').innerHTML=`
+      <div class="meta-tag"><span class="meta-dot"></span>${ROLE_LBL[c.role]||c.role}</div>
+      <div class="meta-tag"><span class="meta-dot"></span>${SRC_LBL[c.source]||c.source}</div>
+      <div class="meta-tag"><span class="meta-dot"></span>${ds} 발급</div>`;
+    const qrArea=document.getElementById('qr-area');
+    const old=qrArea.querySelector('.used-overlay'); if(old) old.remove();
+    qrArea.classList.remove('used-state');
+    if(c.used){
+      qrArea.classList.add('used-state');
+      const ov=document.createElement('div'); ov.className='used-overlay';
+      ov.innerHTML=`<div class="uo-icon">✓</div><div class="uo-text">사용 완료</div><div class="uo-sub">Ya utilizado · ${new Date(c.usedAt).toLocaleDateString('ko')}</div>`;
+      qrArea.appendChild(ov);
+      document.getElementById('verify-btn').style.display='none';
+    } else {
+      document.getElementById('verify-btn').style.display='block';
+    }
+  });
+}
+
+// ── PIN MODAL ──
+function openPinModal(){ pmBuf=''; for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on'); document.getElementById('pm-err').classList.remove('show'); document.getElementById('pin-modal').classList.add('show'); }
+function closePinModal(){ document.getElementById('pin-modal').classList.remove('show'); }
+function pmPin(v){
+  if(v==='del') pmBuf=pmBuf.slice(0,-1);
+  else if(v==='clr') pmBuf='';
+  else if(pmBuf.length<4) pmBuf+=v;
+  for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.toggle('on',i<pmBuf.length);
+  if(pmBuf.length===4){
+    if(pmBuf===PINS.kingbap){
+      closePinModal();
+      document.getElementById('success-bg').classList.add('show');
+      pendingVerify=true;
+    } else {
+      const e=document.getElementById('pm-err');
+      e.textContent='PIN이 올바르지 않습니다';
+      e.classList.add('show');
+      setTimeout(()=>{ e.classList.remove('show'); pmBuf=''; for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on'); },1500);
+    }
+  }
+}
+
+// ── CONFIRM USE ──
+async function confirmUse(){
+  if(!pendingVerify||!curCouponId) return;
+  const snap=await db.ref('coupons/'+curCouponId).once('value');
+  if(!snap.exists()||snap.val().used){ showToast('이미 사용된 쿠폰입니다','err'); document.getElementById('success-bg').classList.remove('show'); pendingVerify=false; return; }
+  await db.ref('coupons/'+curCouponId).update({used:true,usedAt:new Date().toISOString()});
+  pendingVerify=false;
+  document.getElementById('success-bg').classList.remove('show');
+  showToast('✓ 쿠폰 사용 처리 완료','ok');
+}
+
+// ── TOAST ──
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
