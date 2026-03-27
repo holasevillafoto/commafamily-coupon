@@ -16,7 +16,7 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
 
 /* ── PAGER ── */
 .pager { display:flex; width:400%; height:100vh; transition:transform 0.4s cubic-bezier(0.77,0,0.18,1); }
-.page  { width:25%; height:100vh; overflow-y:auto; flex-shrink:0; }
+.page  { width:25%; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; flex-shrink:0; }
 
 /* ── PAGE 1: PIN ── */
 #p-pin {
@@ -61,13 +61,13 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
 .issue-btn:disabled { opacity:0.35; cursor:not-allowed; }
 
 /* ── PAGE 3: RESULT ── */
-#p-result { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:28px 16px 50px; }
-.result-top-lbl { font-size:10px; letter-spacing:2px; color:#444; text-transform:uppercase; margin-bottom:20px; }
+#p-result { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:28px 16px 80px; overflow-y:auto; }
+.result-top-lbl { font-size:10px; letter-spacing:2px; color:#444; text-transform:uppercase; margin-bottom:20px; text-align:center; width:100%; }
 .coupon-card { width:100%; max-width:340px; background:var(--cream); border-radius:24px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,0.6); margin-bottom:16px; }
-.card-top { background:var(--red); padding:26px 24px 22px; position:relative; overflow:hidden; }
+.card-top { background:var(--red); padding:26px 24px 22px; position:relative; overflow:hidden; text-align:center; }
 .card-top::before { content:''; position:absolute; top:-50px; right:-40px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.05); }
 .card-top::after  { content:''; position:absolute; bottom:-35px; left:20px; width:100px; height:100px; border-radius:50%; background:rgba(0,0,0,0.07); }
-.brand-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; position:relative; z-index:1; }
+.brand-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px; position:relative; z-index:1; }
 .brand-ico  { width:42px; height:42px; background:#fff; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
 .brand-name { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:3px; color:#fff; line-height:1; }
 .brand-sub  { font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:1.5px; }
@@ -77,29 +77,29 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
 .notch::before { content:''; position:absolute; left:-11px; width:22px; height:22px; border-radius:50%; background:#0d0d0d; }
 .notch::after  { content:''; position:absolute; right:-11px; width:22px; height:22px; border-radius:50%; background:#0d0d0d; }
 .notch-line { flex:1; margin:0 14px; border-top:2px dashed #d8d0c2; }
-.card-body  { padding:18px 22px 20px; }
+.card-body  { padding:18px 22px 28px; text-align:center; }
 .benefit-area  { text-align:center; margin-bottom:16px; }
 .benefit-badge { display:inline-block; background:var(--red); color:#fff; font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:2px; padding:3px 14px; border-radius:20px; margin-bottom:10px; }
 .benefit-main  { font-family:'Noto Serif KR',serif; font-size:20px; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
 .benefit-es    { font-size:12px; color:#999; font-style:italic; }
-.qr-area { background:#fff; border-radius:14px; padding:16px; text-align:center; margin-bottom:14px; border:1px solid #ede8df; position:relative; }
+.qr-area { background:#fff; border-radius:14px; padding:16px; text-align:center; margin-bottom:16px; border:1px solid #ede8df; position:relative; overflow:visible; }
 .qr-area.used-state { background:#f2f2f2; }
 .code-lbl  { font-size:10px; color:#bbb; letter-spacing:1px; margin-bottom:4px; }
 .code-text { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; color:#1a1a1a; margin-bottom:10px; }
-#coupon-qr-box { display:inline-block; }
+#coupon-qr-box { display:inline-block; min-height:160px; }
 .used-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.93); border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
 .uo-icon { font-size:38px; }
 .uo-text { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:#bbb; }
 .uo-sub  { font-size:11px; color:#ccc; }
-.meta-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+.meta-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; justify-content:center; }
 .meta-tag  { background:#f0ece4; border-radius:20px; padding:4px 10px; font-size:11px; color:#888; display:flex; align-items:center; gap:4px; }
 .meta-dot  { width:5px; height:5px; border-radius:50%; background:var(--red); }
 .how-box   { background:#fff8f0; border-radius:10px; padding:12px 14px; }
 .how-title { font-size:10px; letter-spacing:1.5px; color:var(--red); text-transform:uppercase; font-weight:700; margin-bottom:8px; }
-.how-steps { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.how-steps { list-style:none; display:flex; flex-direction:column; gap:6px; text-align:left; }
 .how-steps li { font-size:12px; color:#555; line-height:1.4; display:flex; gap:8px; align-items:flex-start; }
 .step-num  { background:var(--red); color:#fff; font-size:9px; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
-.card-footer  { background:#1e1e1e; padding:12px 22px; display:flex; align-items:center; justify-content:space-between; }
+.card-footer  { background:#1e1e1e; padding:12px 22px; display:flex; align-items:center; justify-content:center; gap:20px; }
 .footer-logo  { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; color:#3a3a3a; }
 .footer-terms { font-size:9px; color:#3a3a3a; text-align:right; line-height:1.5; }
 
@@ -110,7 +110,7 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
 .new-btn:hover { border-color:var(--red); color:var(--red); }
 
 /* ── PAGE 4: CUSTOMER COUPON ── */
-#p-coupon { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:28px 16px 50px; }
+#p-coupon { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:28px 16px 80px; overflow-y:auto; }
 .verify-wrap { width:100%; max-width:340px; margin-top:4px; }
 .verify-btn  { width:100%; background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:15px; color:#444; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
 .verify-btn:hover { border-color:var(--red); color:var(--red); }
@@ -216,17 +216,13 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
       <div class="card-top">
         <div class="brand-row">
           <div class="brand-ico">🍚</div>
-          <div><div class="brand-name">KINGBAP</div><div class="brand-sub">KOREAN CUP RICE · SEVILLA</div></div>
+          <div><a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;"><div class="brand-name" style="color:#fff;">KINGBAP 📍</div></a><div class="brand-sub">KOREAN CUP RICE · SEVILLA</div></div>
         </div>
-        <div class="card-title">Comma Family 특별 혜택<br><em>음료 1잔 무료 🥤</em></div>
+        
       </div>
       <div class="notch"><div class="notch-line"></div></div>
       <div class="card-body">
-        <div class="benefit-area">
-          <div class="benefit-badge">DRINK COUPON</div>
-          <div class="benefit-main">🥤 음료 무료 업그레이드</div>
-          <div class="benefit-es">Bebida gratis con tu pedido</div>
-        </div>
+
         <div class="qr-area" id="result-qr-area">
           <div class="code-lbl">COUPON CODE</div>
           <div class="code-text" id="result-code">------</div>
@@ -258,17 +254,13 @@ body { background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
       <div class="card-top">
         <div class="brand-row">
           <div class="brand-ico">🍚</div>
-          <div><div class="brand-name">KINGBAP</div><div class="brand-sub">KOREAN CUP RICE · SEVILLA</div></div>
+          <div><a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;"><div class="brand-name" style="color:#fff;">KINGBAP 📍</div></a><div class="brand-sub">KOREAN CUP RICE · SEVILLA</div></div>
         </div>
-        <div class="card-title">Comma Family 특별 혜택<br><em>음료 1잔 무료 🥤</em></div>
+        
       </div>
       <div class="notch"><div class="notch-line"></div></div>
       <div class="card-body">
-        <div class="benefit-area">
-          <div class="benefit-badge">DRINK COUPON</div>
-          <div class="benefit-main">🥤 음료 무료 업그레이드</div>
-          <div class="benefit-es">Bebida gratis con tu pedido</div>
-        </div>
+
         <div class="qr-area" id="coupon-qr-area">
           <div class="code-lbl">COUPON CODE</div>
           <div class="code-text" id="c-code">------</div>
