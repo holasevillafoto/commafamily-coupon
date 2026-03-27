@@ -4,305 +4,297 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kingbap · 음료 쿠폰</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-:root { --red:#bf3022; --gold:#d4a843; --cream:#f7f2ea; }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { height:100%; overflow:hidden; background:#0d0d0d; font-family:'Noto Sans KR',sans-serif; color:#fff; }
+:root{--red:#bf3022;--gold:#d4a843;--cream:#f7f2ea;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:#0d0d0d;font-family:'Noto Sans KR',sans-serif;color:#fff;}
+.pager{display:flex;width:400%;height:100%;transition:transform 0.4s cubic-bezier(0.77,0,0.18,1);}
+.page{width:25%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
 
-.pager { display:flex; width:400%; height:100%; transition:transform 0.4s cubic-bezier(0.77,0,0.18,1); }
-.page  { width:25%; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; flex-shrink:0; }
+/* PIN */
+#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.pin-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:4px;margin-bottom:4px;}
+.pin-logo span{color:var(--gold);}
+.pin-sub{font-size:11px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:36px;}
+.pin-title{font-size:13px;color:#555;margin-bottom:18px;}
+.pin-dots{display:flex;gap:12px;margin-bottom:24px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #2a2a2a;transition:all 0.2s;}
+.pin-dot.on{background:var(--red);border-color:var(--red);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:260px;}
+.pin-btn{background:#1a1a1a;color:#fff;border:1px solid #252525;border-radius:14px;padding:18px;font-size:22px;font-family:'Bebas Neue',sans-serif;cursor:pointer;}
+.pin-btn:active{background:var(--red);transform:scale(0.95);}
+.pin-btn.del{font-size:16px;color:#555;}
+.pin-err{margin-top:14px;font-size:12px;color:var(--red);opacity:0;transition:opacity 0.3s;min-height:18px;}
+.pin-err.show{opacity:1;}
 
-/* PAGE 1: PIN */
-#p-pin { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; }
-.pin-logo { font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:4px; margin-bottom:4px; }
-.pin-logo span { color:var(--gold); }
-.pin-sub   { font-size:11px; color:#444; letter-spacing:2px; text-transform:uppercase; margin-bottom:36px; }
-.pin-title { font-size:13px; color:#555; margin-bottom:18px; }
-.pin-dots  { display:flex; gap:12px; margin-bottom:24px; }
-.pin-dot   { width:16px; height:16px; border-radius:50%; border:2px solid #2a2a2a; transition:all 0.2s; }
-.pin-dot.on { background:var(--red); border-color:var(--red); }
-.pin-pad   { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:260px; }
-.pin-btn   { background:#1a1a1a; color:#fff; border:1px solid #252525; border-radius:14px; padding:18px; font-size:22px; font-family:'Bebas Neue',sans-serif; cursor:pointer; transition:all 0.15s; }
-.pin-btn:active { background:var(--red); transform:scale(0.95); }
-.pin-btn.del { font-size:16px; color:#555; }
-.pin-err   { margin-top:14px; font-size:12px; color:var(--red); opacity:0; transition:opacity 0.3s; min-height:18px; }
-.pin-err.show { opacity:1; }
+/* FORM */
+#p-form{background:#0d0d0d;}
+.page-nav{background:#0d0d0d;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1a1a1a;position:sticky;top:0;z-index:50;}
+.page-nav-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;}
+.page-nav-title span{color:var(--gold);}
+.back-btn{background:transparent;border:1px solid #2a2a2a;border-radius:10px;padding:6px 14px;color:#555;font-size:12px;cursor:pointer;}
+.form-body{padding:20px 16px 60px;}
+.sec-label{font-size:10px;letter-spacing:2px;color:#3a3a3a;text-transform:uppercase;margin-bottom:10px;font-weight:500;}
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.sel-btn{background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;}
+.sel-btn .ico{font-size:22px;}
+.sel-btn .lbl{font-size:11px;font-weight:600;color:#555;text-align:center;line-height:1.3;}
+.sel-btn.on-gold{border-color:var(--gold);background:rgba(212,168,67,0.07);}
+.sel-btn.on-gold .lbl{color:var(--gold);}
+.sel-btn.on-red{border-color:var(--red);background:rgba(191,48,34,0.08);}
+.sel-btn.on-red .lbl{color:#ff7a6b;}
+.note-inp{width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:12px;padding:13px 16px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;margin-bottom:22px;}
+.note-inp::placeholder{color:#2e2e2e;}
+.issue-btn{width:100%;background:var(--red);border:none;border-radius:16px;padding:17px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#fff;cursor:pointer;box-shadow:0 8px 30px rgba(191,48,34,0.3);}
+.issue-btn:disabled{opacity:0.35;cursor:not-allowed;}
 
-/* PAGE 2: FORM */
-#p-form { background:#0d0d0d; }
-.page-nav { background:#0d0d0d; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1a1a1a; position:sticky; top:0; z-index:50; }
-.page-nav-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; }
-.page-nav-title span { color:var(--gold); }
-.back-btn { background:transparent; border:1px solid #2a2a2a; border-radius:10px; padding:6px 14px; color:#555; font-size:12px; cursor:pointer; }
-.form-body { padding:20px 16px 60px; }
-.sec-label { font-size:10px; letter-spacing:2px; color:#3a3a3a; text-transform:uppercase; margin-bottom:10px; font-weight:500; }
-.btn-grid  { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:22px; }
-.sel-btn   { background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:14px 8px; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; transition:all 0.2s; }
-.sel-btn .ico { font-size:22px; }
-.sel-btn .lbl { font-size:11px; font-weight:600; color:#555; text-align:center; line-height:1.3; }
-.sel-btn.on-gold { border-color:var(--gold); background:rgba(212,168,67,0.07); }
-.sel-btn.on-gold .lbl { color:var(--gold); }
-.sel-btn.on-red  { border-color:var(--red); background:rgba(191,48,34,0.08); }
-.sel-btn.on-red .lbl { color:#ff7a6b; }
-.note-inp { width:100%; background:#1a1a1a; border:1px solid #252525; border-radius:12px; padding:13px 16px; color:#fff; font-family:'Noto Sans KR',sans-serif; font-size:14px; outline:none; margin-bottom:22px; }
-.note-inp::placeholder { color:#2e2e2e; }
-.issue-btn { width:100%; background:var(--red); border:none; border-radius:16px; padding:17px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; color:#fff; cursor:pointer; box-shadow:0 8px 30px rgba(191,48,34,0.3); }
-.issue-btn:active { opacity:0.85; }
-.issue-btn:disabled { opacity:0.35; cursor:not-allowed; }
+/* CARD */
+.coupon-card{width:100%;max-width:340px;background:var(--cream);border-radius:20px;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,0.55);}
+.card-top{background:var(--red);padding:20px;text-align:center;position:relative;overflow:hidden;}
+.card-top::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.05);}
+.brand-row{display:flex;align-items:center;justify-content:center;gap:10px;position:relative;z-index:1;}
+.brand-ico{width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 3px 10px rgba(0,0,0,0.2);flex-shrink:0;}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:#fff;line-height:1;text-decoration:none;display:block;}
+.brand-sub{font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:1.5px;}
+.notch{display:flex;align-items:center;height:20px;background:var(--cream);position:relative;}
+.notch::before{content:'';position:absolute;left:-10px;width:20px;height:20px;border-radius:50%;background:#0d0d0d;}
+.notch::after{content:'';position:absolute;right:-10px;width:20px;height:20px;border-radius:50%;background:#0d0d0d;}
+.notch-line{flex:1;margin:0 12px;border-top:2px dashed #d8d0c2;}
 
-/* COUPON CARD */
-.coupon-card { width:100%; max-width:340px; background:var(--cream); border-radius:20px; overflow:hidden; box-shadow:0 16px 50px rgba(0,0,0,0.55); }
-.card-top { background:var(--red); padding:20px; position:relative; overflow:hidden; text-align:center; }
-.card-top::before { content:''; position:absolute; top:-40px; right:-40px; width:130px; height:130px; border-radius:50%; background:rgba(255,255,255,0.05); }
-.brand-row { display:flex; align-items:center; justify-content:center; gap:10px; position:relative; z-index:1; }
-.brand-ico  { width:40px; height:40px; background:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 3px 10px rgba(0,0,0,0.2); flex-shrink:0; }
-.brand-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px; color:#fff; line-height:1; text-decoration:none; display:block; }
-.brand-sub  { font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:1.5px; }
+/* 2단 레이아웃 */
+.card-body{padding:14px 16px 16px;}
+.two-col{display:flex;gap:12px;align-items:flex-start;}
+.col-l{flex-shrink:0;width:140px;}
+.col-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
 
-.notch { display:flex; align-items:center; height:20px; background:var(--cream); position:relative; }
-.notch::before { content:''; position:absolute; left:-10px; width:20px; height:20px; border-radius:50%; background:#0d0d0d; }
-.notch::after  { content:''; position:absolute; right:-10px; width:20px; height:20px; border-radius:50%; background:#0d0d0d; }
-.notch-line { flex:1; margin:0 12px; border-top:2px dashed #d8d0c2; }
+/* QR */
+.qr-wrap{background:#fff;border-radius:10px;padding:10px;border:1px solid #ede8df;position:relative;}
+.qr-wrap.used-state{background:#f2f2f2;}
+.code-lbl{font-size:9px;color:#bbb;letter-spacing:1px;margin-bottom:2px;}
+.code-text{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#1a1a1a;margin-bottom:6px;word-break:break-all;}
+.qr-canvas-wrap{width:120px;height:120px;overflow:hidden;}
+.qr-canvas-wrap canvas{width:120px!important;height:120px!important;display:block;}
 
-.card-body { padding:14px 16px 18px; }
+.used-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.93);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.uo-icon{font-size:30px;}
+.uo-text{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#bbb;}
+.uo-sub{font-size:10px;color:#ccc;}
 
-.qr-area { background:#fff; border-radius:12px; padding:12px 14px; border:1px solid #ede8df; position:relative; }
-.code-lbl  { font-size:9px; color:#bbb; letter-spacing:1px; margin-bottom:2px; text-align:left; }
-.code-text { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:3px; color:#1a1a1a; margin-bottom:8px; text-align:left; }
-.qr-box    { display:flex; justify-content:flex-start; }
-.qr-box canvas, .qr-box img { display:block !important; }
+/* 오른쪽 정보 */
+.meta-tags{display:flex;flex-direction:column;gap:4px;}
+.meta-tag{background:#f0ece4;border-radius:20px;padding:3px 9px;font-size:10px;color:#888;display:inline-flex;align-items:center;gap:3px;width:fit-content;}
+.meta-dot{width:4px;height:4px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.how-box{background:#fff8f0;border-radius:8px;padding:8px 10px;}
+.how-title{font-size:9px;letter-spacing:1px;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:5px;}
+.how-steps{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.how-steps li{font-size:10px;color:#555;line-height:1.3;display:flex;gap:5px;align-items:flex-start;}
+.step-num{background:var(--red);color:#fff;font-size:8px;font-weight:700;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
-.card-2col { display:flex; gap:12px; align-items:flex-start; }
-.col-left  { flex-shrink:0; }
-.col-right { flex:1; min-width:0; }
-.used-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.93); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-.uo-icon { font-size:36px; }
-.uo-text { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:#bbb; }
-.uo-sub  { font-size:11px; color:#ccc; }
+.card-footer{background:#1e1e1e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:#3a3a3a;}
+.footer-terms{font-size:8px;color:#3a3a3a;text-align:right;line-height:1.5;}
 
-.meta-tags { display:flex; gap:5px; flex-direction:column; justify-content:flex-start; }
-.meta-tag  { background:#f0ece4; border-radius:20px; padding:3px 9px; font-size:10px; color:#888; display:inline-flex; align-items:center; gap:3px; width:fit-content; }
-.meta-dot  { width:4px; height:4px; border-radius:50%; background:var(--red); flex-shrink:0; }
+/* RESULT / COUPON PAGES */
+#p-result,#p-coupon{background:#0d0d0d;display:flex;flex-direction:column;align-items:center;padding:20px 16px 80px;}
+.page-top-lbl{font-size:10px;letter-spacing:2px;color:#444;text-transform:uppercase;margin-bottom:14px;text-align:center;}
+.btn-row{display:flex;gap:10px;width:100%;max-width:340px;margin-top:12px;}
+.share-btn{flex:1.5;background:var(--gold);border:none;border-radius:14px;padding:15px 10px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;color:#1a1a1a;cursor:pointer;box-shadow:0 6px 20px rgba(212,168,67,0.35);}
+.share-btn:active{opacity:0.85;}
+.new-btn{flex:1;background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:15px 10px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:#555;cursor:pointer;}
+.new-btn:active{border-color:var(--red);color:var(--red);}
 
-.how-box   { background:#fff8f0; border-radius:10px; padding:9px 11px; margin-top:8px; }
-.how-title { font-size:9px; letter-spacing:1.5px; color:var(--red); text-transform:uppercase; font-weight:700; margin-bottom:7px; }
-.how-steps { list-style:none; display:flex; flex-direction:column; gap:5px; }
-.how-steps li { font-size:11px; color:#555; line-height:1.4; display:flex; gap:7px; align-items:flex-start; }
-.step-num  { background:var(--red); color:#fff; font-size:8px; font-weight:700; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.verify-wrap{width:100%;max-width:340px;margin-top:12px;}
+.verify-btn{width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:14px;color:#444;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;margin-bottom:8px;}
+.verify-btn:hover{border-color:var(--red);color:var(--red);}
+.verify-hint{font-size:11px;color:#2a2a2a;text-align:center;}
 
-.card-footer { background:#1e1e1e; padding:11px 18px; display:flex; align-items:center; justify-content:space-between; }
-.footer-logo  { font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:2px; color:#3a3a3a; }
-.footer-terms { font-size:9px; color:#3a3a3a; text-align:right; line-height:1.5; }
-
-/* PAGE 3: RESULT */
-#p-result { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:24px 16px 80px; }
-.page-top-lbl { font-size:10px; letter-spacing:2px; color:#444; text-transform:uppercase; margin-bottom:16px; text-align:center; }
-
-.btn-row { display:flex; gap:10px; width:100%; max-width:340px; margin-top:12px; }
-.share-btn { flex:1.5; background:var(--gold); border:none; border-radius:14px; padding:15px 10px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; color:#1a1a1a; cursor:pointer; box-shadow:0 6px 20px rgba(212,168,67,0.35); }
-.share-btn:active { opacity:0.85; }
-.new-btn { flex:1; background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:15px 10px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:1px; color:#555; cursor:pointer; }
-.new-btn:active { border-color:var(--red); color:var(--red); }
-
-/* PAGE 4: CUSTOMER */
-#p-coupon { background:#0d0d0d; display:flex; flex-direction:column; align-items:center; padding:24px 16px 80px; }
-.verify-wrap { width:100%; max-width:340px; margin-top:12px; }
-.verify-btn  { width:100%; background:#1a1a1a; border:1px solid #252525; border-radius:14px; padding:14px; color:#444; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; cursor:pointer; margin-bottom:8px; }
-.verify-btn:hover { border-color:var(--red); color:var(--red); }
-.verify-hint { font-size:11px; color:#2a2a2a; text-align:center; }
-
-/* PIN MODAL */
-.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.88); display:flex; align-items:center; justify-content:center; z-index:250; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-.modal-bg.show { opacity:1; pointer-events:all; }
-.pm-box { background:#1a1a1a; border-radius:20px; padding:28px 22px; text-align:center; border:1px solid #2a2a2a; max-width:280px; width:90%; transform:scale(0.85); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.modal-bg.show .pm-box { transform:scale(1); }
-.pm-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:#fff; margin-bottom:4px; }
-.pm-sub   { font-size:12px; color:#444; margin-bottom:18px; }
-.pm-dots  { display:flex; gap:10px; justify-content:center; margin-bottom:18px; }
-.pm-dot   { width:13px; height:13px; border-radius:50%; border:2px solid #2a2a2a; transition:all 0.2s; }
-.pm-dot.on { background:var(--red); border-color:var(--red); }
-.pm-pad   { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:220px; margin:0 auto 10px; }
-.pm-btn   { background:#111; color:#fff; border:1px solid #1e1e1e; border-radius:12px; padding:15px; font-size:20px; font-family:'Bebas Neue',sans-serif; cursor:pointer; }
-.pm-btn:active { background:var(--red); }
-.pm-btn.del { font-size:14px; color:#444; }
-.pm-cancel { background:transparent; border:none; color:#333; font-size:13px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; }
-.pm-err    { font-size:11px; color:var(--red); margin-top:8px; opacity:0; transition:opacity 0.3s; min-height:16px; }
-.pm-err.show { opacity:1; }
-
-/* SUCCESS */
-.success-bg  { position:fixed; inset:0; background:rgba(0,0,0,0.92); display:flex; align-items:center; justify-content:center; z-index:300; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-.success-bg.show { opacity:1; pointer-events:all; }
-.success-box { background:#1a1a1a; border-radius:24px; padding:32px 26px; text-align:center; border:1px solid var(--gold); max-width:300px; width:90%; transform:scale(0.8); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.success-bg.show .success-box { transform:scale(1); }
-.success-icon  { font-size:48px; margin-bottom:10px; }
-.success-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; color:var(--gold); margin-bottom:8px; }
-.success-desc  { font-size:13px; color:#777; line-height:1.6; margin-bottom:18px; }
-.success-close { background:var(--gold); color:#1a1a1a; border:none; border-radius:12px; padding:12px 30px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; cursor:pointer; }
-
-/* TOAST */
-.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:#1e1e1e; color:#fff; padding:11px 20px; border-radius:30px; font-size:13px; font-weight:500; box-shadow:0 8px 30px rgba(0,0,0,0.5); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:999; border:1px solid #2a2a2a; white-space:nowrap; }
-.toast.show { transform:translateX(-50%) translateY(0); }
-.toast.ok  { border-color:var(--gold); color:var(--gold); }
-.toast.err { border-color:var(--red); color:#ff7a6b; }
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:250;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-bg.show{opacity:1;pointer-events:all;}
+.pm-box{background:#1a1a1a;border-radius:20px;padding:28px 22px;text-align:center;border:1px solid #2a2a2a;max-width:280px;width:90%;transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.modal-bg.show .pm-box{transform:scale(1);}
+.pm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff;margin-bottom:4px;}
+.pm-sub{font-size:12px;color:#444;margin-bottom:18px;}
+.pm-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+.pm-dot{width:13px;height:13px;border-radius:50%;border:2px solid #2a2a2a;transition:all 0.2s;}
+.pm-dot.on{background:var(--red);border-color:var(--red);}
+.pm-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:220px;margin:0 auto 10px;}
+.pm-btn{background:#111;color:#fff;border:1px solid #1e1e1e;border-radius:12px;padding:15px;font-size:20px;font-family:'Bebas Neue',sans-serif;cursor:pointer;}
+.pm-btn:active{background:var(--red);}
+.pm-btn.del{font-size:14px;color:#444;}
+.pm-cancel{background:transparent;border:none;color:#333;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.pm-err{font-size:11px;color:var(--red);margin-top:8px;opacity:0;transition:opacity 0.3s;min-height:16px;}
+.pm-err.show{opacity:1;}
+.success-bg{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.success-bg.show{opacity:1;pointer-events:all;}
+.success-box{background:#1a1a1a;border-radius:24px;padding:32px 26px;text-align:center;border:1px solid var(--gold);max-width:300px;width:90%;transform:scale(0.8);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.success-bg.show .success-box{transform:scale(1);}
+.success-icon{font-size:48px;margin-bottom:10px;}
+.success-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
+.success-desc{font-size:13px;color:#777;line-height:1.6;margin-bottom:18px;}
+.success-close{background:var(--gold);color:#1a1a1a;border:none;border-radius:12px;padding:12px 30px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;border:1px solid #2a2a2a;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--gold);color:var(--gold);}
+.toast.err{border-color:var(--red);color:#ff7a6b;}
 </style>
 </head>
 <body>
 <div class="pager" id="pager">
 
-  <!-- PAGE 1: PIN -->
-  <div class="page" id="p-pin">
-    <div class="pin-logo">COMMA <span>FAMILY</span></div>
-    <div class="pin-sub">Kingbap · 음료 쿠폰 시스템</div>
-    <div class="pin-title">PIN 입력 · Ingresa el PIN</div>
-    <div class="pin-dots">
-      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
-      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
-    </div>
-    <div class="pin-pad">
-      <button class="pin-btn" onclick="enterPin('1')">1</button>
-      <button class="pin-btn" onclick="enterPin('2')">2</button>
-      <button class="pin-btn" onclick="enterPin('3')">3</button>
-      <button class="pin-btn" onclick="enterPin('4')">4</button>
-      <button class="pin-btn" onclick="enterPin('5')">5</button>
-      <button class="pin-btn" onclick="enterPin('6')">6</button>
-      <button class="pin-btn" onclick="enterPin('7')">7</button>
-      <button class="pin-btn" onclick="enterPin('8')">8</button>
-      <button class="pin-btn" onclick="enterPin('9')">9</button>
-      <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
-      <button class="pin-btn" onclick="enterPin('0')">0</button>
-      <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
-    </div>
-    <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
+<!-- PAGE 1: PIN -->
+<div class="page" id="p-pin">
+  <div class="pin-logo">COMMA <span>FAMILY</span></div>
+  <div class="pin-sub">Kingbap · 음료 쿠폰 시스템</div>
+  <div class="pin-title">PIN 입력 · Ingresa el PIN</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
   </div>
-
-  <!-- PAGE 2: FORM -->
-  <div class="page" id="p-form">
-    <div class="page-nav">
-      <div class="page-nav-title">COMMA <span>FAMILY</span></div>
-      <button class="back-btn" onclick="goTo(0)">← 뒤로</button>
-    </div>
-    <div class="form-body">
-      <div class="sec-label">발급자 구분</div>
-      <div class="btn-grid">
-        <div class="sel-btn on-gold" id="rb-guide"    onclick="selRole('guide')">   <div class="ico">🗺️</div><div class="lbl">가이드</div></div>
-        <div class="sel-btn"         id="rb-annyeong" onclick="selRole('annyeong')"><div class="ico">🏠</div><div class="lbl">안녕세비야</div></div>
-        <div class="sel-btn"         id="rb-chalcak"  onclick="selRole('chalcak')"> <div class="ico">📸</div><div class="lbl">찰칵세비야</div></div>
-      </div>
-      <div class="sec-label">쿠폰 경로</div>
-      <div class="btn-grid">
-        <div class="sel-btn on-red" id="sb-tour"       onclick="selSrc('tour')">      <div class="ico">🎫</div><div class="lbl">가이드 투어</div></div>
-        <div class="sel-btn"        id="sb-guesthouse" onclick="selSrc('guesthouse')"><div class="ico">🛏️</div><div class="lbl">민박 투숙</div></div>
-        <div class="sel-btn"        id="sb-snap"       onclick="selSrc('snap')">      <div class="ico">📷</div><div class="lbl">스냅 촬영</div></div>
-      </div>
-      <div class="sec-label">메모 (선택)</div>
-      <input class="note-inp" id="note-inp" placeholder="예: 투어 그룹 A, 체크인 3/27 ...">
-      <button class="issue-btn" id="issue-btn" onclick="issueCoupon()">🎟️ 쿠폰 발급하기</button>
-    </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="enterPin('1')">1</button>
+    <button class="pin-btn" onclick="enterPin('2')">2</button>
+    <button class="pin-btn" onclick="enterPin('3')">3</button>
+    <button class="pin-btn" onclick="enterPin('4')">4</button>
+    <button class="pin-btn" onclick="enterPin('5')">5</button>
+    <button class="pin-btn" onclick="enterPin('6')">6</button>
+    <button class="pin-btn" onclick="enterPin('7')">7</button>
+    <button class="pin-btn" onclick="enterPin('8')">8</button>
+    <button class="pin-btn" onclick="enterPin('9')">9</button>
+    <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
+    <button class="pin-btn" onclick="enterPin('0')">0</button>
+    <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
   </div>
-
-  <!-- PAGE 3: RESULT -->
-  <div class="page" id="p-result">
-    <div class="page-top-lbl">✅ 쿠폰 발급 완료 · Cupón emitido</div>
-    <div class="coupon-card">
-      <div class="card-top">
-        <div class="brand-row">
-          <div class="brand-ico">🍚</div>
-          <div>
-            <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
-              <div class="brand-name">KINGBAP 📍</div>
-            </a>
-            <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
-          </div>
-        </div>
-      </div>
-      <div class="notch"><div class="notch-line"></div></div>
-      <div class="card-body">
-        <div class="card-2col">
-          <div class="col-left">
-            <div class="qr-area">
-              <div class="code-lbl">COUPON CODE</div>
-              <div class="code-text" id="result-code">------</div>
-              <div class="qr-box" id="result-qr-box"></div>
-            </div>
-          </div>
-          <div class="col-right">
-            <div class="meta-tags" id="result-meta"></div>
-            <div class="how-box">
-              <div class="how-title">이용 방법</div>
-              <ul class="how-steps">
-                <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
-                <li><span class="step-num">2</span>이 화면을 직원에게</li>
-                <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="footer-logo">COMMA FAMILY</div>
-        <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="share-btn" onclick="shareCoupon()">📤 공유하기</button>
-      <button class="new-btn" onclick="newCoupon()">+ 새 발급</button>
-    </div>
-  </div>
-
-  <!-- PAGE 4: CUSTOMER -->
-  <div class="page" id="p-coupon">
-    <div class="page-top-lbl">📲 Kingbap · 음료 무료 쿠폰</div>
-    <div class="coupon-card">
-      <div class="card-top">
-        <div class="brand-row">
-          <div class="brand-ico">🍚</div>
-          <div>
-            <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
-              <div class="brand-name">KINGBAP 📍</div>
-            </a>
-            <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
-          </div>
-        </div>
-      </div>
-      <div class="notch"><div class="notch-line"></div></div>
-      <div class="card-body">
-        <div class="card-2col">
-          <div class="col-left">
-            <div class="qr-area" id="coupon-qr-area">
-              <div class="code-lbl">COUPON CODE</div>
-              <div class="code-text" id="c-code">------</div>
-              <div class="qr-box" id="coupon-qr-box"></div>
-            </div>
-          </div>
-          <div class="col-right">
-            <div class="meta-tags" id="c-meta"></div>
-            <div class="how-box">
-              <div class="how-title">이용 방법</div>
-              <ul class="how-steps">
-                <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
-                <li><span class="step-num">2</span>이 화면을 직원에게</li>
-                <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="footer-logo">COMMA FAMILY</div>
-        <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
-      </div>
-    </div>
-    <div class="verify-wrap">
-      <button class="verify-btn" id="verify-btn" onclick="openPinModal()">✓ 킹밥 직원 사용 처리</button>
-      <div class="verify-hint">킹밥 직원만 누르세요 · Solo para el personal de Kingbap</div>
-    </div>
-  </div>
-
+  <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
 </div>
+
+<!-- PAGE 2: FORM -->
+<div class="page" id="p-form">
+  <div class="page-nav">
+    <div class="page-nav-title">COMMA <span>FAMILY</span></div>
+    <button class="back-btn" onclick="goTo(0)">← 뒤로</button>
+  </div>
+  <div class="form-body">
+    <div class="sec-label">발급자 구분</div>
+    <div class="btn-grid">
+      <div class="sel-btn on-gold" id="rb-guide"    onclick="selRole('guide')">   <div class="ico">🗺️</div><div class="lbl">가이드</div></div>
+      <div class="sel-btn"         id="rb-annyeong" onclick="selRole('annyeong')"><div class="ico">🏠</div><div class="lbl">안녕세비야</div></div>
+      <div class="sel-btn"         id="rb-chalcak"  onclick="selRole('chalcak')"> <div class="ico">📸</div><div class="lbl">찰칵세비야</div></div>
+    </div>
+    <div class="sec-label">쿠폰 경로</div>
+    <div class="btn-grid">
+      <div class="sel-btn on-red" id="sb-tour"       onclick="selSrc('tour')">      <div class="ico">🎫</div><div class="lbl">가이드 투어</div></div>
+      <div class="sel-btn"        id="sb-guesthouse" onclick="selSrc('guesthouse')"><div class="ico">🛏️</div><div class="lbl">민박 투숙</div></div>
+      <div class="sel-btn"        id="sb-snap"       onclick="selSrc('snap')">      <div class="ico">📷</div><div class="lbl">스냅 촬영</div></div>
+    </div>
+    <div class="sec-label">메모 (선택)</div>
+    <input class="note-inp" id="note-inp" placeholder="예: 투어 그룹 A, 체크인 3/27 ...">
+    <button class="issue-btn" id="issue-btn" onclick="issueCoupon()">🎟️ 쿠폰 발급하기</button>
+  </div>
+</div>
+
+<!-- PAGE 3: RESULT -->
+<div class="page" id="p-result">
+  <div class="page-top-lbl">✅ 쿠폰 발급 완료 · Cupón emitido</div>
+  <div class="coupon-card">
+    <div class="card-top">
+      <div class="brand-row">
+        <div class="brand-ico">🍚</div>
+        <div>
+          <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
+            <div class="brand-name">KINGBAP 📍</div>
+          </a>
+          <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
+        </div>
+      </div>
+    </div>
+    <div class="notch"><div class="notch-line"></div></div>
+    <div class="card-body">
+      <div class="two-col">
+        <div class="col-l">
+          <div class="qr-wrap" id="result-qr-wrap">
+            <div class="code-lbl">COUPON CODE</div>
+            <div class="code-text" id="result-code">------</div>
+            <div class="qr-canvas-wrap" id="result-qr-box"></div>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="meta-tags" id="result-meta"></div>
+          <div class="how-box">
+            <div class="how-title">이용 방법</div>
+            <ul class="how-steps">
+              <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
+              <li><span class="step-num">2</span>이 화면을 직원에게</li>
+              <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="footer-logo">COMMA FAMILY</div>
+      <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="share-btn" onclick="shareCoupon()">📤 공유하기</button>
+    <button class="new-btn" onclick="newCoupon()">+ 새 발급</button>
+  </div>
+</div>
+
+<!-- PAGE 4: CUSTOMER -->
+<div class="page" id="p-coupon">
+  <div class="page-top-lbl">📲 Kingbap · 음료 무료 쿠폰</div>
+  <div class="coupon-card">
+    <div class="card-top">
+      <div class="brand-row">
+        <div class="brand-ico">🍚</div>
+        <div>
+          <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
+            <div class="brand-name">KINGBAP 📍</div>
+          </a>
+          <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
+        </div>
+      </div>
+    </div>
+    <div class="notch"><div class="notch-line"></div></div>
+    <div class="card-body">
+      <div class="two-col">
+        <div class="col-l">
+          <div class="qr-wrap" id="coupon-qr-wrap">
+            <div class="code-lbl">COUPON CODE</div>
+            <div class="code-text" id="c-code">------</div>
+            <div class="qr-canvas-wrap" id="coupon-qr-box"></div>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="meta-tags" id="c-meta"></div>
+          <div class="how-box">
+            <div class="how-title">이용 방법</div>
+            <ul class="how-steps">
+              <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
+              <li><span class="step-num">2</span>이 화면을 직원에게</li>
+              <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="footer-logo">COMMA FAMILY</div>
+      <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
+    </div>
+  </div>
+  <div class="verify-wrap">
+    <button class="verify-btn" id="verify-btn" onclick="openPinModal()">✓ 킹밥 직원 사용 처리</button>
+    <div class="verify-hint">킹밥 직원만 누르세요 · Solo para el personal de Kingbap</div>
+  </div>
+</div>
+
+</div><!-- /pager -->
 
 <!-- PIN MODAL -->
 <div class="modal-bg" id="pin-modal">
@@ -314,25 +306,16 @@ html, body { height:100%; overflow:hidden; background:#0d0d0d; font-family:'Noto
       <div class="pm-dot" id="pmd2"></div><div class="pm-dot" id="pmd3"></div>
     </div>
     <div class="pm-pad">
-      <button class="pm-btn" onclick="pmPin('1')">1</button>
-      <button class="pm-btn" onclick="pmPin('2')">2</button>
-      <button class="pm-btn" onclick="pmPin('3')">3</button>
-      <button class="pm-btn" onclick="pmPin('4')">4</button>
-      <button class="pm-btn" onclick="pmPin('5')">5</button>
-      <button class="pm-btn" onclick="pmPin('6')">6</button>
-      <button class="pm-btn" onclick="pmPin('7')">7</button>
-      <button class="pm-btn" onclick="pmPin('8')">8</button>
-      <button class="pm-btn" onclick="pmPin('9')">9</button>
-      <button class="pm-btn del" onclick="pmPin('del')">⌫</button>
-      <button class="pm-btn" onclick="pmPin('0')">0</button>
-      <button class="pm-btn del" onclick="pmPin('clr')">✕</button>
+      <button class="pm-btn" onclick="pmPin('1')">1</button><button class="pm-btn" onclick="pmPin('2')">2</button><button class="pm-btn" onclick="pmPin('3')">3</button>
+      <button class="pm-btn" onclick="pmPin('4')">4</button><button class="pm-btn" onclick="pmPin('5')">5</button><button class="pm-btn" onclick="pmPin('6')">6</button>
+      <button class="pm-btn" onclick="pmPin('7')">7</button><button class="pm-btn" onclick="pmPin('8')">8</button><button class="pm-btn" onclick="pmPin('9')">9</button>
+      <button class="pm-btn del" onclick="pmPin('del')">⌫</button><button class="pm-btn" onclick="pmPin('0')">0</button><button class="pm-btn del" onclick="pmPin('clr')">✕</button>
     </div>
     <div class="pm-err" id="pm-err"></div>
     <button class="pm-cancel" onclick="closePinModal()">취소</button>
   </div>
 </div>
 
-<!-- SUCCESS -->
 <div class="success-bg" id="success-bg">
   <div class="success-box">
     <div class="success-icon">🥤</div>
@@ -341,84 +324,44 @@ html, body { height:100%; overflow:hidden; background:#0d0d0d; font-family:'Noto
     <button class="success-close" onclick="confirmUse()">확인 · OK</button>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 firebase.initializeApp({
-  apiKey:            "AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
-  authDomain:        "comma-family.firebaseapp.com",
-  databaseURL:       "https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:         "comma-family",
-  storageBucket:     "comma-family.firebasestorage.app",
-  messagingSenderId: "106296714974",
-  appId:             "1:106296714974:web:26b9b708ddb6116347444f"
+  apiKey:"AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
+  authDomain:"comma-family.firebaseapp.com",
+  databaseURL:"https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"comma-family",
+  storageBucket:"comma-family.firebasestorage.app",
+  messagingSenderId:"106296714974",
+  appId:"1:106296714974:web:26b9b708ddb6116347444f"
 });
-const db = firebase.database();
+const db=firebase.database();
 
-const PIN = '0927';
-const ROLE_LBL = { guide:'가이드', annyeong:'안녕세비야', chalcak:'찰칵세비야' };
-const SRC_LBL  = { tour:'가이드 투어', guesthouse:'민박 투숙', snap:'스냅 촬영' };
+const PIN='0927';
+const ROLE_LBL={guide:'가이드',annyeong:'안녕세비야',chalcak:'찰칵세비야'};
+const SRC_LBL={tour:'가이드 투어',guesthouse:'민박 투숙',snap:'스냅 촬영'};
+let curRole='guide',curSrc='tour',pinBuf='',pmBuf='',curCouponId=null,pendingVerify=false;
 
-let curRole='guide', curSrc='tour';
-let pinBuf='', pmBuf='';
-let curCouponId=null, pendingVerify=false;
-
-// INIT
-const urlCouponId = new URLSearchParams(location.search).get('c');
-if (urlCouponId) { goTo(3); showCouponView(urlCouponId); }
-else { goTo(0); }
-
-function goTo(n) {
-  document.getElementById('pager').style.transform = `translateX(-${n*25}%)`;
-}
-
-// PIN
-function enterPin(v) {
-  if(v==='del') pinBuf=pinBuf.slice(0,-1);
-  else if(v==='clr') pinBuf='';
-  else if(pinBuf.length<4) pinBuf+=v;
-  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('on',i<pinBuf.length);
-  if(pinBuf.length===4){
-    if(pinBuf===PIN){
-      pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on'); goTo(1);
-    } else {
-      const e=document.getElementById('pin-err'); e.textContent='PIN이 올바르지 않습니다'; e.classList.add('show');
-      setTimeout(()=>{ e.classList.remove('show'); pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on'); },2000);
-    }
-  }
-}
-
-function selRole(r){ curRole=r; ['guide','annyeong','chalcak'].forEach(id=>document.getElementById('rb-'+id).className='sel-btn'+(id===r?' on-gold':'')); }
-function selSrc(s) { curSrc=s;  ['tour','guesthouse','snap'].forEach(id=>document.getElementById('sb-'+id).className='sel-btn'+(id===s?' on-red':'')); }
-
-// ISSUE
-async function issueCoupon(){
-  const btn=document.getElementById('issue-btn'); btn.disabled=true;
-  const code='KB-'+Date.now().toString(36).toUpperCase().slice(-6);
-  const note=document.getElementById('note-inp').value.trim();
-  const coupon={code,role:curRole,source:curSrc,note,issuedAt:new Date().toISOString(),used:false,usedAt:null};
-  try {
-    await db.ref('coupons/'+code).set(coupon);
-    curCouponId=code;
-    document.getElementById('note-inp').value='';
-    // QR 초기화 후 생성 (중복 방지)
-    document.getElementById('result-qr-box').innerHTML='';
-    document.getElementById('result-code').textContent=code;
-    renderMeta('result-meta', coupon);
-    makeQR('result-qr-box', location.origin+location.pathname+'?c='+code);
-    goTo(2);
-  } catch(e){ showToast('발급 실패 · Error','err'); }
-  btn.disabled=false;
-}
-
-function makeQR(elId, url) {
+// QR 생성 - canvas만 사용, img 제거
+function makeQR(elId, url){
   const el=document.getElementById(elId);
-  el.innerHTML=''; // 항상 초기화 후 생성
-  new QRCode(el,{text:url,width:150,height:150,colorDark:'#1a1a1a',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  el.innerHTML='';
+  const canvas=document.createElement('canvas');
+  el.appendChild(canvas);
+  // QRCode 라이브러리 없이 직접 canvas에 그리기
+  // → qrcodejs 대신 API 방식 사용
+  const img=document.createElement('img');
+  img.style.width='120px';
+  img.style.height='120px';
+  img.style.display='block';
+  // Google Charts QR API (외부 의존 없이 간단)
+  img.src='https://api.qrserver.com/v1/create-qr-code/?size=120x120&data='+encodeURIComponent(url);
+  el.innerHTML='';
+  el.appendChild(img);
 }
 
-function renderMeta(elId, c){
+function renderMeta(elId,c){
   const issued=new Date(c.issuedAt);
   const ds=issued.getFullYear()+'.'+(issued.getMonth()+1).toString().padStart(2,'0')+'.'+issued.getDate().toString().padStart(2,'0');
   document.getElementById(elId).innerHTML=`
@@ -427,75 +370,106 @@ function renderMeta(elId, c){
     <div class="meta-tag"><span class="meta-dot"></span>${ds}</div>`;
 }
 
-// SHARE
-async function shareCoupon(){
-  if(!curCouponId) return;
-  const link=location.origin+location.pathname+'?c='+curCouponId;
-  if(navigator.share){
-    try{ await navigator.share({title:'Kingbap 음료 무료 쿠폰',text:'🍚 Kingbap 음료 1잔 무료 쿠폰!\n컵밥 주문 시 음료가 무료입니다 🥤',url:link}); return; }catch(e){}
-  }
-  navigator.clipboard.writeText(link)
-    .then(()=>showToast('링크 복사됨! 카카오톡으로 전송하세요 📲','ok'))
-    .catch(()=>showToast('링크: '+link,'ok'));
-}
-function newCoupon(){ curCouponId=null; goTo(1); }
+const urlCouponId=new URLSearchParams(location.search).get('c');
+if(urlCouponId){goTo(3);showCouponView(urlCouponId);}else{goTo(0);}
 
-// COUPON VIEW (고객)
+function goTo(n){document.getElementById('pager').style.transform=`translateX(-${n*25}%)`;}
+
+function enterPin(v){
+  if(v==='del') pinBuf=pinBuf.slice(0,-1);
+  else if(v==='clr') pinBuf='';
+  else if(pinBuf.length<4) pinBuf+=v;
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('on',i<pinBuf.length);
+  if(pinBuf.length===4){
+    if(pinBuf===PIN){pinBuf='';for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');goTo(1);}
+    else{
+      const e=document.getElementById('pin-err');e.textContent='PIN이 올바르지 않습니다';e.classList.add('show');
+      setTimeout(()=>{e.classList.remove('show');pinBuf='';for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');},2000);
+    }
+  }
+}
+
+function selRole(r){curRole=r;['guide','annyeong','chalcak'].forEach(id=>document.getElementById('rb-'+id).className='sel-btn'+(id===r?' on-gold':''));}
+function selSrc(s){curSrc=s;['tour','guesthouse','snap'].forEach(id=>document.getElementById('sb-'+id).className='sel-btn'+(id===s?' on-red':''));}
+
+async function issueCoupon(){
+  const btn=document.getElementById('issue-btn');btn.disabled=true;
+  const code='KB-'+Date.now().toString(36).toUpperCase().slice(-6);
+  const note=document.getElementById('note-inp').value.trim();
+  const coupon={code,role:curRole,source:curSrc,note,issuedAt:new Date().toISOString(),used:false,usedAt:null};
+  try{
+    await db.ref('coupons/'+code).set(coupon);
+    curCouponId=code;
+    document.getElementById('note-inp').value='';
+    document.getElementById('result-code').textContent=code;
+    renderMeta('result-meta',coupon);
+    makeQR('result-qr-box',location.origin+location.pathname+'?c='+code);
+    goTo(2);
+  }catch(e){showToast('발급 실패 · Error','err');}
+  btn.disabled=false;
+}
+
+async function shareCoupon(){
+  if(!curCouponId)return;
+  const link=location.origin+location.pathname+'?c='+curCouponId;
+  if(navigator.share){try{await navigator.share({title:'Kingbap 음료 무료 쿠폰',text:'🍚 Kingbap 음료 1잔 무료 쿠폰!\n컵밥 주문 시 음료가 무료입니다 🥤',url:link});return;}catch(e){}}
+  navigator.clipboard.writeText(link).then(()=>showToast('링크 복사됨! 카카오톡으로 전송하세요 📲','ok')).catch(()=>showToast('링크: '+link,'ok'));
+}
+function newCoupon(){curCouponId=null;goTo(1);}
+
 function showCouponView(code){
   document.getElementById('c-code').textContent=code;
-  db.ref('coupons/'+code).on('value', snap=>{
+  db.ref('coupons/'+code).on('value',snap=>{
     if(!snap.exists()){
-      document.getElementById('coupon-qr-area').innerHTML='<div style="padding:20px;color:#aaa;font-size:13px;text-align:center;">유효하지 않은 쿠폰입니다</div>';
-      document.getElementById('verify-btn').style.display='none'; return;
+      document.getElementById('coupon-qr-box').innerHTML='<div style="padding:10px;color:#aaa;font-size:11px;text-align:center;">유효하지 않은 쿠폰</div>';
+      document.getElementById('verify-btn').style.display='none';return;
     }
     const c=snap.val();
-    // QR 중복 방지 - 이미 있으면 다시 생성 안 함
-    const qrBox=document.getElementById('coupon-qr-box');
-    if(!qrBox.hasChildNodes()){
-      makeQR('coupon-qr-box', location.origin+location.pathname+'?c='+code);
+    // QR은 한 번만 생성
+    if(!document.getElementById('coupon-qr-box').hasChildNodes()){
+      makeQR('coupon-qr-box',location.origin+location.pathname+'?c='+code);
     }
-    renderMeta('c-meta', c);
-    const qrArea=document.getElementById('coupon-qr-area');
-    const old=qrArea.querySelector('.used-overlay'); if(old) old.remove();
-    qrArea.classList.remove('used-state');
+    renderMeta('c-meta',c);
+    const wrap=document.getElementById('coupon-qr-wrap');
+    const old=wrap.querySelector('.used-overlay');if(old)old.remove();
+    wrap.classList.remove('used-state');
     if(c.used){
-      qrArea.classList.add('used-state');
-      const ov=document.createElement('div'); ov.className='used-overlay';
+      wrap.classList.add('used-state');
+      const ov=document.createElement('div');ov.className='used-overlay';
       ov.innerHTML=`<div class="uo-icon">✓</div><div class="uo-text">사용 완료</div><div class="uo-sub">${new Date(c.usedAt).toLocaleDateString('ko')}</div>`;
-      qrArea.appendChild(ov);
+      wrap.appendChild(ov);
       document.getElementById('verify-btn').style.display='none';
-    } else { document.getElementById('verify-btn').style.display='block'; }
+    }else{document.getElementById('verify-btn').style.display='block';}
   });
 }
 
-// PIN MODAL
-function openPinModal(){ pmBuf=''; for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on'); document.getElementById('pm-err').classList.remove('show'); document.getElementById('pin-modal').classList.add('show'); }
-function closePinModal(){ document.getElementById('pin-modal').classList.remove('show'); }
+function openPinModal(){pmBuf='';for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on');document.getElementById('pm-err').classList.remove('show');document.getElementById('pin-modal').classList.add('show');}
+function closePinModal(){document.getElementById('pin-modal').classList.remove('show');}
 function pmPin(v){
   if(v==='del') pmBuf=pmBuf.slice(0,-1);
   else if(v==='clr') pmBuf='';
   else if(pmBuf.length<4) pmBuf+=v;
   for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.toggle('on',i<pmBuf.length);
   if(pmBuf.length===4){
-    if(pmBuf===PIN){ closePinModal(); document.getElementById('success-bg').classList.add('show'); pendingVerify=true; }
+    if(pmBuf===PIN){closePinModal();document.getElementById('success-bg').classList.add('show');pendingVerify=true;}
     else{
-      const e=document.getElementById('pm-err'); e.textContent='PIN이 올바르지 않습니다'; e.classList.add('show');
-      setTimeout(()=>{ e.classList.remove('show'); pmBuf=''; for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on'); },1500);
+      const e=document.getElementById('pm-err');e.textContent='PIN이 올바르지 않습니다';e.classList.add('show');
+      setTimeout(()=>{e.classList.remove('show');pmBuf='';for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on');},1500);
     }
   }
 }
 
 async function confirmUse(){
-  if(!pendingVerify||!urlCouponId) return;
+  if(!pendingVerify||!urlCouponId)return;
   const snap=await db.ref('coupons/'+urlCouponId).once('value');
-  if(!snap.exists()||snap.val().used){ showToast('이미 사용된 쿠폰입니다','err'); document.getElementById('success-bg').classList.remove('show'); pendingVerify=false; return; }
+  if(!snap.exists()||snap.val().used){showToast('이미 사용된 쿠폰입니다','err');document.getElementById('success-bg').classList.remove('show');pendingVerify=false;return;}
   await db.ref('coupons/'+urlCouponId).update({used:true,usedAt:new Date().toISOString()});
-  pendingVerify=false; document.getElementById('success-bg').classList.remove('show');
+  pendingVerify=false;document.getElementById('success-bg').classList.remove('show');
   showToast('✓ 쿠폰 사용 처리 완료','ok');
 }
 
 function showToast(msg,type=''){
-  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type;
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
