@@ -215,7 +215,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   <div class="phone-cat">🐱</div>
   <div class="phone-title" id="phone-title">전화번호로 접속</div>
   <div class="phone-sub" id="phone-sub">등록된 전화번호를 입력하세요<br>처음이라면 직원에게 등록을 요청하세요</div>
-  <input class="phone-inp" id="phone-inp" type="tel" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)" onkeydown="if(event.key==='Enter') findByPhone()">
+  <input class="phone-inp" id="phone-inp" type="tel" placeholder="000-000-000" maxlength="11" oninput="fmtPhone(this)" onkeydown="if(event.key==='Enter') findByPhone()">
   <button class="phone-submit" id="phone-submit" onclick="findByPhone()">스탬프 카드 열기</button>
   <div class="phone-back" onclick="goTo(1)" id="phone-back">← 뒤로</div>
 </div>
@@ -268,7 +268,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   <div class="staff-wrap">
     <div class="sec-label" id="search-label">전화번호로 고객 조회</div>
     <div class="search-row">
-      <input class="search-inp" id="search-inp" type="tel" placeholder="010-0000-0000" oninput="fmtPhone(this)">
+      <input class="search-inp" id="search-inp" type="tel" placeholder="000-000-000" oninput="fmtPhone(this)">
       <button class="search-btn" id="search-btn-lbl" onclick="staffSearch()">조회</button>
     </div>
 
@@ -307,7 +307,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   </div>
   <div class="field-wrap">
     <div class="field-label" id="fl-phone">전화번호</div>
-    <input class="field-inp" id="new-phone-inp" type="tel" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)">
+    <input class="field-inp" id="new-phone-inp" type="tel" placeholder="000-000-000" maxlength="11" oninput="fmtPhone(this)">
   </div>
   <button class="create-btn" id="create-btn" onclick="createCustomer()">카드 발급하기</button>
   <div class="back-link" onclick="goTo(4)" id="back-link">← 돌아가기</div>
@@ -421,8 +421,8 @@ function goTo(n){ currentPage=n; document.getElementById('pager').style.transfor
 function fmtPhone(el){
   let v=el.value.replace(/\D/g,'');
   if(v.length<=3) el.value=v;
-  else if(v.length<=7) el.value=v.slice(0,3)+'-'+v.slice(3);
-  else el.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+  else if(v.length<=6) el.value=v.slice(0,3)+'-'+v.slice(3);
+  else el.value=v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6,9);
 }
 
 function phoneKey(p){ return 'phone_'+p.replace(/\D/g,''); }
