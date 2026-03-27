@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ozik 스탬프">
+<meta name="theme-color" content="#f5ede0">
+<title>Ozik · 스탬프 카드</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+:root{
+  --bg:#faf6f0;
+  --card:#fff9f3;
+  --brown:#6b4c35;
+  --brown-light:#c4956a;
+  --brown-pale:#ede0ce;
+  --gold:#d4a843;
+  --green:#7a9e7e;
+  --text:#3a2e26;
+  --text-light:#a08070;
+  --stamp-empty:#ede0ce;
+  --stamp-10:#d4a843;
+  --stamp-20:#7a9e7e;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--text);}
+
+.pager{display:flex;width:500%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
+.page{width:20%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+
+/* ── PIN PAGE ── */
+#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:var(--bg);}
+.ozik-logo{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:var(--brown);letter-spacing:4px;margin-bottom:4px;}
+.ozik-sub{font-size:11px;color:var(--text-light);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.ozik-cat{font-size:36px;margin-bottom:32px;}
+.pin-label{font-size:12px;color:var(--text-light);margin-bottom:16px;letter-spacing:1px;}
+.pin-dots{display:flex;gap:12px;margin-bottom:28px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--brown-pale);transition:all 0.2s;}
+.pin-dot.on{background:var(--brown);border-color:var(--brown);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:240px;}
+.pin-btn{background:#fff;color:var(--text);border:1px solid var(--brown-pale);border-radius:12px;padding:17px;font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.pin-btn:active{background:var(--brown);color:#fff;border-color:var(--brown);}
+.pin-btn.del{font-size:14px;color:var(--text-light);}
+.pin-err{margin-top:14px;font-size:12px;color:#c0392b;opacity:0;transition:opacity 0.3s;min-height:18px;}
+.pin-err.show{opacity:1;}
+.pin-mode-toggle{margin-top:20px;font-size:12px;color:var(--text-light);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* ── CUSTOMER CARD PAGE ── */
+#p-card{background:var(--bg);padding:0;}
+.card-nav{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;}
+.card-nav-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--brown);letter-spacing:3px;}
+.card-nav-id{font-size:10px;color:var(--text-light);letter-spacing:1px;}
+
+.card-wrap{padding:0 16px 60px;}
+
+/* 스탬프 카드 */
+.stamp-card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 4px 24px rgba(107,76,53,0.08);margin-bottom:16px;border:1px solid var(--brown-pale);}
+.sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);}
+.sc-count{font-size:13px;color:var(--text-light);}
+.sc-count span{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);}
+
+/* 스탬프 그리드 */
+.stamp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
+.stamp{aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--brown-pale);display:flex;align-items:center;justify-content:center;font-size:18px;background:#fff;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);position:relative;}
+.stamp.s-empty{opacity:0.35;}
+.stamp.s-filled{border:none;transform:scale(1.05);box-shadow:0 3px 10px rgba(107,76,53,0.15);}
+.stamp.s-10{background:linear-gradient(135deg,#f5d78a,var(--stamp-10));box-shadow:0 3px 12px rgba(212,168,67,0.3);}
+.stamp.s-20{background:linear-gradient(135deg,#a8c5aa,var(--stamp-20));box-shadow:0 3px 12px rgba(122,158,126,0.3);}
+.stamp.s-normal{background:linear-gradient(135deg,#e8d5c0,var(--brown-light));}
+
+/* 리워드 배너 */
+.reward-row{display:flex;gap:8px;margin-bottom:16px;}
+.reward-badge{flex:1;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
+.reward-badge.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);border:1px solid #f5d78a;}
+.reward-badge.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);border:1px solid #a8c5aa;}
+.rb-icon{font-size:20px;}
+.rb-text .rb-n{font-size:10px;color:var(--text-light);margin-bottom:1px;}
+.rb-text .rb-v{font-size:12px;font-weight:700;color:var(--text);}
+
+/* 진행바 */
+.progress-wrap{margin-bottom:4px;}
+.progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text-light);margin-bottom:6px;}
+.progress-bar{background:var(--brown-pale);border-radius:20px;height:6px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--brown-light),var(--brown));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* QR 섹션 */
+.qr-section{background:#fff;border-radius:16px;padding:16px;text-align:center;border:1px solid var(--brown-pale);margin-bottom:16px;}
+.qr-section-title{font-size:10px;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.qr-img{width:140px;height:140px;display:block;margin:0 auto 8px;}
+.qr-id{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--brown);letter-spacing:2px;}
+
+/* 홈화면 추가 안내 */
+.add-home{background:linear-gradient(135deg,#fef3d0,#fff9f3);border-radius:12px;padding:12px 14px;border:1px solid #f5d78a;display:flex;gap:10px;align-items:flex-start;}
+.ah-icon{font-size:20px;flex-shrink:0;}
+.ah-text{font-size:11px;color:var(--text-light);line-height:1.5;}
+.ah-text strong{color:var(--brown);display:block;margin-bottom:2px;}
+
+/* ── STAFF PAGE ── */
+#p-staff{background:var(--bg);}
+.staff-nav{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--brown-pale);}
+.staff-nav-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);letter-spacing:2px;}
+.back-btn{background:transparent;border:1px solid var(--brown-pale);border-radius:10px;padding:6px 14px;color:var(--text-light);font-size:12px;cursor:pointer;}
+.staff-body{padding:16px 16px 60px;}
+
+.customer-search{display:flex;gap:8px;margin-bottom:16px;}
+.search-inp{flex:1;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:12px 16px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);outline:none;}
+.search-inp::placeholder{color:var(--text-light);}
+.search-btn{background:var(--brown);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+
+.customer-result{background:#fff;border-radius:16px;padding:16px;border:1px solid var(--brown-pale);margin-bottom:16px;display:none;}
+.customer-result.show{display:block;}
+.cr-name{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--brown);margin-bottom:4px;}
+.cr-stamps{font-size:13px;color:var(--text-light);margin-bottom:12px;}
+.cr-stamp-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.cr-stamp{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.cr-stamp.on{background:var(--brown-light);}
+.cr-stamp.off{background:var(--brown-pale);}
+
+.stamp-add-btn{width:100%;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.stamp-add-btn:active{opacity:0.85;}
+.stamp-add-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+.reward-use-btn{width:100%;background:var(--gold);color:#3a2e26;border:none;border-radius:12px;padding:14px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;display:none;}
+.reward-use-btn.show{display:block;}
+
+/* 최근 적립 내역 */
+.sec-label{font-size:10px;letter-spacing:2px;color:var(--text-light);text-transform:uppercase;margin-bottom:10px;font-weight:500;}
+.history-list{display:flex;flex-direction:column;gap:6px;}
+.history-item{background:#fff;border-radius:10px;padding:11px 14px;border:1px solid var(--brown-pale);display:flex;align-items:center;justify-content:space-between;}
+.hi-name{font-size:13px;font-weight:500;color:var(--text);}
+.hi-meta{font-size:11px;color:var(--text-light);margin-top:1px;}
+.hi-stamps{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--brown);font-weight:600;}
+
+/* ── NEW CUSTOMER PAGE ── */
+#p-new{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.new-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--brown);margin-bottom:8px;text-align:center;}
+.new-sub{font-size:13px;color:var(--text-light);margin-bottom:32px;text-align:center;}
+.name-inp{width:100%;max-width:300px;background:#fff;border:1px solid var(--brown-pale);border-radius:14px;padding:14px 18px;font-family:'Noto Sans KR',sans-serif;font-size:16px;color:var(--text);outline:none;margin-bottom:12px;text-align:center;}
+.name-inp::placeholder{color:var(--brown-pale);}
+.create-btn{width:100%;max-width:300px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:500;cursor:pointer;}
+.back-link{margin-top:16px;font-size:12px;color:var(--text-light);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* ── REWARD PAGE ── */
+#p-reward{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+.reward-icon-big{font-size:64px;margin-bottom:16px;}
+.reward-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--brown);margin-bottom:8px;}
+.reward-desc{font-size:14px;color:var(--text-light);line-height:1.7;margin-bottom:28px;}
+.reward-confirm-btn{background:var(--brown);color:#fff;border:none;border-radius:14px;padding:14px 40px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:500;cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.reward{background:var(--gold);color:var(--text);}
+</style>
+</head>
+<body>
+<div class="pager" id="pager">
+
+<!-- PAGE 0: PIN -->
+<div class="page" id="p-pin">
+  <div class="ozik-logo">OZIK</div>
+  <div class="ozik-sub">Café · Sevilla</div>
+  <div class="ozik-cat">🐱</div>
+  <div class="pin-label">PIN 입력 또는 고객으로 접속</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="enterPin('1')">1</button>
+    <button class="pin-btn" onclick="enterPin('2')">2</button>
+    <button class="pin-btn" onclick="enterPin('3')">3</button>
+    <button class="pin-btn" onclick="enterPin('4')">4</button>
+    <button class="pin-btn" onclick="enterPin('5')">5</button>
+    <button class="pin-btn" onclick="enterPin('6')">6</button>
+    <button class="pin-btn" onclick="enterPin('7')">7</button>
+    <button class="pin-btn" onclick="enterPin('8')">8</button>
+    <button class="pin-btn" onclick="enterPin('9')">9</button>
+    <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
+    <button class="pin-btn" onclick="enterPin('0')">0</button>
+    <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
+  </div>
+  <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
+  <div class="pin-mode-toggle" onclick="goTo(1); promptCustomerId()">고객으로 접속 →</div>
+</div>
+
+<!-- PAGE 1: CUSTOMER CARD -->
+<div class="page" id="p-card">
+  <div class="card-nav">
+    <div class="card-nav-logo">OZIK</div>
+    <div class="card-nav-id" id="card-nav-id">🐱</div>
+  </div>
+  <div class="card-wrap">
+    <div class="stamp-card">
+      <div class="sc-header">
+        <div class="sc-title">스탬프 카드</div>
+        <div class="sc-count"><span id="stamp-count">0</span> / 20</div>
+      </div>
+      <!-- 스탬프 그리드 1~10 -->
+      <div class="stamp-grid" id="stamp-grid-1"></div>
+      <!-- 스탬프 그리드 11~20 -->
+      <div class="stamp-grid" id="stamp-grid-2"></div>
+
+      <div class="reward-row">
+        <div class="reward-badge r10">
+          <div class="rb-icon">☕</div>
+          <div class="rb-text">
+            <div class="rb-n">10번째</div>
+            <div class="rb-v">음료 무료</div>
+          </div>
+        </div>
+        <div class="reward-badge r20">
+          <div class="rb-icon">🍚</div>
+          <div class="rb-text">
+            <div class="rb-n">20번째</div>
+            <div class="rb-v">Kingbap 무료</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="progress-next-label">다음 리워드까지</span>
+          <span id="progress-next-count">10개 남음</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qr-section">
+      <div class="qr-section-title">내 QR · Mi código</div>
+      <img class="qr-img" id="customer-qr" src="" alt="QR">
+      <div class="qr-id" id="customer-id-display">------</div>
+    </div>
+
+    <div class="add-home">
+      <div class="ah-icon">📱</div>
+      <div class="ah-text">
+        <strong>홈 화면에 추가하면 앱처럼 사용 가능!</strong>
+        Safari → 공유 버튼 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: STAFF -->
+<div class="page" id="p-staff">
+  <div class="staff-nav">
+    <div class="staff-nav-title">OZIK · 직원</div>
+    <button class="back-btn" onclick="goTo(0)">← 나가기</button>
+  </div>
+  <div class="staff-body">
+    <div class="sec-label" style="margin-bottom:10px;">고객 QR 스캔 또는 ID 입력</div>
+    <div class="customer-search">
+      <input class="search-inp" id="search-inp" placeholder="고객 ID 입력 (예: OZ-0001)">
+      <button class="search-btn" onclick="searchCustomer()">조회</button>
+    </div>
+
+    <div class="customer-result" id="customer-result">
+      <div class="cr-name" id="cr-name">-</div>
+      <div class="cr-stamps" id="cr-stamps-txt">스탬프 0 / 20</div>
+      <div class="cr-stamp-row" id="cr-stamp-row"></div>
+      <button class="stamp-add-btn" id="stamp-add-btn" onclick="addStamp()">🐱 스탬프 적립하기</button>
+      <button class="reward-use-btn" id="reward-use-btn" onclick="useReward()">🎉 리워드 사용 처리</button>
+    </div>
+
+    <div class="sec-label">신규 고객 등록</div>
+    <button style="width:100%;background:#fff;border:1px solid var(--brown-pale);border-radius:12px;padding:13px;color:var(--text-light);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;margin-bottom:24px;" onclick="goTo(3)">+ 신규 고객 등록</button>
+
+    <div class="sec-label">최근 적립 내역</div>
+    <div class="history-list" id="history-list">
+      <div style="color:var(--text-light);font-size:13px;padding:12px;text-align:center;">불러오는 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: NEW CUSTOMER -->
+<div class="page" id="p-new">
+  <div class="ozik-cat" style="font-size:48px;margin-bottom:16px;">🐱</div>
+  <div class="new-title">처음 오셨나요?</div>
+  <div class="new-sub">이름을 입력하면 스탬프 카드가 발급됩니다</div>
+  <input class="name-inp" id="name-inp" placeholder="이름 · Nombre" maxlength="20">
+  <button class="create-btn" onclick="createCustomer()">카드 발급하기</button>
+  <div class="back-link" onclick="goTo(2)">← 돌아가기</div>
+</div>
+
+<!-- PAGE 4: REWARD -->
+<div class="page" id="p-reward">
+  <div class="reward-icon-big" id="reward-icon">🎉</div>
+  <div class="reward-title" id="reward-title">축하합니다!</div>
+  <div class="reward-desc" id="reward-desc">리워드를 달성하셨습니다.</div>
+  <button class="reward-confirm-btn" onclick="goTo(currentPage===4?2:1)">확인</button>
+</div>
+
+</div><!-- /pager -->
+<div class="toast" id="toast"></div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
+  authDomain:"comma-family.firebaseapp.com",
+  databaseURL:"https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"comma-family",
+  storageBucket:"comma-family.firebasestorage.app",
+  messagingSenderId:"106296714974",
+  appId:"1:106296714974:web:26b9b708ddb6116347444f"
+});
+const db = firebase.database();
+
+const STAFF_PIN = '0927';
+const CAT = ['😺','😸','😹','😻','😼','🐱','🙀','😾'];
+let pinBuf='', currentPage=0, currentCustomerId=null, searchedCustomerId=null;
+
+// URL 체크 (고객 직접 접속)
+const urlId = new URLSearchParams(location.search).get('id');
+if(urlId){ loadCustomerCard(urlId); goTo(1); }
+else { goTo(0); }
+
+function goTo(n){
+  currentPage=n;
+  document.getElementById('pager').style.transform=`translateX(-${n*20}%)`;
+}
+
+// PIN
+function enterPin(v){
+  if(v==='del') pinBuf=pinBuf.slice(0,-1);
+  else if(v==='clr') pinBuf='';
+  else if(pinBuf.length<4) pinBuf+=v;
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('on',i<pinBuf.length);
+  if(pinBuf.length===4){
+    if(pinBuf===STAFF_PIN){
+      pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');
+      goTo(2); listenHistory();
+    } else {
+      const e=document.getElementById('pin-err'); e.textContent='PIN이 올바르지 않습니다'; e.classList.add('show');
+      setTimeout(()=>{ e.classList.remove('show'); pinBuf=''; for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on'); },2000);
+    }
+  }
+}
+
+// 고객 접속
+function promptCustomerId(){
+  const id = prompt('고객 ID를 입력하세요 (예: OZ-0001)\n처음이면 직원에게 문의하세요');
+  if(id && id.trim()){
+    loadCustomerCard(id.trim().toUpperCase());
+  } else { goTo(0); }
+}
+
+// 고객 카드 로드
+function loadCustomerCard(id){
+  currentCustomerId=id;
+  document.getElementById('card-nav-id').textContent=id;
+  document.getElementById('customer-id-display').textContent=id;
+  const link=location.origin+location.pathname+'?id='+id;
+  document.getElementById('customer-qr').src='https://api.qrserver.com/v1/create-qr-code/?size=140x140&data='+encodeURIComponent(link);
+
+  db.ref('ozik_customers/'+id).on('value', snap=>{
+    if(!snap.exists()){
+      renderStamps(0);
+      return;
+    }
+    const c=snap.val();
+    renderStamps(c.stamps||0);
+  });
+}
+
+function renderStamps(total){
+  document.getElementById('stamp-count').textContent=total;
+
+  // 그리드 1 (1~10)
+  const g1=document.getElementById('stamp-grid-1'); g1.innerHTML='';
+  for(let i=1;i<=10;i++){
+    const el=document.createElement('div');
+    el.className='stamp '+(total>=i ? (i===10?'s-filled s-10':'s-filled s-normal') : 's-empty');
+    el.textContent=total>=i ? (i===10?'☕':'🐱') : '○';
+    if(i===10){
+      const badge=document.createElement('div');
+      badge.style.cssText='position:absolute;top:-6px;right:-4px;background:#d4a843;color:#fff;font-size:7px;padding:1px 4px;border-radius:10px;font-weight:700;';
+      badge.textContent='FREE';
+      el.style.position='relative';
+      el.appendChild(badge);
+    }
+    g1.appendChild(el);
+  }
+
+  // 그리드 2 (11~20)
+  const g2=document.getElementById('stamp-grid-2'); g2.innerHTML='';
+  for(let i=11;i<=20;i++){
+    const el=document.createElement('div');
+    el.className='stamp '+(total>=i ? (i===20?'s-filled s-20':'s-filled s-normal') : 's-empty');
+    el.textContent=total>=i ? (i===20?'🍚':'🐱') : '○';
+    if(i===20){
+      const badge=document.createElement('div');
+      badge.style.cssText='position:absolute;top:-6px;right:-4px;background:#7a9e7e;color:#fff;font-size:7px;padding:1px 4px;border-radius:10px;font-weight:700;';
+      badge.textContent='FREE';
+      el.style.position='relative';
+      el.appendChild(badge);
+    }
+    g2.appendChild(el);
+  }
+
+  // 진행바
+  const next = total<10 ? 10 : total<20 ? 20 : 20;
+  const base = total<10 ? 0 : 10;
+  const pct = Math.min(((total-base)/(next-base))*100, 100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+
+  const remain = total>=20 ? 0 : next-total;
+  document.getElementById('progress-next-label').textContent = total>=20 ? '모든 리워드 달성! 🎉' : (total>=10?'Kingbap 무료까지':'음료 무료까지');
+  document.getElementById('progress-next-count').textContent = total>=20 ? '' : remain+'개 남음';
+}
+
+// 신규 고객 등록
+async function createCustomer(){
+  const name=document.getElementById('name-inp').value.trim();
+  if(!name){ showToast('이름을 입력해주세요'); return; }
+  const count=(await db.ref('ozik_counter').once('value')).val()||0;
+  const newCount=count+1;
+  const id='OZ-'+String(newCount).padStart(4,'0');
+  await db.ref('ozik_counter').set(newCount);
+  await db.ref('ozik_customers/'+id).set({
+    id, name, stamps:0, createdAt:new Date().toISOString(), history:[]
+  });
+  document.getElementById('name-inp').value='';
+  showToast('✓ '+name+'님 카드 발급 완료! ID: '+id);
+  document.getElementById('search-inp').value=id;
+  goTo(2);
+  setTimeout(()=>searchCustomer(),300);
+}
+
+// 고객 조회
+async function searchCustomer(){
+  const id=document.getElementById('search-inp').value.trim().toUpperCase();
+  if(!id){ showToast('ID를 입력하세요'); return; }
+  const snap=await db.ref('ozik_customers/'+id).once('value');
+  const result=document.getElementById('customer-result');
+  if(!snap.exists()){ showToast('고객을 찾을 수 없습니다'); result.classList.remove('show'); return; }
+  const c=snap.val();
+  searchedCustomerId=id;
+  document.getElementById('cr-name').textContent=c.name+' 님';
+  document.getElementById('cr-stamps-txt').textContent='스탬프 '+c.stamps+' / 20';
+
+  // 미니 스탬프 행
+  const row=document.getElementById('cr-stamp-row'); row.innerHTML='';
+  for(let i=0;i<20;i++){
+    const el=document.createElement('div');
+    el.className='cr-stamp '+(i<c.stamps?'on':'off');
+    el.textContent=i<c.stamps?'🐱':'·';
+    row.appendChild(el);
+  }
+
+  // 리워드 버튼
+  const rewardBtn=document.getElementById('reward-use-btn');
+  if(c.stamps>=20){
+    rewardBtn.textContent='🍚 Kingbap 무료 리워드 사용';
+    rewardBtn.classList.add('show');
+  } else if(c.stamps>=10 && c.stamps<20){
+    rewardBtn.textContent='☕ 음료 무료 리워드 사용';
+    rewardBtn.classList.add('show');
+  } else {
+    rewardBtn.classList.remove('show');
+  }
+
+  result.classList.add('show');
+}
+
+// 스탬프 적립
+async function addStamp(){
+  if(!searchedCustomerId) return;
+  const btn=document.getElementById('stamp-add-btn'); btn.disabled=true;
+  const snap=await db.ref('ozik_customers/'+searchedCustomerId).once('value');
+  const c=snap.val();
+  const newStamps=(c.stamps||0)+1;
+  const history=[{stamps:newStamps, date:new Date().toISOString()}, ...(c.history||[])].slice(0,50);
+  await db.ref('ozik_customers/'+searchedCustomerId).update({stamps:newStamps, history});
+
+  showToast('🐱 '+c.name+'님 스탬프 '+newStamps+'개!');
+
+  // 리워드 달성 체크
+  if(newStamps===10){
+    showReward('☕','음료 무료!','10번째 스탬프 달성!\n음료 1잔이 무료입니다.');
+  } else if(newStamps===20){
+    showReward('🍚','Kingbap 무료!','20번째 스탬프 달성!\nKingbap 1인 무료 시식권입니다.');
+  }
+
+  await searchCustomer();
+  btn.disabled=false;
+}
+
+// 리워드 사용 처리
+async function useReward(){
+  if(!searchedCustomerId) return;
+  const snap=await db.ref('ozik_customers/'+searchedCustomerId).once('value');
+  const c=snap.val();
+  const newStamps=c.stamps>=20 ? c.stamps-20 : c.stamps-10;
+  await db.ref('ozik_customers/'+searchedCustomerId).update({stamps:Math.max(0,newStamps)});
+  showToast('✓ 리워드 사용 완료');
+  await searchCustomer();
+}
+
+function showReward(icon, title, desc){
+  document.getElementById('reward-icon').textContent=icon;
+  document.getElementById('reward-title').textContent=title;
+  document.getElementById('reward-desc').textContent=desc;
+  goTo(4);
+}
+
+// 최근 내역
+function listenHistory(){
+  db.ref('ozik_customers').orderByChild('stamps').limitToLast(20).on('value', snap=>{
+    const list=document.getElementById('history-list');
+    if(!snap.exists()){ list.innerHTML='<div style="color:var(--text-light);font-size:13px;padding:12px;text-align:center;">등록된 고객이 없습니다</div>'; return; }
+    const customers=[];
+    snap.forEach(s=>{ if(s.val().stamps>0) customers.push(s.val()); });
+    customers.sort((a,b)=>b.stamps-a.stamps);
+    list.innerHTML=customers.slice(0,15).map(c=>`
+      <div class="history-item">
+        <div>
+          <div class="hi-name">${c.name}</div>
+          <div class="hi-meta">${c.id}</div>
+        </div>
+        <div class="hi-stamps">${c.stamps}<span style="font-size:11px;color:var(--text-light);">/20</span></div>
+      </div>`).join('');
+  });
+}
+
+function showToast(msg, type=''){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
