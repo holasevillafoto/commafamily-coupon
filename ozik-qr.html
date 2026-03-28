@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ozik QR - Print</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#fff;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.card{width:280px;text-align:center;border:2px solid #ede0ce;border-radius:20px;padding:28px 24px;background:#faf6f0;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:#6b4c35;letter-spacing:4px;margin-bottom:4px;}
+.cat{font-size:32px;margin-bottom:4px;}
+.sub{font-size:10px;color:#a08070;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;}
+.divider{border:none;border-top:1.5px dashed #ede0ce;margin:16px 0;}
+.qr-wrap{background:#fff;border-radius:14px;padding:14px;border:1px solid #ede0ce;margin-bottom:16px;display:inline-block;}
+.desc{font-size:12px;color:#a08070;line-height:1.7;margin-bottom:16px;}
+.desc strong{color:#6b4c35;display:block;margin-bottom:4px;font-size:13px;}
+.reward-info{background:#fff9f3;border-radius:12px;padding:12px;border:1px solid #ede0ce;}
+.ri-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;color:#6b4c35;}
+.ri-row:last-child{margin-bottom:0;}
+.ri-icon{font-size:18px;flex-shrink:0;}
+.url{font-size:10px;color:#c4956a;margin-top:14px;word-break:break-all;}
+.print-btn{position:fixed;bottom:20px;right:20px;background:#6b4c35;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:14px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+@media print{.print-btn{display:none;}body{background:#fff;}min-height:unset;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">OZIK</div>
+  <div class="cat">🐱</div>
+  <div class="sub">Café · Sevilla</div>
+
+  <div class="qr-wrap">
+    <img id="qr-img" width="180" height="180" alt="QR">
+  </div>
+
+  <div class="desc">
+    <strong>스탬프 카드 · Tarjeta de sellos · Stamp Card</strong>
+    QR을 스캔하면 내 스탬프 카드가 열립니다<br>
+    Escanea el QR para abrir tu tarjeta<br>
+    Scan QR to open your stamp card
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="reward-info">
+    <div class="ri-row"><span class="ri-icon">☕</span><span>10번째 방문 → 음료 무료<br><span style="color:#a08070;font-size:11px;">10ª visita → Bebida gratis</span></span></div>
+    <div class="ri-row"><span class="ri-icon">🍚</span><span>20번째 방문 → Kingbap 무료<br><span style="color:#a08070;font-size:11px;">20ª visita → Kingbap gratis</span></span></div>
+  </div>
+
+  <div class="url" id="url-display"></div>
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨️ 인쇄하기</button>
+
+<script>
+var url = 'holasevillafoto.github.io/commafamily-coupon/ozik';
+var fullUrl = 'https://' + url;
+document.getElementById('url-display').textContent = url;
+document.getElementById('qr-img').src =
+  'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=4&data=' + encodeURIComponent(fullUrl);
+</script>
+</body>
+</html>
