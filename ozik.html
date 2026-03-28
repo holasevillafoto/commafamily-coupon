@@ -17,8 +17,8 @@
 :root{--bg:#faf6f0;--card:#fff9f3;--brown:#6b4c35;--bl:#c4956a;--bp:#ede0ce;--gold:#d4a843;--green:#7a9e7e;--tx:#3a2e26;--tl:#a08070;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--tx);}
-.pager{display:flex;width:700%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
-.page{width:14.2857%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+.pager{display:flex;width:800%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
+.page{width:12.5%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
 
 /* LANG */
 #p-lang{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
@@ -185,6 +185,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .ra-icon{font-size:28px;margin-bottom:4px;}
 .ra-title{font-size:14px;font-weight:700;color:#3a2e26;margin-bottom:2px;}
 .ra-desc{font-size:12px;color:#a08070;}
+/* HOME PAGE */
+#p-pin{justify-content:space-between;padding:0;}
+.pin-logo-wrap{display:flex;flex-direction:column;align-items:center;padding:50px 24px 24px;background:var(--bg);}
+.guest-section{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;width:100%;}
+.guest-label{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);margin-bottom:16px;text-align:center;}
+.guest-main-btn{width:100%;max-width:300px;background:var(--brown);color:#fff;border:none;border-radius:18px;padding:22px;font-family:'Noto Sans KR',sans-serif;font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(107,76,53,0.25);margin-bottom:10px;transition:all 0.2s;}
+.guest-main-btn:active{opacity:0.85;transform:scale(0.98);}
+.guest-hint{font-size:12px;color:var(--tl);}
+.staff-section{padding:20px 24px 40px;width:100%;display:flex;justify-content:center;}
+.staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:12px 28px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
+.staff-login-btn:hover{border-color:var(--brown);color:var(--brown);}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.gold{background:var(--gold);color:var(--tx);}
@@ -205,12 +216,28 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   </div>
 </div>
 
-<!-- 1: PIN -->
+<!-- 1: HOME (고객용 메인) -->
 <div class="page" id="p-pin">
-  <div class="logo" style="font-size:36px;margin-bottom:4px;">OZIK</div>
-  <div class="sub" style="margin-bottom:24px;">Café · Sevilla</div>
-  <div class="cat" style="font-size:32px;margin-bottom:20px;">🐱</div>
-  <div class="pin-lbl" id="pin-lbl">직원 PIN 입력</div>
+  <div class="pin-logo-wrap">
+    <div class="logo" style="font-size:40px;letter-spacing:4px;">OZIK</div>
+    <div class="cat" style="font-size:44px;margin:6px 0;">🐱</div>
+    <div class="sub" style="margin-bottom:0;">Café · Sevilla</div>
+  </div>
+  <div class="guest-section">
+    <div class="guest-label" id="guest-label">내 스탬프 카드 보기</div>
+    <button class="guest-main-btn" id="guest-btn">📱 스탬프 카드 열기</button>
+    <div class="guest-hint" id="guest-hint">전화번호로 바로 접속</div>
+  </div>
+  <div class="staff-section">
+    <button class="staff-login-btn" id="staff-login-btn">🔒 직원 로그인</button>
+  </div>
+</div>
+
+<!-- 1-5: PIN (직원 전용) -->
+<div class="page" id="p-pin2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;">
+  <div class="logo" style="font-size:32px;margin-bottom:4px;">OZIK</div>
+  <div class="sub" style="margin-bottom:24px;">직원 전용 · Solo personal</div>
+  <div class="pin-lbl" id="pin-lbl">PIN 입력</div>
   <div class="pin-dots">
     <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
     <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
@@ -221,8 +248,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <button class="pb" id="p7">7</button><button class="pb" id="p8">8</button><button class="pb" id="p9">9</button>
     <button class="pb del" id="pdel">⌫</button><button class="pb" id="p0">0</button><button class="pb del" id="pclr">✕</button>
   </div>
-  <div class="pin-err" id="pin-err">PIN 오류</div>
-  <button class="guest-btn" id="guest-btn">📱 내 스탬프 보기</button>
+  <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
+  <button class="ph-back" id="pin-back" style="margin-top:16px;">← 뒤로</button>
 </div>
 
 <!-- 2: PHONE -->
@@ -371,7 +398,10 @@ const PIN = '0927';
 // ── 다국어 ──
 var T = {
   ko: {
-    pinLbl:'직원 PIN 입력', guestBtn:'📱 내 스탬프 보기', pinErr:'PIN이 올바르지 않습니다',
+    pinLbl:'PIN 입력',
+    guestLabel:'내 스탬프 카드 보기',
+    guestHint:'전화번호로 바로 접속',
+    staffLogin:'🔒 직원 로그인', guestBtn:'📱 내 스탬프 보기', pinErr:'PIN이 올바르지 않습니다',
     phTitle:'전화번호로 접속', phSub:'등록된 전화번호를 입력하세요\n처음이라면 직원에게 등록을 요청하세요',
     phGo:'스탬프 카드 열기', phBack:'← 뒤로', phNotFound:'등록되지 않은 번호입니다',
     scTitle:'스탬프 카드', ssl1:'1-10번째', ssl2:'11-20번째',
@@ -399,7 +429,10 @@ var T = {
     tPhone:'전화번호를 입력해주세요', tNotFound:'등록되지 않은 번호입니다', tLoading:'불러오는 중...'
   },
   es: {
-    pinLbl:'Ingresa el PIN del personal', guestBtn:'📱 Ver mis sellos', pinErr:'PIN incorrecto',
+    pinLbl:'Ingresa el PIN',
+    guestLabel:'Ver mi tarjeta de sellos',
+    guestHint:'Accede con tu teléfono',
+    staffLogin:'🔒 Acceso personal', guestBtn:'📱 Ver mis sellos', pinErr:'PIN incorrecto',
     phTitle:'Acceso con teléfono', phSub:'Ingresa tu número registrado\nSi es tu primera vez, pídele al personal',
     phGo:'Abrir mi tarjeta', phBack:'← Volver', phNotFound:'Número no registrado',
     scTitle:'Tarjeta de sellos', ssl1:'Sellos 1-10', ssl2:'Sellos 11-20',
@@ -429,7 +462,10 @@ var T = {
     tPhone:'Escribe tu teléfono', tNotFound:'Número no registrado', tLoading:'Cargando...'
   },
   en: {
-    pinLbl:'Enter staff PIN', guestBtn:'📱 View my stamps', pinErr:'Incorrect PIN',
+    pinLbl:'Enter PIN',
+    guestLabel:'View my stamp card',
+    guestHint:'Access with your phone number',
+    staffLogin:'🔒 Staff login', guestBtn:'📱 View my stamps', pinErr:'Incorrect PIN',
     phTitle:'Access with phone number', phSub:'Enter your registered phone number\nFirst time? Ask staff to register you',
     phGo:'Open my stamp card', phBack:'← Back', phNotFound:'Phone number not found',
     scTitle:'Stamp Card', ssl1:'Stamps 1-10', ssl2:'Stamps 11-20',
@@ -460,7 +496,7 @@ var lang = 'ko';
 var pinBuf = '';
 var curPage = 0;
 var searchedPhone = null;
-var rewardFrom = 3;
+var rewardFrom = 5;
 var editingPhone = null;
 
 // 전화번호 포맷
@@ -475,7 +511,7 @@ function phoneKey(p) { return 'phone_' + p.replace(/\D/g, ''); }
 
 function goTo(n) {
   curPage = n;
-  document.getElementById('pager').style.transform = 'translateX(-' + (n * (100/7)) + '%)';
+  document.getElementById('pager').style.transform = 'translateX(-' + (n * (100/8)) + '%)';
 }
 
 // 이벤트 바인딩 (onclick 속성 대신 addEventListener 사용 - 파싱 오류 방지)
@@ -493,7 +529,9 @@ function bindEvents() {
   document.getElementById('pclr').addEventListener('click', function() { ep('clr'); });
 
   // 게스트 버튼
-  document.getElementById('guest-btn').addEventListener('click', function() { goTo(2); });
+  document.getElementById('guest-btn').addEventListener('click', function() { goTo(3); });
+  document.getElementById('staff-login-btn').addEventListener('click', function() { goTo(2); });
+  document.getElementById('pin-back').addEventListener('click', function() { goTo(1); });
 
   // 전화번호 페이지
   document.getElementById('ph-inp').addEventListener('input', function() { fmtPhone(this); });
@@ -505,18 +543,18 @@ function bindEvents() {
   document.getElementById('lang-mini').addEventListener('click', function() { goTo(0); });
 
   // 직원
-  document.getElementById('back-btn').addEventListener('click', function() { goTo(0); });
+  document.getElementById('back-btn').addEventListener('click', function() { goTo(1); });
   document.getElementById('si').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('s-btn').addEventListener('click', staffSearch);
   document.getElementById('add-btn').addEventListener('click', addStamp);
   document.getElementById('rb10').addEventListener('click', function() { useReward(10); });
   document.getElementById('rb20').addEventListener('click', function() { useReward(20); });
-  document.getElementById('nc-btn').addEventListener('click', function() { goTo(5); });
+  document.getElementById('nc-btn').addEventListener('click', function() { goTo(6); });
 
   // 신규 고객
   document.getElementById('np-inp').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('cr-btn').addEventListener('click', createCustomer);
-  document.getElementById('bk').addEventListener('click', function() { goTo(4); });
+  document.getElementById('bk').addEventListener('click', function() { goTo(5); });
 
   // 리워드
   document.getElementById('rw-b').addEventListener('click', function() { goTo(rewardFrom); });
@@ -606,12 +644,18 @@ document.addEventListener('DOMContentLoaded', function() {
 function setLang(l) {
   lang = l;
   applyLang();
-  goTo(1);
+  goTo(1); // home 페이지
 }
 
 function applyLang() {
   var t = T[lang];
   document.getElementById('pin-lbl').textContent = t.pinLbl;
+  var guestLabel = document.getElementById('guest-label');
+  var guestHint = document.getElementById('guest-hint');
+  var staffLoginBtn = document.getElementById('staff-login-btn');
+  if (guestLabel) guestLabel.textContent = t.guestLabel || '내 스탬프 카드 보기';
+  if (guestHint) guestHint.textContent = t.guestHint || '전화번호로 바로 접속';
+  if (staffLoginBtn) staffLoginBtn.textContent = t.staffLogin || '🔒 직원 로그인';
   document.getElementById('guest-btn').textContent = t.guestBtn;
   document.getElementById('pin-err').textContent = t.pinErr;
   document.getElementById('ph-title').textContent = t.phTitle;
@@ -703,7 +747,7 @@ function findByPhone() {
   db.ref('ozik_customers/' + key).once('value').then(function(snap) {
     if (!snap.exists()) { showToast(T[lang].phNotFound); return; }
     loadCard(phone);
-    goTo(3);
+    goTo(4);
   });
 }
 
@@ -833,11 +877,11 @@ function addStamp() {
       }
       // 10번째 달성
       if (ns === 10 && !r10used) {
-        rewardFrom = 4; showReward('☕', T[lang].rw10t, T[lang].rw10d);
+        rewardFrom = 5; showReward('☕', T[lang].rw10t, T[lang].rw10d);
       }
       // 20번째 달성
       else if (ns === 20) {
-        rewardFrom = 4; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
+        rewardFrom = 5; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
       }
     });
   }).then(function() { btn.disabled = false; });
@@ -1010,7 +1054,7 @@ var urlLang = new URLSearchParams(location.search).get('lang');
 if (urlLang && T[urlLang]) lang = urlLang;
 applyLang();
 bindEvents();
-if (urlPhone) { loadCard(urlPhone); goTo(3); }
+if (urlPhone) { loadCard(urlPhone); goTo(4); }
 else { goTo(0); }
 </script>
 </body>
