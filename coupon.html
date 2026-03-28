@@ -3,1104 +3,590 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Ozik">
-<meta name="theme-color" content="#faf6f0">
-<title>Ozik · 스탬프 카드</title>
-<link rel="manifest" href="ozik-manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>Kingbap · 음료 쿠폰</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-:root{--bg:#faf6f0;--card:#fff9f3;--brown:#6b4c35;--bl:#c4956a;--bp:#ede0ce;--gold:#d4a843;--green:#7a9e7e;--tx:#3a2e26;--tl:#a08070;}
+:root{--red:#bf3022;--gold:#d4a843;--cream:#f7f2ea;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--tx);}
-.pager{display:flex;width:800%;height:100%;transition:transform 0.45s cubic-bezier(0.77,0,0.18,1);}
-.page{width:12.5%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
-
-/* LANG */
-#p-lang{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--brown);letter-spacing:4px;margin-bottom:6px;}
-.cat{font-size:48px;margin-bottom:10px;}
-.sub{font-size:11px;color:var(--tl);letter-spacing:3px;text-transform:uppercase;margin-bottom:36px;}
-.lang-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:260px;}
-.lang-btn{background:#fff;border:1.5px solid var(--bp);border-radius:14px;padding:15px 20px;font-family:'Noto Sans KR',sans-serif;font-size:15px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
-.lang-btn:active{background:var(--brown);color:#fff;border-color:var(--brown);}
+html,body{height:100%;overflow:hidden;background:#0d0d0d;font-family:'Noto Sans KR',sans-serif;color:#fff;}
+.pager{display:flex;width:400%;height:100%;transition:transform 0.4s cubic-bezier(0.77,0,0.18,1);}
+.page{width:25%;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;}
 
 /* PIN */
-#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
-.pin-lbl{font-size:12px;color:var(--tl);margin-bottom:14px;text-align:center;}
-.pin-dots{display:flex;gap:12px;margin-bottom:22px;}
-.pd{width:14px;height:14px;border-radius:50%;border:2px solid var(--bp);transition:all 0.2s;}
-.pd.on{background:var(--brown);border-color:var(--brown);}
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:240px;}
-.pb{background:#fff;color:var(--tx);border:1px solid var(--bp);border-radius:12px;padding:16px;font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;cursor:pointer;transition:all 0.15s;}
-.pb:active{background:var(--brown);color:#fff;}
-.pb.del{font-size:14px;color:var(--tl);}
-.pin-err{margin-top:12px;font-size:12px;color:#c0392b;opacity:0;transition:opacity 0.3s;min-height:18px;text-align:center;}
+#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.pin-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:4px;margin-bottom:4px;}
+.pin-logo span{color:var(--gold);}
+.pin-sub{font-size:11px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:36px;}
+.pin-title{font-size:13px;color:#555;margin-bottom:18px;}
+.pin-dots{display:flex;gap:12px;margin-bottom:24px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #2a2a2a;transition:all 0.2s;}
+.pin-dot.on{background:var(--red);border-color:var(--red);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:260px;}
+.pin-btn{background:#1a1a1a;color:#fff;border:1px solid #252525;border-radius:14px;padding:18px;font-size:22px;font-family:'Bebas Neue',sans-serif;cursor:pointer;}
+.pin-btn:active{background:var(--red);transform:scale(0.95);}
+.pin-btn.del{font-size:16px;color:#555;}
+.pin-err{margin-top:14px;font-size:12px;color:var(--red);opacity:0;transition:opacity 0.3s;min-height:18px;}
 .pin-err.show{opacity:1;}
-.guest-btn{margin-top:18px;background:var(--bp);border:none;border-radius:12px;padding:12px 24px;font-size:13px;color:var(--brown);cursor:pointer;font-weight:500;}
 
-/* PHONE */
-#p-phone{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;}
-.ph-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--brown);margin-bottom:6px;text-align:center;}
-.ph-sub{font-size:13px;color:var(--tl);margin-bottom:28px;text-align:center;line-height:1.6;white-space:pre-line;}
-.ph-inp{width:100%;max-width:280px;background:#fff;border:1.5px solid var(--bp);border-radius:14px;padding:14px 18px;font-size:18px;color:var(--tx);outline:none;margin-bottom:10px;text-align:center;font-family:'Noto Sans KR',sans-serif;letter-spacing:2px;}
-.ph-inp:focus{border-color:var(--brown);}
-.ph-inp::placeholder{color:var(--bp);font-size:14px;letter-spacing:0;}
-.ph-go{width:100%;max-width:280px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px;}
-.ph-back{font-size:12px;color:var(--tl);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+/* FORM */
+#p-form{background:#0d0d0d;}
+.page-nav{background:#0d0d0d;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1a1a1a;position:sticky;top:0;z-index:50;}
+.page-nav-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;}
+.page-nav-title span{color:var(--gold);}
+.back-btn{background:transparent;border:1px solid #2a2a2a;border-radius:10px;padding:6px 14px;color:#555;font-size:12px;cursor:pointer;}
+.form-body{padding:20px 16px 60px;}
+.sec-label{font-size:10px;letter-spacing:2px;color:#3a3a3a;text-transform:uppercase;margin-bottom:10px;font-weight:500;}
+.btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.sel-btn{background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;}
+.sel-btn .ico{font-size:22px;}
+.sel-btn .lbl{font-size:11px;font-weight:600;color:#555;text-align:center;line-height:1.3;}
+.sel-btn.on-gold{border-color:var(--gold);background:rgba(212,168,67,0.07);}
+.sel-btn.on-gold .lbl{color:var(--gold);}
+.sel-btn.on-red{border-color:var(--red);background:rgba(191,48,34,0.08);}
+.sel-btn.on-red .lbl{color:#ff7a6b;}
+.note-inp{width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:12px;padding:13px 16px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;margin-bottom:22px;}
+.note-inp::placeholder{color:#2e2e2e;}
+.issue-btn{width:100%;background:var(--red);border:none;border-radius:16px;padding:17px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#fff;cursor:pointer;box-shadow:0 8px 30px rgba(191,48,34,0.3);}
+.issue-btn:disabled{opacity:0.35;cursor:not-allowed;}
 
 /* CARD */
-#p-card{background:var(--bg);}
-.top-bar{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;}
-.top-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);letter-spacing:3px;}
-.lang-mini{font-size:11px;color:var(--tl);cursor:pointer;background:#fff;border:1px solid var(--bp);border-radius:20px;padding:4px 10px;}
-.cw{padding:0 16px 60px;}
-.sc{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 4px 24px rgba(107,76,53,0.08);margin-bottom:14px;border:1px solid var(--bp);}
-.sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.sc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);}
-.sc-cnt{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);}
-.sc-cnt-s{font-size:11px;color:var(--tl);}
-.sc-name{font-size:12px;color:var(--tl);margin-bottom:14px;}
-.ssl{font-size:10px;color:var(--tl);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;margin-top:12px;}
-.sg{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:2px;}
-.stamp{aspect-ratio:1;border-radius:50%;border:1.5px dashed var(--bp);display:flex;align-items:center;justify-content:center;font-size:16px;background:#fff;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);position:relative;}
-.stamp.e{opacity:0.3;}
-.stamp.f{border:none;transform:scale(1.06);box-shadow:0 3px 10px rgba(107,76,53,0.15);}
-.stamp.sn{background:linear-gradient(135deg,#e8d5c0,#c4956a);}
-.stamp.s10{background:linear-gradient(135deg,#f5d78a,#d4a843);box-shadow:0 3px 12px rgba(212,168,67,0.35);}
-.stamp.s20{background:linear-gradient(135deg,#a8c5aa,#7a9e7e);box-shadow:0 3px 12px rgba(122,158,126,0.35);}
-.fb{position:absolute;top:-5px;right:-3px;font-size:7px;padding:1px 4px;border-radius:8px;font-weight:700;color:#fff;}
-.fb.gd{background:#d4a843;} .fb.gr{background:#7a9e7e;}
-.divider{border:none;border-top:1.5px dashed var(--bp);margin:14px 0;}
-.rr{display:flex;gap:8px;margin-bottom:14px;}
-.rb{flex:1;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;}
-.rb.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);border:1px solid #f5d78a;}
-.rb.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);border:1px solid #a8c5aa;}
-.rb-icon{font-size:18px;}
-.rb-n{font-size:9px;color:var(--tl);margin-bottom:1px;}
-.rb-v{font-size:11px;font-weight:700;color:var(--tx);}
-.pl{display:flex;justify-content:space-between;font-size:10px;color:var(--tl);margin-bottom:5px;}
-.pb2{background:var(--bp);border-radius:20px;height:5px;overflow:hidden;}
-.pf{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--bl),var(--brown));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
-.qrc{background:#fff;border-radius:16px;padding:16px;text-align:center;border:1px solid var(--bp);margin-bottom:14px;}
-.qrc-t{font-size:10px;color:var(--tl);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
-.qr-img{width:130px;height:130px;display:block;margin:0 auto 8px;}
-.qr-ph{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--brown);letter-spacing:2px;margin-bottom:4px;}
-.qr-h{font-size:10px;color:var(--tl);}
-.ahb{background:linear-gradient(135deg,#fef3d0,#fff9f3);border-radius:12px;padding:12px 14px;border:1px solid #f5d78a;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;}
-.ah-icon{font-size:20px;flex-shrink:0;}
-.ah-text{font-size:11px;color:var(--tl);line-height:1.5;}
-.ah-text strong{color:var(--brown);display:block;margin-bottom:2px;}
-.ah-x{background:transparent;border:none;color:var(--tl);font-size:16px;cursor:pointer;margin-left:auto;flex-shrink:0;padding:0 4px;}
+.coupon-card{width:100%;max-width:340px;background:var(--cream);border-radius:20px;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,0.55);}
+.card-top{background:var(--red);padding:20px;text-align:center;position:relative;overflow:hidden;}
+.card-top::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.05);}
+.brand-row{display:flex;align-items:center;justify-content:center;gap:10px;position:relative;z-index:1;}
+.brand-ico{width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 3px 10px rgba(0,0,0,0.2);flex-shrink:0;}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:#fff;line-height:1;text-decoration:none;display:block;}
+.brand-sub{font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:1.5px;}
+.notch{display:flex;align-items:center;height:20px;background:var(--cream);position:relative;}
+.notch::before{content:'';position:absolute;left:-10px;width:20px;height:20px;border-radius:50%;background:#0d0d0d;}
+.notch::after{content:'';position:absolute;right:-10px;width:20px;height:20px;border-radius:50%;background:#0d0d0d;}
+.notch-line{flex:1;margin:0 12px;border-top:2px dashed #d8d0c2;}
 
-/* STAFF */
-#p-staff{background:var(--bg);}
-.snav{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--bp);}
-.snav-t{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--brown);letter-spacing:2px;}
-.back-btn{background:transparent;border:1px solid var(--bp);border-radius:10px;padding:6px 14px;color:var(--tl);font-size:12px;cursor:pointer;}
-.sw{padding:16px 16px 60px;}
-.sl{font-size:10px;letter-spacing:2px;color:var(--tl);text-transform:uppercase;margin-bottom:10px;font-weight:500;}
-.sr{display:flex;gap:8px;margin-bottom:14px;}
-.si{flex:1;background:#fff;border:1px solid var(--bp);border-radius:12px;padding:12px 16px;font-size:14px;color:var(--tx);outline:none;font-family:'Noto Sans KR',sans-serif;}
-.si::placeholder{color:var(--tl);}
-.sb{background:var(--brown);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-size:13px;font-weight:500;cursor:pointer;}
-.rc{background:#fff;border-radius:16px;padding:16px;border:1px solid var(--bp);margin-bottom:14px;display:none;}
-.rc.show{display:block;}
-.rc-name{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--brown);margin-bottom:2px;}
-.rc-info{font-size:11px;color:var(--tl);margin-bottom:10px;}
-.rc-grid{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
-.rd{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;}
-.rd.on{background:var(--bl);color:#fff;} .rd.off{background:var(--bp);}
-.rd.g{background:var(--gold);} .rd.gr2{background:var(--green);color:#fff;}
-.add-btn{width:100%;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;}
-.add-btn:disabled{opacity:0.35;cursor:not-allowed;}
-.rwd-btn{width:100%;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;display:none;}
-.rwd-btn.show{display:block;}
-.rwd-btn.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);color:var(--tx);}
-.rwd-btn.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);color:var(--tx);}
-.nc-btn{width:100%;background:#fff;border:1px solid var(--bp);border-radius:12px;padding:13px;color:var(--tl);font-size:13px;cursor:pointer;margin-bottom:22px;}
+/* 2단 레이아웃 */
+.card-body{padding:14px 16px 16px;}
+.two-col{display:flex;gap:12px;align-items:flex-start;}
+.col-l{flex-shrink:0;width:140px;}
+.col-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
 
-/* 고객 명단 */
-.ct{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--bp);}
-.ct-head{display:grid;grid-template-columns:1fr 1fr auto;padding:10px 14px;background:var(--bp);font-size:10px;letter-spacing:1px;color:var(--tl);text-transform:uppercase;gap:8px;}
-.ct-row{display:grid;grid-template-columns:1fr 1fr auto;padding:11px 14px;border-top:1px solid var(--bp);gap:8px;align-items:center;}
-.ct-name{font-size:13px;font-weight:500;cursor:pointer;}
-.ct-name:hover{color:var(--brown);}
-.ct-ph{font-size:11px;color:var(--tl);cursor:pointer;}
-.ct-right{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
-.ct-s{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown);}
-.ct-s span{font-size:10px;color:var(--tl);}
-.edit-btn{background:transparent;border:1px solid var(--bp);border-radius:8px;padding:3px 7px;font-size:13px;cursor:pointer;color:var(--tl);}
-.edit-btn:hover{border-color:var(--brown);color:var(--brown);}
+/* QR */
+.qr-wrap{background:#fff;border-radius:10px;padding:10px;border:1px solid #ede8df;position:relative;}
+.qr-wrap.used-state{background:#f2f2f2;}
+.code-lbl{font-size:9px;color:#bbb;letter-spacing:1px;margin-bottom:2px;}
+.code-text{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#1a1a1a;margin-bottom:6px;word-break:break-all;}
+.qr-canvas-wrap{width:120px;height:120px;overflow:hidden;}
+.qr-canvas-wrap canvas{width:120px!important;height:120px!important;display:block;}
 
-/* NEW */
-#p-new{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
-.nc{font-size:52px;margin-bottom:14px;}
-.nt{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--brown);margin-bottom:6px;text-align:center;}
-.ns{font-size:13px;color:var(--tl);margin-bottom:24px;text-align:center;line-height:1.5;white-space:pre-line;}
-.fl{margin-bottom:12px;width:100%;max-width:280px;}
-.fl-l{font-size:10px;color:var(--tl);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
-.fl-i{width:100%;background:#fff;border:1.5px solid var(--bp);border-radius:12px;padding:13px 16px;font-size:15px;color:var(--tx);outline:none;font-family:'Noto Sans KR',sans-serif;}
-.fl-i:focus{border-color:var(--brown);}
-.fl-i::placeholder{color:var(--bp);}
-.cr-btn{width:100%;max-width:280px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;}
-.bk{margin-top:14px;font-size:12px;color:var(--tl);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.used-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.93);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.uo-icon{font-size:30px;}
+.uo-text{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#bbb;}
+.uo-sub{font-size:10px;color:#ccc;}
 
-/* REWARD */
-#p-reward{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
-.rw-i{font-size:64px;margin-bottom:14px;}
-.rw-t{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--brown);margin-bottom:8px;}
-.rw-d{font-size:14px;color:var(--tl);line-height:1.7;margin-bottom:28px;white-space:pre-line;}
-.rw-b{background:var(--brown);color:#fff;border:none;border-radius:14px;padding:14px 40px;font-size:15px;font-weight:500;cursor:pointer;}
+/* 오른쪽 정보 */
+.meta-tags{display:flex;flex-direction:column;gap:4px;}
+.meta-tag{background:#f0ece4;border-radius:20px;padding:3px 9px;font-size:10px;color:#888;display:inline-flex;align-items:center;gap:3px;width:fit-content;}
+.meta-dot{width:4px;height:4px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.how-box{background:#fff8f0;border-radius:8px;padding:8px 10px;}
+.how-title{font-size:9px;letter-spacing:1px;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:5px;}
+.how-steps{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.how-steps li{font-size:10px;color:#555;line-height:1.3;display:flex;gap:5px;align-items:flex-start;}
+.step-num{background:var(--red);color:#fff;font-size:8px;font-weight:700;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 
-/* EDIT MODAL */
-.mbg{position:fixed;inset:0;background:rgba(58,46,38,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s;}
-.mbg.show{opacity:1;pointer-events:all;}
-.mbox{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.77,0,0.18,1);}
-.mbg.show .mbox{transform:translateY(0);}
-.m-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown);margin-bottom:16px;}
-.mf{margin-bottom:12px;}
-.mf label{display:block;font-size:10px;letter-spacing:1.5px;color:var(--tl);text-transform:uppercase;margin-bottom:5px;}
-.mf input{width:100%;background:#fff;border:1.5px solid var(--bp);border-radius:12px;padding:12px 14px;font-size:15px;color:var(--tx);outline:none;font-family:'Noto Sans KR',sans-serif;}
-.mf input:focus{border-color:var(--brown);}
-.m-btns{display:flex;gap:8px;margin-top:16px;}
-.m-save{flex:1;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;}
-.m-del{background:#fff;color:#c0392b;border:1.5px solid #e8b4b8;border-radius:12px;padding:14px 16px;font-size:13px;cursor:pointer;}
-.m-cancel{background:#fff;color:var(--tl);border:1px solid var(--bp);border-radius:12px;padding:14px 16px;font-size:13px;cursor:pointer;}
+.card-footer{background:#1e1e1e;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:#3a3a3a;}
+.footer-terms{font-size:8px;color:#3a3a3a;text-align:right;line-height:1.5;}
 
-.install-btn{width:100%;max-width:340px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.install-btn:active{opacity:0.85;}
-.ios-guide{background:#fff;border-radius:16px;padding:18px;border:1px solid var(--bp);margin-bottom:10px;width:100%;max-width:340px;}
-.ios-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
-.ios-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx);}
-.ios-icon{background:var(--brown);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.ios-close{width:100%;background:var(--bp);border:none;border-radius:10px;padding:10px;font-size:13px;color:var(--brown);cursor:pointer;font-weight:500;}
-.reward-alert{display:none;background:linear-gradient(135deg,#fef3d0,#fde68a);border:2px solid #d4a843;border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center;}
-.reward-alert.show{display:block;}
-.reward-alert.green{background:linear-gradient(135deg,#d4ead5,#a8c5aa);border-color:#7a9e7e;}
-.ra-icon{font-size:28px;margin-bottom:4px;}
-.ra-title{font-size:14px;font-weight:700;color:#3a2e26;margin-bottom:2px;}
-.ra-desc{font-size:12px;color:#a08070;}
-/* HOME PAGE */
-#p-pin{display:block;padding:0;overflow-y:auto;}
-.pin-oao{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--bl);letter-spacing:3px;margin-top:-2px;margin-bottom:4px;}
-.guest-label{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown);margin-bottom:16px;text-align:center;}
-.guest-main-btn{width:100%;max-width:300px;background:var(--brown);color:#fff;border:none;border-radius:16px;padding:18px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(107,76,53,0.25);margin-bottom:8px;transition:all 0.2s;display:block;margin-left:auto;margin-right:auto;}
-.guest-main-btn:active{opacity:0.85;transform:scale(0.98);}
-.guest-hint{font-size:11px;color:var(--tl);}
-.staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:12px 32px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
-.staff-login-btn:hover{border-color:var(--brown);color:var(--brown);}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
+/* RESULT / COUPON PAGES */
+#p-result,#p-coupon{background:#0d0d0d;display:flex;flex-direction:column;align-items:center;padding:20px 16px 80px;}
+.page-top-lbl{font-size:10px;letter-spacing:2px;color:#444;text-transform:uppercase;margin-bottom:14px;text-align:center;}
+.btn-row{display:flex;gap:10px;width:100%;max-width:340px;margin-top:12px;}
+.share-btn{flex:1.5;background:var(--gold);border:none;border-radius:14px;padding:15px 10px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;color:#1a1a1a;cursor:pointer;box-shadow:0 6px 20px rgba(212,168,67,0.35);}
+.share-btn:active{opacity:0.85;}
+.new-btn{flex:1;background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:15px 10px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:#555;cursor:pointer;}
+.new-btn:active{border-color:var(--red);color:var(--red);}
+
+.verify-wrap{width:100%;max-width:340px;margin-top:12px;}
+.verify-btn{width:100%;background:#1a1a1a;border:1px solid #252525;border-radius:14px;padding:14px;color:#444;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;margin-bottom:8px;}
+.verify-btn:hover{border-color:var(--red);color:var(--red);}
+.verify-hint{font-size:11px;color:#2a2a2a;text-align:center;}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:250;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-bg.show{opacity:1;pointer-events:all;}
+.pm-box{background:#1a1a1a;border-radius:20px;padding:28px 22px;text-align:center;border:1px solid #2a2a2a;max-width:280px;width:90%;transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.modal-bg.show .pm-box{transform:scale(1);}
+.pm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff;margin-bottom:4px;}
+.pm-sub{font-size:12px;color:#444;margin-bottom:18px;}
+.pm-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+.pm-dot{width:13px;height:13px;border-radius:50%;border:2px solid #2a2a2a;transition:all 0.2s;}
+.pm-dot.on{background:var(--red);border-color:var(--red);}
+.pm-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:220px;margin:0 auto 10px;}
+.pm-btn{background:#111;color:#fff;border:1px solid #1e1e1e;border-radius:12px;padding:15px;font-size:20px;font-family:'Bebas Neue',sans-serif;cursor:pointer;}
+.pm-btn:active{background:var(--red);}
+.pm-btn.del{font-size:14px;color:#444;}
+.pm-cancel{background:transparent;border:none;color:#333;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.pm-err{font-size:11px;color:var(--red);margin-top:8px;opacity:0;transition:opacity 0.3s;min-height:16px;}
+.pm-err.show{opacity:1;}
+.success-bg{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:300;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.success-bg.show{opacity:1;pointer-events:all;}
+.success-box{background:#1a1a1a;border-radius:24px;padding:32px 26px;text-align:center;border:1px solid var(--gold);max-width:300px;width:90%;transform:scale(0.8);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.success-bg.show .success-box{transform:scale(1);}
+.success-icon{font-size:48px;margin-bottom:10px;}
+.success-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;}
+.success-desc{font-size:13px;color:#777;line-height:1.6;margin-bottom:18px;}
+.success-close{background:var(--gold);color:#1a1a1a;border:none;border-radius:12px;padding:12px 30px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;}
+/* 언어 선택 바 */
+.lang-bar{position:fixed;top:0;right:0;z-index:100;display:flex;gap:4px;padding:8px 12px;}
+.lb{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 10px;font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;font-family:"Noto Sans KR",sans-serif;}
+.lb.active{background:var(--red);color:#fff;border-color:var(--red);}
+/* 발급 화면 언어 바 (다크) */
+.lang-bar.dark .lb{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4);}
+.lang-bar.dark .lb.active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;border:1px solid #2a2a2a;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
-.toast.gold{background:var(--gold);color:var(--tx);}
+.toast.ok{border-color:var(--gold);color:var(--gold);}
+.toast.err{border-color:var(--red);color:#ff7a6b;}
 </style>
 </head>
 <body>
+<!-- 언어 선택 바 -->
+<div class="lang-bar" id="lang-bar">
+  <button class="lb active" id="lb-ko" onclick="setCouponLang('ko')">한국어</button>
+  <button class="lb" id="lb-es" onclick="setCouponLang('es')">ES</button>
+</div>
+
 <div class="pager" id="pager">
 
-<!-- 0: LANG -->
-<div class="page" id="p-lang">
-  <div class="logo">OZIK</div>
-  <div class="pin-oao" style="margin-bottom:6px;">one and only</div>
-  <div class="cat">🐱</div>
-  <div class="sub">Café · Sevilla</div>
-  <div class="lang-btns">
-    <button class="lang-btn" id="lb-ko"><span>🇰🇷</span>한국어</button>
-    <button class="lang-btn" id="lb-es"><span>🇪🇸</span>Español</button>
-    <button class="lang-btn" id="lb-en"><span>🇬🇧</span>English</button>
-  </div>
-</div>
-
-<!-- 1: HOME (고객용 메인) -->
+<!-- PAGE 1: PIN -->
 <div class="page" id="p-pin">
-  <div style="text-align:center;padding:32px 24px 16px;">
-    <div class="logo" style="font-size:40px;letter-spacing:4px;">OZIK</div>
-    <div class="pin-oao">one and only</div>
-    <div class="cat" style="font-size:36px;margin:4px 0;">🐱</div>
-    <div class="sub">Café · Sevilla</div>
-  </div>
-  <div style="padding:12px 24px 12px;text-align:center;">
-    <div class="guest-label" id="guest-label">내 스탬프 카드 보기</div>
-    <button class="guest-main-btn" id="guest-btn">📱 스탬프 카드 열기</button>
-    <div class="guest-hint" id="guest-hint">전화번호로 바로 접속</div>
-  </div>
-  <div style="padding:8px 24px 32px;text-align:center;">
-    <button class="staff-login-btn" id="staff-login-btn">🔒 직원 로그인</button>
-  </div>
-</div>
-
-<!-- 1-5: PIN (직원 전용) -->
-<div class="page" id="p-pin2" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;">
-  <div class="logo" style="font-size:32px;margin-bottom:4px;">OZIK</div>
-  <div class="sub" style="margin-bottom:24px;">직원 전용 · Solo personal</div>
-  <div class="pin-lbl" id="pin-lbl">PIN 입력</div>
+  <div class="pin-logo">COMMA <span>FAMILY</span></div>
+  <div class="pin-sub">Kingbap · 음료 쿠폰 시스템</div>
+  <div class="pin-title" id="pin-title-text">PIN 입력 · Ingresa el PIN</div>
   <div class="pin-dots">
-    <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
-    <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
   </div>
   <div class="pin-pad">
-    <button class="pb" id="p1">1</button><button class="pb" id="p2">2</button><button class="pb" id="p3">3</button>
-    <button class="pb" id="p4">4</button><button class="pb" id="p5">5</button><button class="pb" id="p6">6</button>
-    <button class="pb" id="p7">7</button><button class="pb" id="p8">8</button><button class="pb" id="p9">9</button>
-    <button class="pb del" id="pdel">⌫</button><button class="pb" id="p0">0</button><button class="pb del" id="pclr">✕</button>
+    <button class="pin-btn" onclick="enterPin('1')">1</button>
+    <button class="pin-btn" onclick="enterPin('2')">2</button>
+    <button class="pin-btn" onclick="enterPin('3')">3</button>
+    <button class="pin-btn" onclick="enterPin('4')">4</button>
+    <button class="pin-btn" onclick="enterPin('5')">5</button>
+    <button class="pin-btn" onclick="enterPin('6')">6</button>
+    <button class="pin-btn" onclick="enterPin('7')">7</button>
+    <button class="pin-btn" onclick="enterPin('8')">8</button>
+    <button class="pin-btn" onclick="enterPin('9')">9</button>
+    <button class="pin-btn del" onclick="enterPin('del')">⌫</button>
+    <button class="pin-btn" onclick="enterPin('0')">0</button>
+    <button class="pin-btn del" onclick="enterPin('clr')">✕</button>
   </div>
   <div class="pin-err" id="pin-err">PIN이 올바르지 않습니다</div>
-  <button class="ph-back" id="pin-back" style="margin-top:16px;">← 뒤로</button>
 </div>
 
-<!-- 2: PHONE -->
-<div class="page" id="p-phone">
-  <div class="cat" style="font-size:40px;margin-bottom:12px;">🐱</div>
-  <div class="ph-title" id="ph-title">전화번호로 접속</div>
-  <div class="ph-sub" id="ph-sub">등록된 전화번호를 입력하세요</div>
-  <input class="ph-inp" id="ph-inp" type="tel" placeholder="000-000-000" maxlength="11">
-  <button class="ph-go" id="ph-go">스탬프 카드 열기</button>
-  <div class="ph-back" id="ph-back">← 뒤로</div>
-</div>
-
-<!-- 3: CARD -->
-<div class="page" id="p-card">
-  <div class="top-bar">
-    <div class="top-logo">OZIK</div>
-    <div class="lang-mini" id="lang-mini">🌐 언어</div>
+<!-- PAGE 2: FORM -->
+<div class="page" id="p-form">
+  <div class="page-nav">
+    <div class="page-nav-title">COMMA <span>FAMILY</span></div>
+    <button class="back-btn" onclick="goTo(0)">← 뒤로</button>
   </div>
-  <div class="cw">
-    <div class="reward-alert" id="reward-alert">
-      <div class="ra-icon" id="ra-icon">🎉</div>
-      <div class="ra-title" id="ra-title">리워드 달성!</div>
-      <div class="ra-desc" id="ra-desc">직원에게 말씀해주세요</div>
+  <div class="form-body">
+    <div class="sec-label">발급자 구분</div>
+    <div class="btn-grid">
+      <div class="sel-btn on-gold" id="rb-guide"    onclick="selRole('guide')">   <div class="ico">🗺️</div><div class="lbl">가이드</div></div>
+      <div class="sel-btn"         id="rb-annyeong" onclick="selRole('annyeong')"><div class="ico">🏠</div><div class="lbl">안녕세비야</div></div>
+      <div class="sel-btn"         id="rb-chalcak"  onclick="selRole('chalcak')"> <div class="ico">📸</div><div class="lbl">찰칵세비야</div></div>
     </div>
-    <div class="sc">
-      <div class="sc-head">
-        <div class="sc-title" id="sc-title">스탬프 카드</div>
-        <div class="sc-cnt"><span id="stamp-cnt">0</span><span class="sc-cnt-s">/20</span></div>
+    <div class="sec-label">쿠폰 경로</div>
+    <div class="btn-grid">
+      <div class="sel-btn on-red" id="sb-tour"       onclick="selSrc('tour')">      <div class="ico">🎫</div><div class="lbl">가이드 투어</div></div>
+      <div class="sel-btn"        id="sb-guesthouse" onclick="selSrc('guesthouse')"><div class="ico">🛏️</div><div class="lbl">민박 투숙</div></div>
+      <div class="sel-btn"        id="sb-snap"       onclick="selSrc('snap')">      <div class="ico">📷</div><div class="lbl">스냅 촬영</div></div>
+    </div>
+    <div class="sec-label">메모 (선택)</div>
+    <input class="note-inp" id="note-inp" placeholder="예: 투어 그룹 A, 체크인 3/27 ...">
+    <button class="issue-btn" id="issue-btn" onclick="issueCoupon()">🎟️ 쿠폰 발급하기</button>
+  </div>
+</div>
+
+<!-- PAGE 3: RESULT -->
+<div class="page" id="p-result">
+  <div class="page-top-lbl">✅ 쿠폰 발급 완료 · Cupón emitido</div>
+  <div class="coupon-card">
+    <div class="card-top">
+      <div class="brand-row">
+        <div class="brand-ico">🍚</div>
+        <div>
+          <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
+            <div class="brand-name">KINGBAP 📍</div>
+          </a>
+          <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
+        </div>
       </div>
-      <div class="sc-name" id="sc-name">🐱</div>
-      <div class="ssl" id="ssl1">1-10</div>
-      <div class="sg" id="sg1"></div>
-      <div class="ssl" id="ssl2">11-20</div>
-      <div class="sg" id="sg2"></div>
-      <div class="divider"></div>
-      <div class="rr">
-        <div class="rb r10"><div class="rb-icon">☕</div><div><div class="rb-n" id="r10n">10번째</div><div class="rb-v" id="r10v">음료 무료</div></div></div>
-        <div class="rb r20"><div class="rb-icon">🍚</div><div><div class="rb-n" id="r20n">20번째</div><div class="rb-v" id="r20v">Kingbap 무료</div></div></div>
+    </div>
+    <div class="notch"><div class="notch-line"></div></div>
+    <div class="card-body">
+      <div class="two-col">
+        <div class="col-l">
+          <div class="qr-wrap" id="result-qr-wrap">
+            <div class="code-lbl">COUPON CODE</div>
+            <div class="code-text" id="result-code">------</div>
+            <div class="qr-canvas-wrap" id="result-qr-box"></div>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="meta-tags" id="result-meta"></div>
+          <div class="how-box">
+            <div class="how-title">이용 방법</div>
+            <ul class="how-steps">
+              <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
+              <li><span class="step-num">2</span>이 화면을 직원에게</li>
+              <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="pl"><span id="prog-lbl">다음 리워드까지</span><span id="prog-cnt">10개 남음</span></div>
-      <div class="pb2"><div class="pf" id="pf" style="width:0%"></div></div>
     </div>
-    <div class="qrc">
-      <div class="qrc-t" id="qrc-t">내 QR 코드</div>
-      <img class="qr-img" id="qr-img" src="" alt="QR">
-      <div class="qr-ph" id="qr-ph">-</div>
-      <div class="qr-h" id="qr-h">직원에게 스캔을 요청하세요</div>
+    <div class="card-footer">
+      <div class="footer-logo">COMMA FAMILY</div>
+      <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
     </div>
-    <div class="ahb" id="ahb">
-      <div class="ah-icon">📱</div>
-      <div class="ah-text"><strong id="ah-t">홈 화면에 추가하면 앱처럼!</strong><span id="ah-d">Safari → 공유 → "홈 화면에 추가"</span></div>
-      <button class="ah-x" onclick="document.getElementById('ahb').style.display='none'">×</button>
-    </div>
+  </div>
+  <div class="btn-row">
+    <button class="share-btn" onclick="shareCoupon()">📤 공유하기</button>
+    <button class="new-btn" onclick="newCoupon()">+ 새 발급</button>
   </div>
 </div>
 
-<!-- 4: STAFF -->
-<div class="page" id="p-staff">
-  <div class="snav">
-    <div class="snav-t">OZIK · <span id="staff-lbl">직원</span></div>
-    <button class="back-btn" id="back-btn">← 나가기</button>
-  </div>
-  <div class="sw">
-    <div class="sl" id="search-lbl">전화번호로 고객 조회</div>
-    <div class="sr">
-      <input class="si" id="si" type="tel" placeholder="000-000-000" maxlength="11">
-      <button class="sb" id="s-btn">조회</button>
-    </div>
-    <div class="rc" id="rc">
-      <div class="rc-name" id="rc-name">-</div>
-      <div class="rc-info" id="rc-info">-</div>
-      <div class="rc-grid" id="rc-grid"></div>
-      <button class="add-btn" id="add-btn">🐱 스탬프 적립</button>
-      <button class="rwd-btn r10" id="rb10">☕ 음료 무료 리워드 사용</button>
-      <button class="rwd-btn r20" id="rb20">🍚 Kingbap 무료 리워드 사용</button>
-    </div>
-    <div class="sl" id="new-lbl">신규 고객</div>
-    <button class="nc-btn" id="nc-btn">+ 신규 고객 등록</button>
-    <div class="sl" id="list-lbl">고객 명단</div>
-    <div class="ct">
-      <div class="ct-head">
-        <div id="th-n">이름</div><div id="th-p">전화번호</div><div id="th-s">스탬프</div>
+<!-- PAGE 4: CUSTOMER -->
+<div class="page" id="p-coupon">
+  <div class="page-top-lbl">📲 Kingbap · 음료 무료 쿠폰</div>
+  <div class="coupon-card">
+    <div class="card-top">
+      <div class="brand-row">
+        <div class="brand-ico">🍚</div>
+        <div>
+          <a href="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" style="text-decoration:none;">
+            <div class="brand-name">KINGBAP 📍</div>
+          </a>
+          <div class="brand-sub">KOREAN CUP RICE · SEVILLA</div>
+        </div>
       </div>
-      <div id="clist"><div style="padding:14px;text-align:center;color:var(--tl);font-size:13px;" id="clist-loading">불러오는 중...</div></div>
+    </div>
+    <div class="notch"><div class="notch-line"></div></div>
+    <div class="card-body">
+      <div class="two-col">
+        <div class="col-l">
+          <div class="qr-wrap" id="coupon-qr-wrap">
+            <div class="code-lbl">COUPON CODE</div>
+            <div class="code-text" id="c-code">------</div>
+            <div class="qr-canvas-wrap" id="coupon-qr-box"></div>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="meta-tags" id="c-meta"></div>
+          <div class="how-box">
+            <div class="how-title">이용 방법</div>
+            <ul class="how-steps">
+              <li><span class="step-num">1</span>Kingbap 방문 후 주문</li>
+              <li><span class="step-num">2</span>이 화면을 직원에게</li>
+              <li><span class="step-num">3</span>음료 1잔 무료! 🥤</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="footer-logo">COMMA FAMILY</div>
+      <div class="footer-terms">1인 1매 · 1회 사용 후 소멸<br>No acumulable · Un solo uso</div>
     </div>
   </div>
-</div>
-
-<!-- 5: NEW CUSTOMER -->
-<div class="page" id="p-new">
-  <div class="nc">🐱</div>
-  <div class="nt" id="nt">신규 고객 등록</div>
-  <div class="ns" id="ns">이름과 전화번호를 입력하면 스탬프 카드가 발급됩니다</div>
-  <div class="fl">
-    <div class="fl-l" id="fl-n">이름</div>
-    <input class="fl-i" id="n-inp" maxlength="20">
+  <div class="verify-wrap">
+    <button class="verify-btn" id="verify-btn" onclick="openPinModal()">✓ 킹밥 직원 사용 처리</button>
+    <div class="verify-hint">킹밥 직원만 누르세요 · Solo para el personal de Kingbap</div>
   </div>
-  <div class="fl">
-    <div class="fl-l" id="fl-p">전화번호</div>
-    <input class="fl-i" id="np-inp" type="tel" maxlength="11" placeholder="000-000-000">
-  </div>
-  <button class="cr-btn" id="cr-btn">카드 발급하기</button>
-  <div class="bk" id="bk">← 돌아가기</div>
 </div>
 
-<!-- 6: REWARD -->
-<div class="page" id="p-reward">
-  <div class="rw-i" id="rw-i">🎉</div>
-  <div class="rw-t" id="rw-t">축하합니다!</div>
-  <div class="rw-d" id="rw-d"></div>
-  <button class="rw-b" id="rw-b">확인</button>
-</div>
+</div><!-- /pager -->
 
-</div>
-
-<!-- DELETE CONFIRM MODAL -->
-<div class="modal-bg del-bg" id="del-modal" style="z-index:300;">
-  <div class="mbox" style="border-radius:20px;">
-    <div class="m-title" style="color:#c0392b;">🗑 삭제 확인</div>
-    <div style="font-size:13px;color:var(--tl);margin-bottom:6px;" id="del-label">정말 삭제하시겠습니까?</div>
-    <div style="font-size:14px;font-weight:600;color:var(--tx);margin-bottom:20px;" id="del-name"></div>
-    <div class="m-btns">
-      <button class="m-cancel" id="del-cancel">취소</button>
-      <button class="m-del" id="del-confirm" style="flex:1;background:#c0392b;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;">삭제</button>
+<!-- PIN MODAL -->
+<div class="modal-bg" id="pin-modal">
+  <div class="pm-box">
+    <div class="pm-title">직원 확인</div>
+    <div class="pm-sub">킹밥 직원 PIN 입력</div>
+    <div class="pm-dots">
+      <div class="pm-dot" id="pmd0"></div><div class="pm-dot" id="pmd1"></div>
+      <div class="pm-dot" id="pmd2"></div><div class="pm-dot" id="pmd3"></div>
     </div>
-  </div>
-</div>
-
-<!-- EDIT MODAL -->
-<div class="mbg" id="mbg">
-  <div class="mbox">
-    <div class="m-title" id="m-title">고객 정보 수정</div>
-    <div class="mf"><label id="ml-n">이름</label><input id="m-name"></div>
-    <div class="mf"><label id="ml-p">전화번호</label><input id="m-phone" type="tel" maxlength="11" placeholder="000-000-000"></div>
-    <div class="mf"><label id="ml-s">스탬프 수</label><input id="m-stamps" type="number" min="0" max="20"></div>
-    <div class="m-btns">
-      <button class="m-cancel" id="m-cancel">취소</button>
-      <button class="m-del" id="m-del">🗑 삭제</button>
-      <button class="m-save" id="m-save">저장</button>
+    <div class="pm-pad">
+      <button class="pm-btn" onclick="pmPin('1')">1</button><button class="pm-btn" onclick="pmPin('2')">2</button><button class="pm-btn" onclick="pmPin('3')">3</button>
+      <button class="pm-btn" onclick="pmPin('4')">4</button><button class="pm-btn" onclick="pmPin('5')">5</button><button class="pm-btn" onclick="pmPin('6')">6</button>
+      <button class="pm-btn" onclick="pmPin('7')">7</button><button class="pm-btn" onclick="pmPin('8')">8</button><button class="pm-btn" onclick="pmPin('9')">9</button>
+      <button class="pm-btn del" onclick="pmPin('del')">⌫</button><button class="pm-btn" onclick="pmPin('0')">0</button><button class="pm-btn del" onclick="pmPin('clr')">✕</button>
     </div>
+    <div class="pm-err" id="pm-err"></div>
+    <button class="pm-cancel" onclick="closePinModal()">취소</button>
   </div>
 </div>
 
+<div class="success-bg" id="success-bg">
+  <div class="success-box">
+    <div class="success-icon">🥤</div>
+    <div class="success-title">사용 완료!</div>
+    <div class="success-desc">음료 무료 쿠폰이 사용되었습니다.<br><span style="color:#444;font-size:12px">Cupón utilizado correctamente</span></div>
+    <button class="success-close" onclick="confirmUse()">확인 · OK</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
-  authDomain: "comma-family.firebaseapp.com",
-  databaseURL: "https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "comma-family",
-  storageBucket: "comma-family.firebasestorage.app",
-  messagingSenderId: "106296714974",
-  appId: "1:106296714974:web:26b9b708ddb6116347444f"
+  apiKey:"AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
+  authDomain:"comma-family.firebaseapp.com",
+  databaseURL:"https://comma-family-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"comma-family",
+  storageBucket:"comma-family.firebasestorage.app",
+  messagingSenderId:"106296714974",
+  appId:"1:106296714974:web:26b9b708ddb6116347444f"
 });
-const db = firebase.database();
-const PIN = '0927';
+const db=firebase.database();
+
+const PIN='0927';
+const ROLE_LBL={guide:'가이드',annyeong:'안녕세비야',chalcak:'찰칵세비야'};
+const SRC_LBL={tour:'가이드 투어',guesthouse:'민박 투숙',snap:'스냅 촬영'};
+let curRole='guide',curSrc='tour',pinBuf='',pmBuf='',curCouponId=null,pendingVerify=false;
+
+// QR 생성 - canvas만 사용, img 제거
+function makeQR(elId, url){
+  const el=document.getElementById(elId);
+  el.innerHTML='';
+  const canvas=document.createElement('canvas');
+  el.appendChild(canvas);
+  // QRCode 라이브러리 없이 직접 canvas에 그리기
+  // → qrcodejs 대신 API 방식 사용
+  const img=document.createElement('img');
+  img.style.width='120px';
+  img.style.height='120px';
+  img.style.display='block';
+  // Google Charts QR API (외부 의존 없이 간단)
+  img.src='https://api.qrserver.com/v1/create-qr-code/?size=120x120&data='+encodeURIComponent(url);
+  el.innerHTML='';
+  el.appendChild(img);
+}
+
+function renderMeta(elId,c){
+  const issued=new Date(c.issuedAt);
+  const ds=issued.getFullYear()+'.'+(issued.getMonth()+1).toString().padStart(2,'0')+'.'+issued.getDate().toString().padStart(2,'0');
+  document.getElementById(elId).innerHTML=`
+    <div class="meta-tag"><span class="meta-dot"></span>${ROLE_LBL[c.role]||c.role}</div>
+    <div class="meta-tag"><span class="meta-dot"></span>${SRC_LBL[c.source]||c.source}</div>
+    <div class="meta-tag"><span class="meta-dot"></span>${ds}</div>`;
+}
+
+const urlCouponId=new URLSearchParams(location.search).get('c');
+if(urlCouponId){goTo(3);showCouponView(urlCouponId);}else{goTo(0);}
+
+function goTo(n){document.getElementById('pager').style.transform=`translateX(-${n*25}%)`;}
+
+function enterPin(v){
+  if(v==='del') pinBuf=pinBuf.slice(0,-1);
+  else if(v==='clr') pinBuf='';
+  else if(pinBuf.length<4) pinBuf+=v;
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('on',i<pinBuf.length);
+  if(pinBuf.length===4){
+    if(pinBuf===PIN){pinBuf='';for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');goTo(1);}
+    else{
+      const e=document.getElementById('pin-err');e.textContent='PIN이 올바르지 않습니다';e.classList.add('show');
+      setTimeout(()=>{e.classList.remove('show');pinBuf='';for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('on');},2000);
+    }
+  }
+}
+
+function selRole(r){curRole=r;['guide','annyeong','chalcak'].forEach(id=>document.getElementById('rb-'+id).className='sel-btn'+(id===r?' on-gold':''));}
+function selSrc(s){curSrc=s;['tour','guesthouse','snap'].forEach(id=>document.getElementById('sb-'+id).className='sel-btn'+(id===s?' on-red':''));}
+
+async function issueCoupon(){
+  const btn=document.getElementById('issue-btn');btn.disabled=true;
+  const code='KB-'+Date.now().toString(36).toUpperCase().slice(-6);
+  const note=document.getElementById('note-inp').value.trim();
+  const coupon={code,role:curRole,source:curSrc,note,issuedAt:new Date().toISOString(),used:false,usedAt:null};
+  try{
+    await db.ref('coupons/'+code).set(coupon);
+    curCouponId=code;
+    document.getElementById('note-inp').value='';
+    document.getElementById('result-code').textContent=code;
+    renderMeta('result-meta',coupon);
+    makeQR('result-qr-box',location.origin+location.pathname+'?c='+code);
+    goTo(2);
+  }catch(e){showToast('발급 실패 · Error','err');}
+  btn.disabled=false;
+}
+
+async function shareCoupon(){
+  if(!curCouponId)return;
+  const link=location.origin+location.pathname+'?c='+curCouponId;
+  if(navigator.share){try{await navigator.share({title:'Kingbap 음료 무료 쿠폰',text:'🍚 Kingbap 음료 1잔 무료 쿠폰!\n컵밥 주문 시 음료가 무료입니다 🥤',url:link});return;}catch(e){}}
+  navigator.clipboard.writeText(link).then(()=>showToast('링크 복사됨! 카카오톡으로 전송하세요 📲','ok')).catch(()=>showToast('링크: '+link,'ok'));
+}
+function newCoupon(){curCouponId=null;goTo(1);}
+
+function showCouponView(code){
+  document.getElementById('c-code').textContent=code;
+  db.ref('coupons/'+code).on('value',snap=>{
+    if(!snap.exists()){
+      document.getElementById('coupon-qr-box').innerHTML='<div style="padding:10px;color:#aaa;font-size:11px;text-align:center;">유효하지 않은 쿠폰</div>';
+      document.getElementById('verify-btn').style.display='none';return;
+    }
+    const c=snap.val();
+    // QR은 한 번만 생성
+    if(!document.getElementById('coupon-qr-box').hasChildNodes()){
+      makeQR('coupon-qr-box',location.origin+location.pathname+'?c='+code);
+    }
+    renderMeta('c-meta',c);
+    const wrap=document.getElementById('coupon-qr-wrap');
+    const old=wrap.querySelector('.used-overlay');if(old)old.remove();
+    wrap.classList.remove('used-state');
+    if(c.used){
+      wrap.classList.add('used-state');
+      const ov=document.createElement('div');ov.className='used-overlay';
+      ov.innerHTML=`<div class="uo-icon">✓</div><div class="uo-text">사용 완료</div><div class="uo-sub">${new Date(c.usedAt).toLocaleDateString('ko')}</div>`;
+      wrap.appendChild(ov);
+      document.getElementById('verify-btn').style.display='none';
+    }else{document.getElementById('verify-btn').style.display='block';}
+  });
+}
+
+function openPinModal(){pmBuf='';for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on');document.getElementById('pm-err').classList.remove('show');document.getElementById('pin-modal').classList.add('show');}
+function closePinModal(){document.getElementById('pin-modal').classList.remove('show');}
+function pmPin(v){
+  if(v==='del') pmBuf=pmBuf.slice(0,-1);
+  else if(v==='clr') pmBuf='';
+  else if(pmBuf.length<4) pmBuf+=v;
+  for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.toggle('on',i<pmBuf.length);
+  if(pmBuf.length===4){
+    if(pmBuf===PIN){closePinModal();document.getElementById('success-bg').classList.add('show');pendingVerify=true;}
+    else{
+      const e=document.getElementById('pm-err');e.textContent='PIN이 올바르지 않습니다';e.classList.add('show');
+      setTimeout(()=>{e.classList.remove('show');pmBuf='';for(let i=0;i<4;i++) document.getElementById('pmd'+i).classList.remove('on');},1500);
+    }
+  }
+}
+
+async function confirmUse(){
+  if(!pendingVerify||!urlCouponId)return;
+  const snap=await db.ref('coupons/'+urlCouponId).once('value');
+  if(!snap.exists()||snap.val().used){showToast('이미 사용된 쿠폰입니다','err');document.getElementById('success-bg').classList.remove('show');pendingVerify=false;return;}
+  await db.ref('coupons/'+urlCouponId).update({used:true,usedAt:new Date().toISOString()});
+  pendingVerify=false;document.getElementById('success-bg').classList.remove('show');
+  showToast('✓ 쿠폰 사용 처리 완료','ok');
+}
 
 // ── 다국어 ──
-var T = {
+const LANG_T = {
   ko: {
-    pinLbl:'PIN 입력',
-    guestLabel:'내 스탬프 카드 보기',
-    guestHint:'전화번호로 바로 접속',
-    staffLogin:'🔒 직원 로그인', guestBtn:'📱 내 스탬프 보기', pinErr:'PIN이 올바르지 않습니다',
-    phTitle:'전화번호로 접속', phSub:'등록된 전화번호를 입력하세요\n처음이라면 직원에게 등록을 요청하세요',
-    phGo:'스탬프 카드 열기', phBack:'← 뒤로', phNotFound:'등록되지 않은 번호입니다',
-    scTitle:'스탬프 카드', ssl1:'1-10번째', ssl2:'11-20번째',
-    r10n:'10번째', r10v:'음료 무료', r20n:'20번째', r20v:'Kingbap 무료',
-    progLbl:'다음 리워드까지', progLeft:'개 남음', allDone:'모든 리워드 달성! 🎉',
-    qrcT:'내 QR 코드', qrH:'직원에게 스캔을 요청하세요',
-    ahT:'홈 화면에 추가하면 앱처럼!', ahD:'Safari → 공유 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"',
-    staffLbl:'직원', backBtn:'← 나가기', searchLbl:'전화번호로 고객 조회',
-    sBtn:'조회', newLbl:'신규 고객', listLbl:'고객 명단', ncBtn:'+ 신규 고객 등록',
-    addBtn:'🐱 스탬프 적립', rb10:'☕ 음료 무료 리워드 사용', rb20:'🍚 Kingbap 무료 리워드 사용',
-    thN:'이름', thP:'전화번호', thS:'스탬프',
-    nt:'신규 고객 등록', ns:'이름과 전화번호를 입력하면\n스탬프 카드가 발급됩니다',
-    flN:'이름', flP:'전화번호', crBtn:'카드 발급하기', bk:'← 돌아가기',
-    mTitle:'고객 정보 수정', mlN:'이름', mlP:'전화번호', mlS:'스탬프 수 (직접 수정)',
-    mCancel:'취소', mDel:'🗑 삭제', mSave:'저장', mDelConfirm:'정말 삭제하시겠습니까?',
-    rw10t:'음료 무료!', rw10d:'10번째 스탬프 달성!\n음료 1잔이 무료입니다 ☕',
-    rw20t:'Kingbap 무료!', rw20d:'20번째 스탬프 달성!\nKingbap 1인 무료 시식권입니다 🍚',
-    rwB:'확인',
-    ra10title:'🎉 음료 무료 리워드 달성!', ra10desc:'직원에게 말씀해주세요',
-    ra20title:'🎉 Kingbap 무료 리워드 달성!', ra20desc:'직원에게 말씀해주세요',
-    installBtn:'홈 화면에 앱 추가',
-    iosS1:'하단 공유 버튼 탭 ⬆️', iosS2:'"홈 화면에 추가" 선택 ➕', iosS3:'"추가" 탭 ✓', iosClose:'닫기', langMini:'🌐 언어',
-    tStamp:'님 스탬프 적립! 🐱', tReward:'리워드 사용 완료 ✓', tCreated:'카드 발급 완료! ',
-    tSaved:'수정 완료 ✓', tDeleted:'삭제 완료', tName:'이름을 입력해주세요',
-    tPhone:'전화번호를 입력해주세요', tNotFound:'등록되지 않은 번호입니다', tLoading:'불러오는 중...'
+    pinTitle:'PIN 입력 · Ingresa el PIN',
+    roleTitle:'발급자 구분', srcTitle:'쿠폰 경로', noteTitle:'메모 (선택)',
+    issueBtn:'🎟️ 쿠폰 발급하기',
+    roleGuide:'가이드', roleAnnyeong:'안녕세비야', roleChalcak:'찰칵세비야',
+    srcTour:'가이드 투어', srcGuest:'민박 투숙', srcSnap:'스냅 촬영',
+    notePh:'예: 투어 그룹 A ...',
+    resultTop:'✅ 쿠폰 발급 완료',
+    shareBtn:'📤 공유하기', newBtn:'+ 새 발급',
+    couponTop:'📲 Kingbap · 음료 무료 쿠폰',
+    benefitBadge:'DRINK COUPON', benefitMain:'🥤 음료 무료 업그레이드',
+    benefitEs:'Bebida gratis con tu pedido',
+    howTitle:'이용 방법 · Cómo usar',
+    how1:'Kingbap 방문 후 주문', how2:'이 화면을 직원에게', how3:'음료 1잔 무료! 🥤',
+    footerTerms:'1인 1매 · 1회 사용 후 소멸<br>No acumulable',
+    verifyBtn:'✓ 킹밥 직원 사용 처리', verifyHint:'킹밥 직원만 누르세요',
+    staffTitle:'직원 확인', staffSub:'킹밥 직원 PIN 입력', pinErr:'PIN이 올바르지 않습니다',
+    sucTitle:'사용 완료!', sucBtn:'확인 · OK'
   },
   es: {
-    pinLbl:'Ingresa el PIN',
-    guestLabel:'Ver mi tarjeta de sellos',
-    guestHint:'Accede con tu teléfono',
-    staffLogin:'🔒 Acceso personal', guestBtn:'📱 Ver mis sellos', pinErr:'PIN incorrecto',
-    phTitle:'Acceso con teléfono', phSub:'Ingresa tu número registrado\nSi es tu primera vez, pídele al personal',
-    phGo:'Abrir mi tarjeta', phBack:'← Volver', phNotFound:'Número no registrado',
-    scTitle:'Tarjeta de sellos', ssl1:'Sellos 1-10', ssl2:'Sellos 11-20',
-    r10n:'Sello 10', r10v:'Bebida gratis', r20n:'Sello 20', r20v:'Kingbap gratis',
-    progLbl:'Hasta el próximo premio', progLeft:' restantes', allDone:'¡Todos los premios! 🎉',
-    qrcT:'Mi código QR', qrH:'Muéstraselo al personal',
-    ahT:'¡Añade a pantalla de inicio!', ahD:'Safari → Compartir → "Añadir a inicio"',
-    staffLbl:'Personal', backBtn:'← Salir', searchLbl:'Buscar por teléfono',
-    sBtn:'Buscar', newLbl:'Nuevo cliente', listLbl:'Lista de clientes', ncBtn:'+ Registrar cliente',
-    addBtn:'🐱 Añadir sello', rb10:'☕ Canjear bebida gratis', rb20:'🍚 Canjear Kingbap gratis',
-    thN:'Nombre', thP:'Teléfono', thS:'Sellos',
-    nt:'Registro de cliente', ns:'Escribe nombre y teléfono\npara obtener tu tarjeta',
-    flN:'Nombre', flP:'Teléfono', crBtn:'Crear tarjeta', bk:'← Volver',
-    mTitle:'Editar cliente', mlN:'Nombre', mlP:'Teléfono', mlS:'Sellos (editar)',
-    mCancel:'Cancelar', mDel:'🗑 Eliminar', mSave:'Guardar', mDelConfirm:'¿Eliminar este cliente?',
-    rw10t:'¡Bebida gratis!', rw10d:'¡Sello 10 conseguido!\nTu bebida es gratis ☕',
-    rw20t:'¡Kingbap gratis!', rw20d:'¡Sello 20 conseguido!\nKingbap gratis 🍚',
-    rwB:'OK',
-    ra10title:'🎉 Free drink reward unlocked!', ra10desc:'Tell the staff',
-    ra20title:'🎉 Free Kingbap reward unlocked!', ra20desc:'Tell the staff',
-    ra10title:'🎉 ¡Premio bebida gratis!', ra10desc:'Díselo al personal',
-    ra20title:'🎉 ¡Premio Kingbap gratis!', ra20desc:'Díselo al personal',rwB:'OK',
-    installBtn:'Añadir a pantalla de inicio',
-    iosS1:'Toca el botón Compartir ⬆️', iosS2:'Selecciona "Añadir a inicio" ➕', iosS3:'Toca "Añadir" ✓', iosClose:'Cerrar', langMini:'🌐 Idioma',
-    tStamp:' — ¡sello añadido! 🐱', tReward:'Premio canjeado ✓', tCreated:'¡Tarjeta creada! ',
-    tSaved:'Guardado ✓', tDeleted:'Eliminado', tName:'Escribe tu nombre',
-    tPhone:'Escribe tu teléfono', tNotFound:'Número no registrado', tLoading:'Cargando...'
-  },
-  en: {
-    pinLbl:'Enter PIN',
-    guestLabel:'View my stamp card',
-    guestHint:'Access with your phone number',
-    staffLogin:'🔒 Staff login', guestBtn:'📱 View my stamps', pinErr:'Incorrect PIN',
-    phTitle:'Access with phone number', phSub:'Enter your registered phone number\nFirst time? Ask staff to register you',
-    phGo:'Open my stamp card', phBack:'← Back', phNotFound:'Phone number not found',
-    scTitle:'Stamp Card', ssl1:'Stamps 1-10', ssl2:'Stamps 11-20',
-    r10n:'10th stamp', r10v:'Free drink', r20n:'20th stamp', r20v:'Free Kingbap',
-    progLbl:'Until next reward', progLeft:' left', allDone:'All rewards unlocked! 🎉',
-    qrcT:'My QR code', qrH:'Show this to the staff',
-    ahT:'Add to home screen for app-like use!', ahD:'Safari → Share → "Add to Home Screen"',
-    staffLbl:'Staff', backBtn:'← Exit', searchLbl:'Search customer by phone',
-    sBtn:'Search', newLbl:'New customer', listLbl:'Customer list', ncBtn:'+ Register customer',
-    addBtn:'🐱 Add stamp', rb10:'☕ Use free drink reward', rb20:'🍚 Use free Kingbap reward',
-    thN:'Name', thP:'Phone', thS:'Stamps',
-    nt:'New customer', ns:'Enter name and phone number\nto get a stamp card',
-    flN:'Name', flP:'Phone number', crBtn:'Create card', bk:'← Back',
-    mTitle:'Edit customer', mlN:'Name', mlP:'Phone', mlS:'Stamps (edit)',
-    mCancel:'Cancel', mDel:'🗑 Delete', mSave:'Save', mDelConfirm:'Delete this customer?',
-    rw10t:'Free drink!', rw10d:'10th stamp achieved!\nYou get a free drink ☕',
-    rw20t:'Free Kingbap!', rw20d:'20th stamp achieved!\nFree Kingbap 🍚',
-    rwB:'OK',
-    installBtn:'Add to Home Screen',
-    iosS1:'Tap the Share button ⬆️', iosS2:'Select "Add to Home Screen" ➕', iosS3:'Tap "Add" ✓', iosClose:'Close', langMini:'🌐 Language',
-    tStamp:' — stamp added! 🐱', tReward:'Reward used ✓', tCreated:'Card created! ',
-    tSaved:'Saved ✓', tDeleted:'Deleted', tName:'Please enter name',
-    tPhone:'Please enter phone number', tNotFound:'Phone number not found', tLoading:'Loading...'
+    pinTitle:'Ingresa el PIN',
+    roleTitle:'Tipo de emisor', srcTitle:'Canal de origen', noteTitle:'Nota (opcional)',
+    issueBtn:'🎟️ Emitir cupón',
+    roleGuide:'Guía', roleAnnyeong:'Annyeong Sev.', roleChalcak:'Chalcak Sev.',
+    srcTour:'Tour guiado', srcGuest:'Alojamiento', srcSnap:'Sesión foto',
+    notePh:'Ej: Grupo A, 27/3 ...',
+    resultTop:'✅ Cupón emitido',
+    shareBtn:'📤 Compartir', newBtn:'+ Nuevo',
+    couponTop:'📲 Kingbap · Bebida gratis',
+    benefitBadge:'DRINK COUPON', benefitMain:'🥤 Bebida gratis',
+    benefitEs:'Con tu pedido de cup rice',
+    howTitle:'Cómo usar · 이용 방법',
+    how1:'Visita Kingbap y pide', how2:'Muestra esta pantalla', how3:'¡Bebida gratis! 🥤',
+    footerTerms:'1 por persona · Un solo uso<br>1인 1매 · 1회',
+    verifyBtn:'✓ Canjear cupón (personal)', verifyHint:'Solo para el personal de Kingbap',
+    staffTitle:'Verificación', staffSub:'PIN del personal de Kingbap', pinErr:'PIN incorrecto',
+    sucTitle:'¡Canjeado!', sucBtn:'OK · 확인'
   }
 };
 
-var lang = 'ko';
-var pinBuf = '';
-var curPage = 0;
-var searchedPhone = null;
-var rewardFrom = 'p-staff';
-var editingPhone = null;
+var couponLang = 'ko';
 
-// 전화번호 포맷
-function fmtPhone(el) {
-  var v = el.value.replace(/\D/g, '');
-  if (v.length <= 3) el.value = v;
-  else if (v.length <= 6) el.value = v.slice(0,3) + '-' + v.slice(3);
-  else el.value = v.slice(0,3) + '-' + v.slice(3,6) + '-' + v.slice(6,9);
-}
-
-function phoneKey(p) { return 'phone_' + p.replace(/\D/g, ''); }
-
-// 페이지 순서 맵 (ID → 인덱스)
-var PAGE_INDEX = {
-  'p-lang': 0,
-  'p-pin': 1,
-  'p-pin2': 2,
-  'p-phone': 3,
-  'p-card': 4,
-  'p-staff': 5,
-  'p-new': 6,
-  'p-reward': 7
-};
-
-function goTo(n) {
-  // n이 문자열이면 ID로 처리, 숫자면 인덱스로 처리
-  if (typeof n === 'string') n = PAGE_INDEX[n] || 0;
-  curPage = n;
-  document.getElementById('pager').style.transform = 'translateX(-' + (n * (100/8)) + '%)';
-}
-
-// 이벤트 바인딩 (onclick 속성 대신 addEventListener 사용 - 파싱 오류 방지)
-function bindEvents() {
-  // 언어 버튼
-  document.getElementById('lb-ko').addEventListener('click', function() { setLang('ko'); });
-  document.getElementById('lb-es').addEventListener('click', function() { setLang('es'); });
-  document.getElementById('lb-en').addEventListener('click', function() { setLang('en'); });
-
-  // PIN 패드
-  ['1','2','3','4','5','6','7','8','9','0'].forEach(function(n) {
-    document.getElementById('p' + n).addEventListener('click', function() { ep(n); });
+function setCouponLang(l) {
+  couponLang = l;
+  const t = LANG_T[l];
+  document.getElementById('lb-ko').className = 'lb' + (l==='ko'?' active':'');
+  document.getElementById('lb-es').className = 'lb' + (l==='es'?' active':'');
+  const pt = document.querySelector('.pin-title');
+  if(pt) pt.textContent = t.pinTitle;
+  const sls = document.querySelectorAll('.sec-label');
+  if(sls[0]) sls[0].textContent = t.roleTitle;
+  if(sls[1]) sls[1].textContent = t.srcTitle;
+  if(sls[2]) sls[2].textContent = t.noteTitle;
+  const ib = document.getElementById('issue-btn');
+  if(ib) ib.textContent = t.issueBtn;
+  const lbls = document.querySelectorAll('.btn-grid .sel-btn .lbl');
+  if(lbls[0]) lbls[0].textContent = t.roleGuide;
+  if(lbls[1]) lbls[1].textContent = t.roleAnnyeong;
+  if(lbls[2]) lbls[2].textContent = t.roleChalcak;
+  if(lbls[3]) lbls[3].textContent = t.srcTour;
+  if(lbls[4]) lbls[4].textContent = t.srcGuest;
+  if(lbls[5]) lbls[5].textContent = t.srcSnap;
+  const ni = document.getElementById('note-inp');
+  if(ni) ni.placeholder = t.notePh;
+  const rt = document.querySelector('#p-result .page-top-lbl');
+  if(rt) rt.textContent = t.resultTop;
+  const sb = document.querySelector('.share-btn');
+  if(sb) sb.textContent = t.shareBtn;
+  const nb = document.querySelector('.new-btn');
+  if(nb) nb.textContent = t.newBtn;
+  document.querySelectorAll('.benefit-badge').forEach(el => el.textContent = t.benefitBadge);
+  document.querySelectorAll('.benefit-main').forEach(el => el.textContent = t.benefitMain);
+  document.querySelectorAll('.benefit-es').forEach(el => el.textContent = t.benefitEs);
+  document.querySelectorAll('.how-title').forEach(el => el.textContent = t.howTitle);
+  document.querySelectorAll('.how-steps').forEach(ul => {
+    const li = ul.querySelectorAll('li');
+    if(li[0]) li[0].innerHTML = '<span class="step-num">1</span>' + t.how1;
+    if(li[1]) li[1].innerHTML = '<span class="step-num">2</span>' + t.how2;
+    if(li[2]) li[2].innerHTML = '<span class="step-num">3</span>' + t.how3;
   });
-  document.getElementById('pdel').addEventListener('click', function() { ep('del'); });
-  document.getElementById('pclr').addEventListener('click', function() { ep('clr'); });
-
-  // 홈 버튼
-  document.getElementById('guest-btn').addEventListener('click', function() { goTo('p-phone'); });
-  document.getElementById('staff-login-btn').addEventListener('click', function() { goTo('p-pin2'); });
-  document.getElementById('pin-back').addEventListener('click', function() { goTo('p-pin'); });
-
-  // 전화번호 페이지
-  document.getElementById('ph-inp').addEventListener('input', function() { fmtPhone(this); });
-  document.getElementById('ph-inp').addEventListener('keydown', function(e) { if(e.key==='Enter') findByPhone(); });
-  document.getElementById('ph-go').addEventListener('click', findByPhone);
-  document.getElementById('ph-back').addEventListener('click', function() { goTo('p-pin'); });
-
-  // 언어 미니
-  document.getElementById('lang-mini').addEventListener('click', function() { goTo('p-lang'); });
-
-  // 직원
-  document.getElementById('back-btn').addEventListener('click', function() { goTo('p-pin'); });
-  document.getElementById('si').addEventListener('input', function() { fmtPhone(this); });
-  document.getElementById('s-btn').addEventListener('click', staffSearch);
-  document.getElementById('add-btn').addEventListener('click', addStamp);
-  document.getElementById('rb10').addEventListener('click', function() { useReward(10); });
-  document.getElementById('rb20').addEventListener('click', function() { useReward(20); });
-  document.getElementById('nc-btn').addEventListener('click', function() { goTo('p-new'); });
-
-  // 신규 고객
-  document.getElementById('np-inp').addEventListener('input', function() { fmtPhone(this); });
-  document.getElementById('cr-btn').addEventListener('click', createCustomer);
-  document.getElementById('bk').addEventListener('click', function() { goTo('p-staff'); });
-
-  // 리워드
-  document.getElementById('rw-b').addEventListener('click', function() { goTo(rewardFrom); });
-
-  // 홈화면 추가 (요소가 없을 수 있으므로 안전하게 처리)
-  var ahx = document.getElementById('ah-x');
-  if (ahx) ahx.addEventListener('click', function() {
-    document.getElementById('ahb').style.display = 'none';
-  });
-  var iosClose = document.getElementById('ios-close');
-  if (iosClose) iosClose.addEventListener('click', function() {
-    var ig = document.getElementById('ios-guide');
-    if (ig) ig.style.display = 'none';
-  });
-
-  // 편집 모달
-  document.getElementById('mbg').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('show');
-  });
-  document.getElementById('m-phone').addEventListener('input', function() { fmtPhone(this); });
-  document.getElementById('m-cancel').addEventListener('click', function() { document.getElementById('mbg').classList.remove('show'); });
-  document.getElementById('del-cancel').addEventListener('click', function() { document.getElementById('del-modal').classList.remove('show'); });
-  document.getElementById('del-confirm').addEventListener('click', confirmDelete);
-  document.getElementById('del-modal').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('show');
-  });
-  document.getElementById('m-del').addEventListener('click', deleteCustomer);
-  document.getElementById('m-save').addEventListener('click', saveEdit);
+  document.querySelectorAll('.footer-terms').forEach(el => el.innerHTML = t.footerTerms);
+  const ct = document.querySelector('#p-coupon .page-top-lbl');
+  if(ct) ct.textContent = t.couponTop;
+  const vb = document.getElementById('verify-btn');
+  if(vb) vb.textContent = t.verifyBtn;
+  const vh = document.querySelector('.verify-hint');
+  if(vh) vh.textContent = t.verifyHint;
+  const pmt = document.querySelector('.pm-title');
+  if(pmt) pmt.textContent = t.staffTitle;
+  const pms = document.querySelector('.pm-sub');
+  if(pms) pms.textContent = t.staffSub;
+  const pme = document.getElementById('pm-err');
+  if(pme) pme.textContent = t.pinErr;
+  const st = document.querySelector('.success-title');
+  if(st) st.textContent = t.sucTitle;
+  const sc = document.querySelector('.success-close');
+  if(sc) sc.textContent = t.sucBtn;
 }
 
-// PWA 설치 프롬프트
-var deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  var btn = document.getElementById('install-btn');
-  btn.style.display = 'flex';
-  updateInstallBtn();
-});
-
-window.addEventListener('appinstalled', function() {
-  document.getElementById('install-btn').style.display = 'none';
-  document.getElementById('ahb').style.display = 'none';
-  deferredPrompt = null;
-});
-
-function updateInstallBtn() {
-  var btn = document.getElementById('install-btn');
-  if (!btn) return;
-  var t = T[lang];
-  btn.textContent = '📲 ' + (t.installBtn || '홈 화면에 앱 추가');
-  btn.onclick = function() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
-    }
-  };
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
-
-function showAddToHome() {
-  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  var isInStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  if (isInStandalone) {
-    document.getElementById('ahb').style.display = 'none';
-    return;
-  }
-  if (isIOS) {
-    document.getElementById('ios-guide').style.display = 'block';
-  } else if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
-  } else {
-    document.getElementById('ios-guide').style.display = 'block';
-  }
-}
-
-// ahb 클릭시 가이드 열기
-document.addEventListener('DOMContentLoaded', function() {
-  var ahb = document.getElementById('ahb');
-  if (ahb) {
-    var ahIcon = ahb.querySelector('.ah-icon');
-    var ahText = ahb.querySelector('.ah-text');
-    if (ahIcon) ahIcon.addEventListener('click', showAddToHome);
-    if (ahText) ahText.addEventListener('click', showAddToHome);
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      ahb.style.display = 'none';
-    }
-  }
-});
-
-function setLang(l) {
-  lang = l;
-  applyLang();
-  goTo('p-pin'); // home 페이지
-}
-
-function applyLang() {
-  var t = T[lang];
-  document.getElementById('pin-lbl').textContent = t.pinLbl;
-  var guestLabel = document.getElementById('guest-label');
-  var guestHint = document.getElementById('guest-hint');
-  var staffLoginBtn = document.getElementById('staff-login-btn');
-  if (guestLabel) guestLabel.textContent = t.guestLabel || '내 스탬프 카드 보기';
-  if (guestHint) guestHint.textContent = t.guestHint || '전화번호로 바로 접속';
-  if (staffLoginBtn) staffLoginBtn.textContent = t.staffLogin || '🔒 직원 로그인';
-  document.getElementById('guest-btn').textContent = t.guestBtn;
-  document.getElementById('pin-err').textContent = t.pinErr;
-  document.getElementById('ph-title').textContent = t.phTitle;
-  document.getElementById('ph-sub').textContent = t.phSub;
-  document.getElementById('ph-go').textContent = t.phGo;
-  document.getElementById('ph-back').textContent = t.phBack;
-  document.getElementById('sc-title').textContent = t.scTitle;
-  document.getElementById('ssl1').textContent = t.ssl1;
-  document.getElementById('ssl2').textContent = t.ssl2;
-  document.getElementById('r10n').textContent = t.r10n;
-  document.getElementById('r10v').textContent = t.r10v;
-  document.getElementById('r20n').textContent = t.r20n;
-  document.getElementById('r20v').textContent = t.r20v;
-  document.getElementById('qrc-t').textContent = t.qrcT;
-  document.getElementById('qr-h').textContent = t.qrH;
-  document.getElementById('ah-t').textContent = t.ahT;
-  document.getElementById('ah-d').textContent = t.ahD;
-  document.getElementById('lang-mini').textContent = t.langMini;
-  document.getElementById('staff-lbl').textContent = t.staffLbl;
-  document.getElementById('back-btn').textContent = t.backBtn;
-  document.getElementById('search-lbl').textContent = t.searchLbl;
-  document.getElementById('s-btn').textContent = t.sBtn;
-  document.getElementById('new-lbl').textContent = t.newLbl;
-  document.getElementById('list-lbl').textContent = t.listLbl;
-  document.getElementById('nc-btn').textContent = t.ncBtn;
-  document.getElementById('add-btn').textContent = t.addBtn;
-  document.getElementById('rb10').textContent = t.rb10;
-  document.getElementById('rb20').textContent = t.rb20;
-  document.getElementById('th-n').textContent = t.thN;
-  document.getElementById('th-p').textContent = t.thP;
-  document.getElementById('th-s').textContent = t.thS;
-  document.getElementById('nt').textContent = t.nt;
-  document.getElementById('ns').textContent = t.ns;
-  document.getElementById('fl-n').textContent = t.flN;
-  document.getElementById('fl-p').textContent = t.flP;
-  document.getElementById('cr-btn').textContent = t.crBtn;
-  document.getElementById('bk').textContent = t.bk;
-  document.getElementById('m-title').textContent = t.mTitle;
-  document.getElementById('ml-n').textContent = t.mlN;
-  document.getElementById('ml-p').textContent = t.mlP;
-  document.getElementById('ml-s').textContent = t.mlS;
-  document.getElementById('m-cancel').textContent = t.mCancel;
-  document.getElementById('m-del').textContent = t.mDel;
-  document.getElementById('m-save').textContent = t.mSave;
-  document.getElementById('rw-b').textContent = t.rwB;
-  var delLabel = document.getElementById('del-label');
-  var delCancel = document.getElementById('del-cancel');
-  var delConfirm = document.getElementById('del-confirm');
-  if (delLabel) delLabel.textContent = t.mDelConfirm || '정말 삭제하시겠습니까?';
-  if (delCancel) delCancel.textContent = t.mCancel || '취소';
-  if (delConfirm) delConfirm.textContent = t.mDel ? t.mDel.replace('🗑 ', '') : '삭제';
-  var iosS1 = document.getElementById('ios-s1');
-  var iosS2 = document.getElementById('ios-s2');
-  var iosS3 = document.getElementById('ios-s3');
-  var iosClose = document.getElementById('ios-close');
-  var installBtn = document.getElementById('install-btn');
-  if (iosS1) iosS1.textContent = t.iosS1 || '하단 공유 버튼 탭';
-  if (iosS2) iosS2.textContent = t.iosS2 || '"홈 화면에 추가" 선택';
-  if (iosS3) iosS3.textContent = t.iosS3 || '"추가" 탭';
-  if (iosClose) iosClose.textContent = t.iosClose || '닫기';
-  if (installBtn && deferredPrompt) updateInstallBtn();
-  document.getElementById('ah-d').textContent = t.ahD || '';
-  document.getElementById('clist-loading').textContent = t.tLoading;
-}
-
-// PIN
-function ep(v) {
-  if (v === 'del') pinBuf = pinBuf.slice(0, -1);
-  else if (v === 'clr') pinBuf = '';
-  else if (pinBuf.length < 4) pinBuf += v;
-  for (var i = 0; i < 4; i++) document.getElementById('pd' + i).classList.toggle('on', i < pinBuf.length);
-  if (pinBuf.length === 4) {
-    if (pinBuf === PIN) {
-      pinBuf = '';
-      for (var i = 0; i < 4; i++) document.getElementById('pd' + i).classList.remove('on');
-      goTo('p-staff');
-      listenCustomerList();
-    } else {
-      var e = document.getElementById('pin-err');
-      e.classList.add('show');
-      setTimeout(function() {
-        e.classList.remove('show');
-        pinBuf = '';
-        for (var i = 0; i < 4; i++) document.getElementById('pd' + i).classList.remove('on');
-      }, 2000);
-    }
-  }
-}
-
-// 고객: 전화번호로 카드 열기
-function findByPhone() {
-  var phone = document.getElementById('ph-inp').value.trim();
-  if (!phone) { showToast(T[lang].tPhone); return; }
-  var key = phoneKey(phone);
-  db.ref('ozik_customers/' + key).once('value').then(function(snap) {
-    if (!snap.exists()) { showToast(T[lang].phNotFound); return; }
-    loadCard(phone);
-    goTo('p-card');
-  });
-}
-
-function loadCard(phone) {
-  var link = location.origin + location.pathname + '?p=' + encodeURIComponent(phone) + '&lang=' + lang;
-  document.getElementById('qr-ph').textContent = phone;
-  document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' + encodeURIComponent(link);
-  db.ref('ozik_customers/' + phoneKey(phone)).on('value', function(snap) {
-    if (!snap.exists()) return;
-    var c = snap.val();
-    window._r10used = c.reward10used || false;
-    document.getElementById('sc-name').textContent = '🐱 ' + c.name;
-    renderStamps(c.stamps || 0);
-  });
-}
-
-function renderStamps(total) {
-  var t = T[lang];
-  document.getElementById('stamp-cnt').textContent = total;
-  [['sg1', 1], ['sg2', 11]].forEach(function(pair) {
-    var g = document.getElementById(pair[0]);
-    g.innerHTML = '';
-    for (var i = pair[1]; i < pair[1] + 10; i++) {
-      var filled = total >= i;
-      var el = document.createElement('div');
-      var cls = 'stamp ';
-      if (filled) { cls += (i === 10 ? 'f s10' : i === 20 ? 'f s20' : 'f sn'); }
-      else { cls += 'e'; }
-      el.className = cls;
-      el.textContent = filled ? (i === 10 ? '☕' : i === 20 ? '🍚' : '🐱') : '';
-      el.style.position = 'relative';
-      if (i === 10 || i === 20) {
-        var b = document.createElement('div');
-        b.className = 'fb ' + (i === 10 ? 'gd' : 'gr');
-        // 10번째 사용됐으면 USED 표시
-        if (i === 10 && window._r10used && total >= 10) {
-          b.textContent = 'USED';
-          b.style.background = '#aaa';
-        } else {
-          b.textContent = total >= i ? 'FREE' : '';
-        }
-        el.appendChild(b);
-      }
-      g.appendChild(el);
-    }
-  });
-  var next = total < 10 ? 10 : 20;
-  var base = total < 10 ? 0 : 10;
-  var pct = total >= 20 ? 100 : Math.min(((total - base) / (next - base)) * 100, 100);
-  document.getElementById('pf').style.width = pct + '%';
-  var remain = total >= 20 ? 0 : next - total;
-  document.getElementById('prog-lbl').textContent = total >= 20 ? t.allDone : t.progLbl;
-  document.getElementById('prog-cnt').textContent = total >= 20 ? '' : remain + t.progLeft;
-
-  // 리워드 달성 배너
-  var alert = document.getElementById('reward-alert');
-  var raIcon = document.getElementById('ra-icon');
-  var raTitle = document.getElementById('ra-title');
-  var raDesc = document.getElementById('ra-desc');
-  if (total >= 20) {
-    alert.className = 'reward-alert show green';
-    raIcon.textContent = '🍚';
-    raTitle.textContent = t.ra20title || 'Kingbap 무료 리워드 달성!';
-    raDesc.textContent = t.ra20desc || '직원에게 말씀해주세요 · Díselo al personal';
-  } else if (total >= 10 && !window._r10used) {
-    alert.className = 'reward-alert show';
-    raIcon.textContent = '☕';
-    raTitle.textContent = t.ra10title || '음료 무료 리워드 달성!';
-    raDesc.textContent = t.ra10desc || '직원에게 말씀해주세요 · Díselo al personal';
-  } else {
-    alert.className = 'reward-alert';
-  }
-}
-
-// 직원: 조회
-function staffSearch() {
-  var phone = document.getElementById('si').value.trim();
-  if (!phone) { showToast(T[lang].tPhone); return; }
-  db.ref('ozik_customers/' + phoneKey(phone)).once('value').then(function(snap) {
-    var rc = document.getElementById('rc');
-    if (!snap.exists()) { showToast(T[lang].tNotFound); rc.classList.remove('show'); return; }
-    var c = snap.val();
-    searchedPhone = phone;
-    document.getElementById('rc-name').textContent = c.name;
-    document.getElementById('rc-info').textContent = phone + ' · ' + (c.stamps || 0) + '/20';
-    var g = document.getElementById('rc-grid');
-    g.innerHTML = '';
-    for (var i = 0; i < 20; i++) {
-      var el = document.createElement('div');
-      var cls = 'rd ';
-      if (i < (c.stamps || 0)) cls += (i === 9 ? 'g' : i === 19 ? 'gr2' : 'on');
-      else cls += 'off';
-      el.className = cls;
-      el.textContent = i < (c.stamps || 0) ? (i === 9 ? '☕' : i === 19 ? '🍚' : '🐱') : '·';
-      g.appendChild(el);
-    }
-    var stamps = c.stamps || 0;
-    var r10used = c.reward10used || false;
-    // 10개 이상이고 아직 10번 리워드 안 썼을 때
-    document.getElementById('rb10').className = 'rwd-btn r10' + (stamps >= 10 && !r10used ? ' show' : '');
-    // 20개 이상일 때
-    document.getElementById('rb20').className = 'rwd-btn r20' + (stamps >= 20 ? ' show' : '');
-    rc.classList.add('show');
-  });
-}
-
-function addStamp() {
-  if (!searchedPhone) return;
-  var btn = document.getElementById('add-btn');
-  btn.disabled = true;
-  db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
-    var cu = snap.val();
-    var ns = (cu.stamps || 0) + 1;
-    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update({ stamps: ns, lastStamp: new Date().toISOString() }).then(function() {
-      showToast(cu.name + T[lang].tStamp);
-      // 리워드 버튼 즉시 업데이트
-      var r10used = cu.reward10used || false;
-      document.getElementById('rb10').className = 'rwd-btn r10' + (ns >= 10 && !r10used ? ' show' : '');
-      document.getElementById('rb20').className = 'rwd-btn r20' + (ns >= 20 ? ' show' : '');
-      document.getElementById('rc-info').textContent = searchedPhone + ' · ' + ns + '/20';
-      // 미니 그리드 마지막 점 업데이트
-      var grid = document.getElementById('rc-grid');
-      var dots = grid.querySelectorAll('.rd');
-      if (dots[ns-1]) {
-        dots[ns-1].className = 'rd ' + (ns-1 === 9 ? 'g' : ns-1 === 19 ? 'gr2' : 'on');
-        dots[ns-1].textContent = ns-1 === 9 ? '☕' : ns-1 === 19 ? '🍚' : '🐱';
-      }
-      // 10번째 달성
-      if (ns === 10 && !r10used) {
-        rewardFrom = 'p-staff'; showReward('☕', T[lang].rw10t, T[lang].rw10d);
-      }
-      // 20번째 달성
-      else if (ns === 20) {
-        rewardFrom = 'p-staff'; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
-      }
-    });
-  }).then(function() { btn.disabled = false; });
-}
-
-function useReward(n) {
-  if (!searchedPhone) return;
-  db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
-    var cu = snap.val();
-    var stamps = cu.stamps || 0;
-    var updates = {};
-    if (n === 10) {
-      // 10번째 사용: 사용 표시만, 스탬프는 유지 (계속 적립 가능)
-      updates.reward10used = true;
-      updates.stamps = stamps; // 그대로 유지
-    } else if (n === 20) {
-      // 20번째 사용: 완전 리셋
-      updates.reward10used = false;
-      updates.stamps = 0;
-    }
-    updates.lastReward = new Date().toISOString();
-    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update(updates);
-  }).then(function() {
-    showToast(T[lang].tReward, 'gold');
-    staffSearch();
-  });
-}
-
-function showReward(icon, title, desc) {
-  document.getElementById('rw-i').textContent = icon;
-  document.getElementById('rw-t').textContent = title;
-  document.getElementById('rw-d').textContent = desc;
-  goTo('p-reward');
-}
-
-// 신규 고객
-function createCustomer() {
-  var name = document.getElementById('n-inp').value.trim();
-  var phone = document.getElementById('np-inp').value.trim();
-  if (!name) { showToast(T[lang].tName); return; }
-  if (!phone) { showToast(T[lang].tPhone); return; }
-  var key = phoneKey(phone);
-  db.ref('ozik_customers/' + key).set({
-    name: name, phone: phone, stamps: 0, createdAt: new Date().toISOString()
-  }).then(function() {
-    document.getElementById('n-inp').value = '';
-    document.getElementById('np-inp').value = '';
-    showToast(T[lang].tCreated + name, 'gold');
-    document.getElementById('si').value = phone;
-    goTo('p-staff');
-    setTimeout(staffSearch, 400);
-  });
-}
-
-// 고객 명단
-function listenCustomerList() {
-  db.ref('ozik_customers').on('value', function(snap) {
-    var list = document.getElementById('clist');
-    if (!snap.exists()) {
-      list.innerHTML = '<div style="padding:14px;text-align:center;color:var(--tl);font-size:13px;">' + T[lang].tLoading + '</div>';
-      return;
-    }
-    var arr = [];
-    snap.forEach(function(s) { arr.push(s.val()); });
-    arr.sort(function(a, b) { return (b.stamps || 0) - (a.stamps || 0); });
-    list.innerHTML = '';
-    arr.forEach(function(c) {
-      var row = document.createElement('div');
-      row.className = 'ct-row';
-      var nameDiv = document.createElement('div');
-      nameDiv.className = 'ct-name';
-      nameDiv.textContent = c.name;
-      nameDiv.addEventListener('click', function() { quickLoad(c.phone); });
-      var phDiv = document.createElement('div');
-      phDiv.className = 'ct-ph';
-      phDiv.textContent = c.phone || '-';
-      phDiv.addEventListener('click', function() { quickLoad(c.phone); });
-      var rightDiv = document.createElement('div');
-      rightDiv.className = 'ct-right';
-      var stampsDiv = document.createElement('div');
-      stampsDiv.className = 'ct-s';
-      stampsDiv.innerHTML = (c.stamps || 0) + '<span>/20</span>';
-      var editBtn = document.createElement('button');
-      editBtn.className = 'edit-btn';
-      editBtn.textContent = '✏️';
-      (function(phone, name, stamps) {
-        editBtn.addEventListener('click', function() { openEdit(phone, name, stamps); });
-      })(c.phone, c.name, c.stamps || 0);
-      rightDiv.appendChild(stampsDiv);
-      rightDiv.appendChild(editBtn);
-      row.appendChild(nameDiv);
-      row.appendChild(phDiv);
-      row.appendChild(rightDiv);
-      list.appendChild(row);
-    });
-  });
-}
-
-function quickLoad(phone) {
-  document.getElementById('si').value = phone;
-  staffSearch();
-  document.getElementById('p-staff').scrollTo(0, 0);
-}
-
-// 편집 모달
-function openEdit(phone, name, stamps) {
-  editingPhone = phone;
-  document.getElementById('m-name').value = name;
-  document.getElementById('m-phone').value = phone;
-  document.getElementById('m-stamps').value = stamps;
-  document.getElementById('mbg').classList.add('show');
-}
-
-function saveEdit() {
-  if (!editingPhone) return;
-  var newName = document.getElementById('m-name').value.trim();
-  var newPhone = document.getElementById('m-phone').value.trim();
-  var newStamps = parseInt(document.getElementById('m-stamps').value) || 0;
-  if (!newName) { showToast(T[lang].tName); return; }
-  if (!newPhone) { showToast(T[lang].tPhone); return; }
-  newStamps = Math.min(20, Math.max(0, newStamps));
-  var oldKey = phoneKey(editingPhone);
-  var newKey = phoneKey(newPhone);
-  var p;
-  if (oldKey !== newKey) {
-    p = db.ref('ozik_customers/' + oldKey).once('value').then(function(snap) {
-      var old = snap.val();
-      return db.ref('ozik_customers/' + newKey).set(Object.assign({}, old, { name: newName, phone: newPhone, stamps: newStamps }));
-    }).then(function() {
-      return db.ref('ozik_customers/' + oldKey).remove();
-    });
-  } else {
-    p = db.ref('ozik_customers/' + oldKey).update({ name: newName, phone: newPhone, stamps: newStamps });
-  }
-  p.then(function() {
-    document.getElementById('mbg').classList.remove('show');
-    showToast(T[lang].tSaved, 'gold');
-    if (searchedPhone === editingPhone) {
-      document.getElementById('si').value = newPhone;
-      searchedPhone = newPhone;
-      staffSearch();
-    }
-    editingPhone = null;
-  });
-}
-
-function deleteCustomer() {
-  if (!editingPhone) return;
-  var name = document.getElementById('m-name').value.trim();
-  // 커스텀 확인 모달 표시
-  document.getElementById('del-name').textContent = name + ' (' + editingPhone + ')';
-  document.getElementById('del-modal').classList.add('show');
-}
-
-function confirmDelete() {
-  document.getElementById('del-modal').classList.remove('show');
-  if (!editingPhone) return;
-  db.ref('ozik_customers/' + phoneKey(editingPhone)).remove().then(function() {
-    document.getElementById('mbg').classList.remove('show');
-    document.getElementById('rc').classList.remove('show');
-    searchedPhone = null;
-    editingPhone = null;
-    showToast(T[lang].tDeleted);
-  });
-}
-
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' ' + type : '');
-  setTimeout(function() { t.classList.remove('show'); }, 3000);
-}
-
-// URL 체크 & 초기화
-var urlPhone = new URLSearchParams(location.search).get('p');
-var urlLang = new URLSearchParams(location.search).get('lang');
-if (urlLang && T[urlLang]) lang = urlLang;
-applyLang();
-bindEvents();
-if (urlPhone) { loadCard(urlPhone); goTo('p-card'); }
-else { goTo('p-lang'); }
 </script>
 </body>
 </html>
