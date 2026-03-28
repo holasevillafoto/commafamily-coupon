@@ -521,12 +521,15 @@ function bindEvents() {
   // 리워드
   document.getElementById('rw-b').addEventListener('click', function() { goTo(rewardFrom); });
 
-  // 홈화면 추가
-  document.getElementById('ah-x').addEventListener('click', function() {
+  // 홈화면 추가 (요소가 없을 수 있으므로 안전하게 처리)
+  var ahx = document.getElementById('ah-x');
+  if (ahx) ahx.addEventListener('click', function() {
     document.getElementById('ahb').style.display = 'none';
   });
-  document.getElementById('ios-close').addEventListener('click', function() {
-    document.getElementById('ios-guide').style.display = 'none';
+  var iosClose = document.getElementById('ios-close');
+  if (iosClose) iosClose.addEventListener('click', function() {
+    var ig = document.getElementById('ios-guide');
+    if (ig) ig.style.display = 'none';
   });
 
   // 편집 모달
@@ -557,8 +560,9 @@ window.addEventListener('appinstalled', function() {
 });
 
 function updateInstallBtn() {
-  var t = T[lang];
   var btn = document.getElementById('install-btn');
+  if (!btn) return;
+  var t = T[lang];
   btn.textContent = '📲 ' + (t.installBtn || '홈 화면에 앱 추가');
   btn.onclick = function() {
     if (deferredPrompt) {
@@ -589,12 +593,13 @@ function showAddToHome() {
 document.addEventListener('DOMContentLoaded', function() {
   var ahb = document.getElementById('ahb');
   if (ahb) {
-    ahb.querySelector('.ah-icon').addEventListener('click', showAddToHome);
-    ahb.querySelector('.ah-text').addEventListener('click', showAddToHome);
-  }
-  // 이미 설치된 경우 배너 숨기기
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    document.getElementById('ahb').style.display = 'none';
+    var ahIcon = ahb.querySelector('.ah-icon');
+    var ahText = ahb.querySelector('.ah-text');
+    if (ahIcon) ahIcon.addEventListener('click', showAddToHome);
+    if (ahText) ahText.addEventListener('click', showAddToHome);
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      ahb.style.display = 'none';
+    }
   }
 });
 
@@ -709,6 +714,7 @@ function loadCard(phone) {
   db.ref('ozik_customers/' + phoneKey(phone)).on('value', function(snap) {
     if (!snap.exists()) return;
     var c = snap.val();
+    window._r10used = c.reward10used || false;
     document.getElementById('sc-name').textContent = '🐱 ' + c.name;
     renderStamps(c.stamps || 0);
   });
@@ -732,7 +738,13 @@ function renderStamps(total) {
       if (i === 10 || i === 20) {
         var b = document.createElement('div');
         b.className = 'fb ' + (i === 10 ? 'gd' : 'gr');
-        b.textContent = 'FREE';
+        // 10번째 사용됐으면 USED 표시
+        if (i === 10 && window._r10used && total >= 10) {
+          b.textContent = 'USED';
+          b.style.background = '#aaa';
+        } else {
+          b.textContent = total >= i ? 'FREE' : '';
+        }
         el.appendChild(b);
       }
       g.appendChild(el);
@@ -756,7 +768,7 @@ function renderStamps(total) {
     raIcon.textContent = '🍚';
     raTitle.textContent = t.ra20title || 'Kingbap 무료 리워드 달성!';
     raDesc.textContent = t.ra20desc || '직원에게 말씀해주세요 · Díselo al personal';
-  } else if (total >= 10) {
+  } else if (total >= 10 && !window._r10used) {
     alert.className = 'reward-alert show';
     raIcon.textContent = '☕';
     raTitle.textContent = t.ra10title || '음료 무료 리워드 달성!';
@@ -788,8 +800,12 @@ function staffSearch() {
       el.textContent = i < (c.stamps || 0) ? (i === 9 ? '☕' : i === 19 ? '🍚' : '🐱') : '·';
       g.appendChild(el);
     }
-    document.getElementById('rb10').className = 'rwd-btn r10' + ((c.stamps || 0) >= 10 ? ' show' : '');
-    document.getElementById('rb20').className = 'rwd-btn r20' + ((c.stamps || 0) >= 20 ? ' show' : '');
+    var stamps = c.stamps || 0;
+    var r10used = c.reward10used || false;
+    // 10개 이상이고 아직 10번 리워드 안 썼을 때
+    document.getElementById('rb10').className = 'rwd-btn r10' + (stamps >= 10 && !r10used ? ' show' : '');
+    // 20개 이상일 때
+    document.getElementById('rb20').className = 'rwd-btn r20' + (stamps >= 20 ? ' show' : '');
     rc.classList.add('show');
   });
 }
@@ -803,8 +819,14 @@ function addStamp() {
     var ns = (c.stamps || 0) + 1;
     return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update({ stamps: ns, lastStamp: new Date().toISOString() }).then(function() {
       showToast(c.name + T[lang].tStamp);
-      if (ns === 10) { rewardFrom = 4; showReward('☕', T[lang].rw10t, T[lang].rw10d); }
-      else if (ns === 20) { rewardFrom = 4; showReward('🍚', T[lang].rw20t, T[lang].rw20d); }
+      // 10번째 달성 (아직 10번 리워드 안 썼을 때만)
+      if (ns === 10 && !(cu.reward10used)) {
+        rewardFrom = 4; showReward('☕', T[lang].rw10t, T[lang].rw10d);
+      }
+      // 20번째 달성
+      else if (ns === 20) {
+        rewardFrom = 4; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
+      }
       return staffSearch();
     });
   }).then(function() { btn.disabled = false; });
@@ -813,9 +835,20 @@ function addStamp() {
 function useReward(n) {
   if (!searchedPhone) return;
   db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
-    var c = snap.val();
-    var ns = Math.max(0, (c.stamps || 0) - n);
-    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update({ stamps: ns });
+    var cu = snap.val();
+    var stamps = cu.stamps || 0;
+    var updates = {};
+    if (n === 10) {
+      // 10번째 사용: 사용 표시만, 스탬프는 유지 (계속 적립 가능)
+      updates.reward10used = true;
+      updates.stamps = stamps; // 그대로 유지
+    } else if (n === 20) {
+      // 20번째 사용: 완전 리셋
+      updates.reward10used = false;
+      updates.stamps = 0;
+    }
+    updates.lastReward = new Date().toISOString();
+    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update(updates);
   }).then(function() {
     showToast(T[lang].tReward, 'gold');
     staffSearch();
