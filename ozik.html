@@ -496,7 +496,7 @@ var lang = 'ko';
 var pinBuf = '';
 var curPage = 0;
 var searchedPhone = null;
-var rewardFrom = 5;
+var rewardFrom = 'p-staff';
 var editingPhone = null;
 
 // 전화번호 포맷
@@ -509,7 +509,21 @@ function fmtPhone(el) {
 
 function phoneKey(p) { return 'phone_' + p.replace(/\D/g, ''); }
 
+// 페이지 순서 맵 (ID → 인덱스)
+var PAGE_INDEX = {
+  'p-lang': 0,
+  'p-pin': 1,
+  'p-pin2': 2,
+  'p-phone': 3,
+  'p-card': 4,
+  'p-staff': 5,
+  'p-new': 6,
+  'p-reward': 7
+};
+
 function goTo(n) {
+  // n이 문자열이면 ID로 처리, 숫자면 인덱스로 처리
+  if (typeof n === 'string') n = PAGE_INDEX[n] || 0;
   curPage = n;
   document.getElementById('pager').style.transform = 'translateX(-' + (n * (100/8)) + '%)';
 }
@@ -528,33 +542,33 @@ function bindEvents() {
   document.getElementById('pdel').addEventListener('click', function() { ep('del'); });
   document.getElementById('pclr').addEventListener('click', function() { ep('clr'); });
 
-  // 게스트 버튼
-  document.getElementById('guest-btn').addEventListener('click', function() { goTo(3); });
-  document.getElementById('staff-login-btn').addEventListener('click', function() { goTo(2); });
-  document.getElementById('pin-back').addEventListener('click', function() { goTo(1); });
+  // 홈 버튼
+  document.getElementById('guest-btn').addEventListener('click', function() { goTo('p-phone'); });
+  document.getElementById('staff-login-btn').addEventListener('click', function() { goTo('p-pin2'); });
+  document.getElementById('pin-back').addEventListener('click', function() { goTo('p-pin'); });
 
   // 전화번호 페이지
   document.getElementById('ph-inp').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('ph-inp').addEventListener('keydown', function(e) { if(e.key==='Enter') findByPhone(); });
   document.getElementById('ph-go').addEventListener('click', findByPhone);
-  document.getElementById('ph-back').addEventListener('click', function() { goTo(1); });
+  document.getElementById('ph-back').addEventListener('click', function() { goTo('p-pin'); });
 
   // 언어 미니
-  document.getElementById('lang-mini').addEventListener('click', function() { goTo(0); });
+  document.getElementById('lang-mini').addEventListener('click', function() { goTo('p-lang'); });
 
   // 직원
-  document.getElementById('back-btn').addEventListener('click', function() { goTo(1); });
+  document.getElementById('back-btn').addEventListener('click', function() { goTo('p-pin'); });
   document.getElementById('si').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('s-btn').addEventListener('click', staffSearch);
   document.getElementById('add-btn').addEventListener('click', addStamp);
   document.getElementById('rb10').addEventListener('click', function() { useReward(10); });
   document.getElementById('rb20').addEventListener('click', function() { useReward(20); });
-  document.getElementById('nc-btn').addEventListener('click', function() { goTo(6); });
+  document.getElementById('nc-btn').addEventListener('click', function() { goTo('p-new'); });
 
   // 신규 고객
   document.getElementById('np-inp').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('cr-btn').addEventListener('click', createCustomer);
-  document.getElementById('bk').addEventListener('click', function() { goTo(5); });
+  document.getElementById('bk').addEventListener('click', function() { goTo('p-staff'); });
 
   // 리워드
   document.getElementById('rw-b').addEventListener('click', function() { goTo(rewardFrom); });
@@ -644,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function setLang(l) {
   lang = l;
   applyLang();
-  goTo(1); // home 페이지
+  goTo('p-pin'); // home 페이지
 }
 
 function applyLang() {
@@ -725,7 +739,7 @@ function ep(v) {
     if (pinBuf === PIN) {
       pinBuf = '';
       for (var i = 0; i < 4; i++) document.getElementById('pd' + i).classList.remove('on');
-      goTo(4);
+      goTo('p-staff');
       listenCustomerList();
     } else {
       var e = document.getElementById('pin-err');
@@ -747,7 +761,7 @@ function findByPhone() {
   db.ref('ozik_customers/' + key).once('value').then(function(snap) {
     if (!snap.exists()) { showToast(T[lang].phNotFound); return; }
     loadCard(phone);
-    goTo(4);
+    goTo('p-card');
   });
 }
 
@@ -877,11 +891,11 @@ function addStamp() {
       }
       // 10번째 달성
       if (ns === 10 && !r10used) {
-        rewardFrom = 5; showReward('☕', T[lang].rw10t, T[lang].rw10d);
+        rewardFrom = 'p-staff'; showReward('☕', T[lang].rw10t, T[lang].rw10d);
       }
       // 20번째 달성
       else if (ns === 20) {
-        rewardFrom = 5; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
+        rewardFrom = 'p-staff'; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
       }
     });
   }).then(function() { btn.disabled = false; });
@@ -914,7 +928,7 @@ function showReward(icon, title, desc) {
   document.getElementById('rw-i').textContent = icon;
   document.getElementById('rw-t').textContent = title;
   document.getElementById('rw-d').textContent = desc;
-  goTo(6);
+  goTo('p-reward');
 }
 
 // 신규 고객
@@ -931,7 +945,7 @@ function createCustomer() {
     document.getElementById('np-inp').value = '';
     showToast(T[lang].tCreated + name, 'gold');
     document.getElementById('si').value = phone;
-    goTo(4);
+    goTo('p-staff');
     setTimeout(staffSearch, 400);
   });
 }
@@ -1054,8 +1068,8 @@ var urlLang = new URLSearchParams(location.search).get('lang');
 if (urlLang && T[urlLang]) lang = urlLang;
 applyLang();
 bindEvents();
-if (urlPhone) { loadCard(urlPhone); goTo(4); }
-else { goTo(0); }
+if (urlPhone) { loadCard(urlPhone); goTo('p-card'); }
+else { goTo('p-lang'); }
 </script>
 </body>
 </html>
