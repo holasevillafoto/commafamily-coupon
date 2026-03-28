@@ -186,16 +186,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .ra-title{font-size:14px;font-weight:700;color:#3a2e26;margin-bottom:2px;}
 .ra-desc{font-size:12px;color:#a08070;}
 /* HOME PAGE */
-#p-pin{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:0;overflow:hidden;}
-.pin-logo-wrap{display:flex;flex-direction:column;align-items:center;padding:36px 24px 12px;}
-.pin-oao{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--bl);letter-spacing:3px;margin-top:-4px;margin-bottom:2px;}
-.guest-section{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 24px;width:100%;}
-.guest-label{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown);margin-bottom:14px;text-align:center;}
-.guest-main-btn{width:100%;max-width:300px;background:var(--brown);color:#fff;border:none;border-radius:16px;padding:18px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(107,76,53,0.25);margin-bottom:8px;transition:all 0.2s;}
+#p-pin{display:block;padding:0;overflow-y:auto;}
+.pin-oao{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--bl);letter-spacing:3px;margin-top:-2px;margin-bottom:4px;}
+.guest-label{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown);margin-bottom:16px;text-align:center;}
+.guest-main-btn{width:100%;max-width:300px;background:var(--brown);color:#fff;border:none;border-radius:16px;padding:18px;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(107,76,53,0.25);margin-bottom:8px;transition:all 0.2s;display:block;margin-left:auto;margin-right:auto;}
 .guest-main-btn:active{opacity:0.85;transform:scale(0.98);}
 .guest-hint{font-size:11px;color:var(--tl);}
-.staff-section{flex-shrink:0;padding:12px 24px 32px;width:100%;display:flex;justify-content:center;}
-.staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:11px 32px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
+.staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:12px 32px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
 .staff-login-btn:hover{border-color:var(--brown);color:var(--brown);}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
@@ -208,6 +205,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 <!-- 0: LANG -->
 <div class="page" id="p-lang">
   <div class="logo">OZIK</div>
+  <div class="pin-oao" style="margin-bottom:6px;">one and only</div>
   <div class="cat">🐱</div>
   <div class="sub">Café · Sevilla</div>
   <div class="lang-btns">
@@ -219,18 +217,18 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 
 <!-- 1: HOME (고객용 메인) -->
 <div class="page" id="p-pin">
-  <div class="pin-logo-wrap">
+  <div style="text-align:center;padding:32px 24px 16px;">
     <div class="logo" style="font-size:40px;letter-spacing:4px;">OZIK</div>
     <div class="pin-oao">one and only</div>
     <div class="cat" style="font-size:36px;margin:4px 0;">🐱</div>
-    <div class="sub" style="margin-bottom:0;">Café · Sevilla</div>
+    <div class="sub">Café · Sevilla</div>
   </div>
-  <div class="guest-section">
+  <div style="padding:12px 24px 12px;text-align:center;">
     <div class="guest-label" id="guest-label">내 스탬프 카드 보기</div>
     <button class="guest-main-btn" id="guest-btn">📱 스탬프 카드 열기</button>
     <div class="guest-hint" id="guest-hint">전화번호로 바로 접속</div>
   </div>
-  <div class="staff-section">
+  <div style="padding:8px 24px 32px;text-align:center;">
     <button class="staff-login-btn" id="staff-login-btn">🔒 직원 로그인</button>
   </div>
 </div>
