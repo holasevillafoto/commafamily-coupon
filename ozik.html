@@ -365,6 +365,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 
 </div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-bg del-bg" id="del-modal" style="z-index:300;">
+  <div class="mbox" style="border-radius:20px;">
+    <div class="m-title" style="color:#c0392b;">🗑 삭제 확인</div>
+    <div style="font-size:13px;color:var(--tl);margin-bottom:6px;" id="del-label">정말 삭제하시겠습니까?</div>
+    <div style="font-size:14px;font-weight:600;color:var(--tx);margin-bottom:20px;" id="del-name"></div>
+    <div class="m-btns">
+      <button class="m-cancel" id="del-cancel">취소</button>
+      <button class="m-del" id="del-confirm" style="flex:1;background:#c0392b;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;">삭제</button>
+    </div>
+  </div>
+</div>
+
 <!-- EDIT MODAL -->
 <div class="mbg" id="mbg">
   <div class="mbox">
@@ -590,6 +603,11 @@ function bindEvents() {
   });
   document.getElementById('m-phone').addEventListener('input', function() { fmtPhone(this); });
   document.getElementById('m-cancel').addEventListener('click', function() { document.getElementById('mbg').classList.remove('show'); });
+  document.getElementById('del-cancel').addEventListener('click', function() { document.getElementById('del-modal').classList.remove('show'); });
+  document.getElementById('del-confirm').addEventListener('click', confirmDelete);
+  document.getElementById('del-modal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
   document.getElementById('m-del').addEventListener('click', deleteCustomer);
   document.getElementById('m-save').addEventListener('click', saveEdit);
 }
@@ -715,6 +733,12 @@ function applyLang() {
   document.getElementById('m-del').textContent = t.mDel;
   document.getElementById('m-save').textContent = t.mSave;
   document.getElementById('rw-b').textContent = t.rwB;
+  var delLabel = document.getElementById('del-label');
+  var delCancel = document.getElementById('del-cancel');
+  var delConfirm = document.getElementById('del-confirm');
+  if (delLabel) delLabel.textContent = t.mDelConfirm || '정말 삭제하시겠습니까?';
+  if (delCancel) delCancel.textContent = t.mCancel || '취소';
+  if (delConfirm) delConfirm.textContent = t.mDel ? t.mDel.replace('🗑 ', '') : '삭제';
   var iosS1 = document.getElementById('ios-s1');
   var iosS2 = document.getElementById('ios-s2');
   var iosS3 = document.getElementById('ios-s3');
@@ -1045,7 +1069,14 @@ function saveEdit() {
 function deleteCustomer() {
   if (!editingPhone) return;
   var name = document.getElementById('m-name').value.trim();
-  if (!confirm(T[lang].mDelConfirm + '\n' + name + ' (' + editingPhone + ')')) return;
+  // 커스텀 확인 모달 표시
+  document.getElementById('del-name').textContent = name + ' (' + editingPhone + ')';
+  document.getElementById('del-modal').classList.add('show');
+}
+
+function confirmDelete() {
+  document.getElementById('del-modal').classList.remove('show');
+  if (!editingPhone) return;
   db.ref('ozik_customers/' + phoneKey(editingPhone)).remove().then(function() {
     document.getElementById('mbg').classList.remove('show');
     document.getElementById('rc').classList.remove('show');
