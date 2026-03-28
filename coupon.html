@@ -137,12 +137,9 @@ html,body{height:100%;overflow:hidden;background:#0d0d0d;font-family:'Noto Sans 
 .success-desc{font-size:13px;color:#777;line-height:1.6;margin-bottom:18px;}
 .success-close{background:var(--gold);color:#1a1a1a;border:none;border-radius:12px;padding:12px 30px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;cursor:pointer;}
 /* 언어 선택 바 */
-.lang-bar{position:fixed;top:0;right:0;z-index:100;display:flex;gap:4px;padding:8px 12px;}
+.lang-bar{display:flex;gap:4px;}
 .lb{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 10px;font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;font-family:"Noto Sans KR",sans-serif;}
 .lb.active{background:var(--red);color:#fff;border-color:var(--red);}
-/* 발급 화면 언어 바 (다크) */
-.lang-bar.dark .lb{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4);}
-.lang-bar.dark .lb.active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e1e1e;color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;border:1px solid #2a2a2a;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.ok{border-color:var(--gold);color:var(--gold);}
@@ -150,16 +147,16 @@ html,body{height:100%;overflow:hidden;background:#0d0d0d;font-family:'Noto Sans 
 </style>
 </head>
 <body>
-<!-- 언어 선택 바 -->
-<div class="lang-bar" id="lang-bar">
-  <button class="lb active" id="lb-ko" onclick="setCouponLang('ko')">한국어</button>
-  <button class="lb" id="lb-es" onclick="setCouponLang('es')">ES</button>
-</div>
-
 <div class="pager" id="pager">
 
 <!-- PAGE 1: PIN -->
 <div class="page" id="p-pin">
+  <div style="display:flex;justify-content:flex-end;padding:10px 10px 0;width:100%;">
+    <div class="lang-bar">
+      <button class="lb active" id="lb-ko" onclick="setCouponLang('ko')">한국어</button>
+      <button class="lb" id="lb-es" onclick="setCouponLang('es')">ES</button>
+    </div>
+  </div>
   <div class="pin-logo">COMMA <span>FAMILY</span></div>
   <div class="pin-sub">Kingbap · 음료 쿠폰 시스템</div>
   <div class="pin-title" id="pin-title-text">PIN 입력 · Ingresa el PIN</div>
@@ -188,7 +185,13 @@ html,body{height:100%;overflow:hidden;background:#0d0d0d;font-family:'Noto Sans 
 <div class="page" id="p-form">
   <div class="page-nav">
     <div class="page-nav-title">COMMA <span>FAMILY</span></div>
-    <button class="back-btn" onclick="goTo(0)">← 뒤로</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="lang-bar">
+        <button class="lb active" id="lb-ko2" onclick="setCouponLang('ko')">한국어</button>
+        <button class="lb" id="lb-es2" onclick="setCouponLang('es')">ES</button>
+      </div>
+      <button class="back-btn" onclick="goTo(0)">← 뒤로</button>
+    </div>
   </div>
   <div class="form-body">
     <div class="sec-label">발급자 구분</div>
@@ -528,8 +531,8 @@ var couponLang = 'ko';
 function setCouponLang(l) {
   couponLang = l;
   const t = LANG_T[l];
-  document.getElementById('lb-ko').className = 'lb' + (l==='ko'?' active':'');
-  document.getElementById('lb-es').className = 'lb' + (l==='es'?' active':'');
+  ['lb-ko','lb-ko2'].forEach(id => { const el=document.getElementById(id); if(el) el.className='lb'+(l==='ko'?' active':''); });
+  ['lb-es','lb-es2'].forEach(id => { const el=document.getElementById(id); if(el) el.className='lb'+(l==='es'?' active':''); });
   const pt = document.querySelector('.pin-title');
   if(pt) pt.textContent = t.pinTitle;
   const sls = document.querySelectorAll('.sec-label');
