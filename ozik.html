@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Ozik">
 <meta name="theme-color" content="#faf6f0">
 <title>Ozik · 스탬프 카드</title>
+<link rel="manifest" href="ozik-manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -171,6 +172,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .m-del{background:#fff;color:#c0392b;border:1.5px solid #e8b4b8;border-radius:12px;padding:14px 16px;font-size:13px;cursor:pointer;}
 .m-cancel{background:#fff;color:var(--tl);border:1px solid var(--bp);border-radius:12px;padding:14px 16px;font-size:13px;cursor:pointer;}
 
+.install-btn{width:100%;max-width:340px;background:var(--brown);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.install-btn:active{opacity:0.85;}
+.ios-guide{background:#fff;border-radius:16px;padding:18px;border:1px solid var(--bp);margin-bottom:10px;width:100%;max-width:340px;}
+.ios-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+.ios-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tx);}
+.ios-icon{background:var(--brown);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.ios-close{width:100%;background:var(--bp);border:none;border-radius:10px;padding:10px;font-size:13px;color:var(--brown);cursor:pointer;font-weight:500;}
+.reward-alert{display:none;background:linear-gradient(135deg,#fef3d0,#fde68a);border:2px solid #d4a843;border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center;}
+.reward-alert.show{display:block;}
+.reward-alert.green{background:linear-gradient(135deg,#d4ead5,#a8c5aa);border-color:#7a9e7e;}
+.ra-icon{font-size:28px;margin-bottom:4px;}
+.ra-title{font-size:14px;font-weight:700;color:#3a2e26;margin-bottom:2px;}
+.ra-desc{font-size:12px;color:#a08070;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.gold{background:var(--gold);color:var(--tx);}
@@ -228,6 +242,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <div class="lang-mini" id="lang-mini">🌐 언어</div>
   </div>
   <div class="cw">
+    <div class="reward-alert" id="reward-alert">
+      <div class="ra-icon" id="ra-icon">🎉</div>
+      <div class="ra-title" id="ra-title">리워드 달성!</div>
+      <div class="ra-desc" id="ra-desc">직원에게 말씀해주세요</div>
+    </div>
     <div class="sc">
       <div class="sc-head">
         <div class="sc-title" id="sc-title">스탬프 카드</div>
@@ -370,7 +389,11 @@ var T = {
     mCancel:'취소', mDel:'🗑 삭제', mSave:'저장', mDelConfirm:'정말 삭제하시겠습니까?',
     rw10t:'음료 무료!', rw10d:'10번째 스탬프 달성!\n음료 1잔이 무료입니다 ☕',
     rw20t:'Kingbap 무료!', rw20d:'20번째 스탬프 달성!\nKingbap 1인 무료 시식권입니다 🍚',
-    rwB:'확인', langMini:'🌐 언어',
+    rwB:'확인',
+    ra10title:'🎉 음료 무료 리워드 달성!', ra10desc:'직원에게 말씀해주세요',
+    ra20title:'🎉 Kingbap 무료 리워드 달성!', ra20desc:'직원에게 말씀해주세요',
+    installBtn:'홈 화면에 앱 추가',
+    iosS1:'하단 공유 버튼 탭 ⬆️', iosS2:'"홈 화면에 추가" 선택 ➕', iosS3:'"추가" 탭 ✓', iosClose:'닫기', langMini:'🌐 언어',
     tStamp:'님 스탬프 적립! 🐱', tReward:'리워드 사용 완료 ✓', tCreated:'카드 발급 완료! ',
     tSaved:'수정 완료 ✓', tDeleted:'삭제 완료', tName:'이름을 입력해주세요',
     tPhone:'전화번호를 입력해주세요', tNotFound:'등록되지 않은 번호입니다', tLoading:'불러오는 중...'
@@ -394,7 +417,13 @@ var T = {
     mCancel:'Cancelar', mDel:'🗑 Eliminar', mSave:'Guardar', mDelConfirm:'¿Eliminar este cliente?',
     rw10t:'¡Bebida gratis!', rw10d:'¡Sello 10 conseguido!\nTu bebida es gratis ☕',
     rw20t:'¡Kingbap gratis!', rw20d:'¡Sello 20 conseguido!\nKingbap gratis 🍚',
-    rwB:'OK', langMini:'🌐 Idioma',
+    rwB:'OK',
+    ra10title:'🎉 Free drink reward unlocked!', ra10desc:'Tell the staff',
+    ra20title:'🎉 Free Kingbap reward unlocked!', ra20desc:'Tell the staff',
+    ra10title:'🎉 ¡Premio bebida gratis!', ra10desc:'Díselo al personal',
+    ra20title:'🎉 ¡Premio Kingbap gratis!', ra20desc:'Díselo al personal',rwB:'OK',
+    installBtn:'Añadir a pantalla de inicio',
+    iosS1:'Toca el botón Compartir ⬆️', iosS2:'Selecciona "Añadir a inicio" ➕', iosS3:'Toca "Añadir" ✓', iosClose:'Cerrar', langMini:'🌐 Idioma',
     tStamp:' — ¡sello añadido! 🐱', tReward:'Premio canjeado ✓', tCreated:'¡Tarjeta creada! ',
     tSaved:'Guardado ✓', tDeleted:'Eliminado', tName:'Escribe tu nombre',
     tPhone:'Escribe tu teléfono', tNotFound:'Número no registrado', tLoading:'Cargando...'
@@ -418,7 +447,9 @@ var T = {
     mCancel:'Cancel', mDel:'🗑 Delete', mSave:'Save', mDelConfirm:'Delete this customer?',
     rw10t:'Free drink!', rw10d:'10th stamp achieved!\nYou get a free drink ☕',
     rw20t:'Free Kingbap!', rw20d:'20th stamp achieved!\nFree Kingbap 🍚',
-    rwB:'OK', langMini:'🌐 Language',
+    rwB:'OK',
+    installBtn:'Add to Home Screen',
+    iosS1:'Tap the Share button ⬆️', iosS2:'Select "Add to Home Screen" ➕', iosS3:'Tap "Add" ✓', iosClose:'Close', langMini:'🌐 Language',
     tStamp:' — stamp added! 🐱', tReward:'Reward used ✓', tCreated:'Card created! ',
     tSaved:'Saved ✓', tDeleted:'Deleted', tName:'Please enter name',
     tPhone:'Please enter phone number', tNotFound:'Phone number not found', tLoading:'Loading...'
@@ -490,6 +521,14 @@ function bindEvents() {
   // 리워드
   document.getElementById('rw-b').addEventListener('click', function() { goTo(rewardFrom); });
 
+  // 홈화면 추가
+  document.getElementById('ah-x').addEventListener('click', function() {
+    document.getElementById('ahb').style.display = 'none';
+  });
+  document.getElementById('ios-close').addEventListener('click', function() {
+    document.getElementById('ios-guide').style.display = 'none';
+  });
+
   // 편집 모달
   document.getElementById('mbg').addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('show');
@@ -499,6 +538,65 @@ function bindEvents() {
   document.getElementById('m-del').addEventListener('click', deleteCustomer);
   document.getElementById('m-save').addEventListener('click', saveEdit);
 }
+
+// PWA 설치 프롬프트
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var btn = document.getElementById('install-btn');
+  btn.style.display = 'flex';
+  updateInstallBtn();
+});
+
+window.addEventListener('appinstalled', function() {
+  document.getElementById('install-btn').style.display = 'none';
+  document.getElementById('ahb').style.display = 'none';
+  deferredPrompt = null;
+});
+
+function updateInstallBtn() {
+  var t = T[lang];
+  var btn = document.getElementById('install-btn');
+  btn.textContent = '📲 ' + (t.installBtn || '홈 화면에 앱 추가');
+  btn.onclick = function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+    }
+  };
+}
+
+function showAddToHome() {
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isInStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (isInStandalone) {
+    document.getElementById('ahb').style.display = 'none';
+    return;
+  }
+  if (isIOS) {
+    document.getElementById('ios-guide').style.display = 'block';
+  } else if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+  } else {
+    document.getElementById('ios-guide').style.display = 'block';
+  }
+}
+
+// ahb 클릭시 가이드 열기
+document.addEventListener('DOMContentLoaded', function() {
+  var ahb = document.getElementById('ahb');
+  if (ahb) {
+    ahb.querySelector('.ah-icon').addEventListener('click', showAddToHome);
+    ahb.querySelector('.ah-text').addEventListener('click', showAddToHome);
+  }
+  // 이미 설치된 경우 배너 숨기기
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    document.getElementById('ahb').style.display = 'none';
+  }
+});
 
 function setLang(l) {
   lang = l;
@@ -554,6 +652,17 @@ function applyLang() {
   document.getElementById('m-del').textContent = t.mDel;
   document.getElementById('m-save').textContent = t.mSave;
   document.getElementById('rw-b').textContent = t.rwB;
+  var iosS1 = document.getElementById('ios-s1');
+  var iosS2 = document.getElementById('ios-s2');
+  var iosS3 = document.getElementById('ios-s3');
+  var iosClose = document.getElementById('ios-close');
+  var installBtn = document.getElementById('install-btn');
+  if (iosS1) iosS1.textContent = t.iosS1 || '하단 공유 버튼 탭';
+  if (iosS2) iosS2.textContent = t.iosS2 || '"홈 화면에 추가" 선택';
+  if (iosS3) iosS3.textContent = t.iosS3 || '"추가" 탭';
+  if (iosClose) iosClose.textContent = t.iosClose || '닫기';
+  if (installBtn && deferredPrompt) updateInstallBtn();
+  document.getElementById('ah-d').textContent = t.ahD || '';
   document.getElementById('clist-loading').textContent = t.tLoading;
 }
 
@@ -636,6 +745,25 @@ function renderStamps(total) {
   var remain = total >= 20 ? 0 : next - total;
   document.getElementById('prog-lbl').textContent = total >= 20 ? t.allDone : t.progLbl;
   document.getElementById('prog-cnt').textContent = total >= 20 ? '' : remain + t.progLeft;
+
+  // 리워드 달성 배너
+  var alert = document.getElementById('reward-alert');
+  var raIcon = document.getElementById('ra-icon');
+  var raTitle = document.getElementById('ra-title');
+  var raDesc = document.getElementById('ra-desc');
+  if (total >= 20) {
+    alert.className = 'reward-alert show green';
+    raIcon.textContent = '🍚';
+    raTitle.textContent = t.ra20title || 'Kingbap 무료 리워드 달성!';
+    raDesc.textContent = t.ra20desc || '직원에게 말씀해주세요 · Díselo al personal';
+  } else if (total >= 10) {
+    alert.className = 'reward-alert show';
+    raIcon.textContent = '☕';
+    raTitle.textContent = t.ra10title || '음료 무료 리워드 달성!';
+    raDesc.textContent = t.ra10desc || '직원에게 말씀해주세요 · Díselo al personal';
+  } else {
+    alert.className = 'reward-alert';
+  }
 }
 
 // 직원: 조회
