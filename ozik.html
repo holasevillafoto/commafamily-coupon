@@ -815,19 +815,30 @@ function addStamp() {
   var btn = document.getElementById('add-btn');
   btn.disabled = true;
   db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
-    var c = snap.val();
-    var ns = (c.stamps || 0) + 1;
+    var cu = snap.val();
+    var ns = (cu.stamps || 0) + 1;
     return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update({ stamps: ns, lastStamp: new Date().toISOString() }).then(function() {
-      showToast(c.name + T[lang].tStamp);
-      // 10번째 달성 (아직 10번 리워드 안 썼을 때만)
-      if (ns === 10 && !(cu.reward10used)) {
+      showToast(cu.name + T[lang].tStamp);
+      // 리워드 버튼 즉시 업데이트
+      var r10used = cu.reward10used || false;
+      document.getElementById('rb10').className = 'rwd-btn r10' + (ns >= 10 && !r10used ? ' show' : '');
+      document.getElementById('rb20').className = 'rwd-btn r20' + (ns >= 20 ? ' show' : '');
+      document.getElementById('rc-info').textContent = searchedPhone + ' · ' + ns + '/20';
+      // 미니 그리드 마지막 점 업데이트
+      var grid = document.getElementById('rc-grid');
+      var dots = grid.querySelectorAll('.rd');
+      if (dots[ns-1]) {
+        dots[ns-1].className = 'rd ' + (ns-1 === 9 ? 'g' : ns-1 === 19 ? 'gr2' : 'on');
+        dots[ns-1].textContent = ns-1 === 9 ? '☕' : ns-1 === 19 ? '🍚' : '🐱';
+      }
+      // 10번째 달성
+      if (ns === 10 && !r10used) {
         rewardFrom = 4; showReward('☕', T[lang].rw10t, T[lang].rw10d);
       }
       // 20번째 달성
       else if (ns === 20) {
         rewardFrom = 4; showReward('🍚', T[lang].rw20t, T[lang].rw20d);
       }
-      return staffSearch();
     });
   }).then(function() { btn.disabled = false; });
 }
