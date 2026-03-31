@@ -426,10 +426,58 @@ async function issueCoupon(){
 }
 
 async function shareCoupon(){
-  if(!curCouponId)return;
-  const link=location.origin+location.pathname+'?c='+curCouponId;
-  if(navigator.share){try{await navigator.share({title:'Kingbap 음료 무료 쿠폰',text:'🍚 Kingbap 음료 1잔 무료 쿠폰!\n컵밥 주문 시 음료가 무료입니다 🥤',url:link});return;}catch(e){}}
-  navigator.clipboard.writeText(link).then(()=>showToast('링크 복사됨! 카카오톡으로 전송하세요 📲','ok')).catch(()=>showToast('링크: '+link,'ok'));
+  if(!curCouponId) return;
+  const link = location.origin + location.pathname + '?c=' + curCouponId;
+  const t = LANG_T[couponLang] || LANG_T['ko'];
+
+  // navigator.share 지원 여부 확인
+  if(navigator.share){
+    try{
+      await navigator.share({
+        title: 'Kingbap 음료 무료 쿠폰',
+        text: '🍚 Kingbap 음료 1잔 무료 쿠폰!\n컵밥 주문 시 음료가 무료입니다 🥤',
+        url: link
+      });
+      return;
+    } catch(e){
+      // 사용자가 취소하거나 실패한 경우 클립보드로 fallback
+      if(e.name === 'AbortError') return; // 사용자가 직접 취소
+    }
+  }
+
+  // 클립보드 복사 시도
+  try {
+    await navigator.clipboard.writeText(link);
+    showToast((t.toastCopied || '링크 복사됨! 카카오톡으로 전송하세요 📲'), 'ok');
+  } catch(e) {
+    // 클립보드도 안 되면 링크를 직접 보여주는 팝업
+    showSharePopup(link);
+  }
+}
+
+function showSharePopup(link){
+  // 링크를 직접 선택/복사할 수 있는 팝업
+  const existing = document.getElementById('share-popup');
+  if(existing) existing.remove();
+  const popup = document.createElement('div');
+  popup.id = 'share-popup';
+  popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;';
+  popup.innerHTML = `
+    <div style="background:#1a1a1a;border-radius:16px;padding:24px;width:100%;max-width:340px;border:1px solid #2a2a2a;">
+      <div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:#d4a843;margin-bottom:12px;">링크 공유 · Compartir enlace</div>
+      <input id="share-link-inp" value="${link}" readonly style="width:100%;background:#111;border:1px solid #333;border-radius:10px;padding:11px 14px;color:#fff;font-size:12px;outline:none;margin-bottom:12px;word-break:break-all;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="const inp=document.getElementById('share-link-inp');inp.select();inp.setSelectionRange(0,999);document.execCommand('copy');showToast('복사됨!','ok');document.getElementById('share-popup').remove();" style="flex:1;background:#bf3022;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;cursor:pointer;">복사</button>
+        <button onclick="document.getElementById('share-popup').remove();" style="background:#2a2a2a;color:#888;border:none;border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;">닫기</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  // 자동 선택
+  setTimeout(() => {
+    const inp = document.getElementById('share-link-inp');
+    if(inp){ inp.focus(); inp.select(); }
+  }, 100);
 }
 function newCoupon(){curCouponId=null;goTo(1);}
 
