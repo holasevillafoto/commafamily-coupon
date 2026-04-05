@@ -1,0 +1,17 @@
+{
+  "name": "Kingbap 스탬프 카드",
+  "short_name": "Kingbap",
+  "description": "Kingbap Cup Rice 스탬프 카드",
+  "start_url": "./kingbap-stamp.html",
+  "display": "standalone",
+  "background_color": "#faf6f0",
+  "theme_color": "#6b4c35",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=kingbap",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
