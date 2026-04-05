@@ -11,8 +11,8 @@
 <title>Ozik · 스탬프 카드</title>
 <link rel="manifest" href="ozik-manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
 <style>
 :root{--bg:#faf6f0;--card:#fff9f3;--brown:#6b4c35;--bl:#c4956a;--bp:#ede0ce;--gold:#d4a843;--green:#7a9e7e;--tx:#3a2e26;--tl:#a08070;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -194,6 +194,19 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .guest-hint{font-size:11px;color:var(--tl);}
 .staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:12px 32px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
 .staff-login-btn:hover{border-color:var(--brown);color:var(--brown);}
+.ph-new-hint{font-size:11px;color:var(--tl);margin-top:8px;margin-bottom:4px;text-align:center;}
+.self-reg{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);transition:transform 0.35s cubic-bezier(0.77,0,0.18,1);z-index:150;border:0.5px solid var(--bp);}
+.self-reg.show{transform:translateX(-50%) translateY(0);}
+.sr-title{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;color:var(--brown);margin-bottom:4px;}
+.sr-sub{font-size:12px;color:var(--tl);margin-bottom:18px;}
+.sr-field{margin-bottom:12px;}
+.sr-field label{display:block;font-size:10px;letter-spacing:1.5px;color:var(--tl);text-transform:uppercase;margin-bottom:5px;}
+.sr-field input{width:100%;background:#fff;border:1.5px solid var(--bp);border-radius:12px;padding:12px 14px;font-size:15px;color:var(--tx);outline:none;font-family:"Noto Sans KR",sans-serif;}
+.sr-field input:focus{border-color:var(--brown);}
+.sr-save{width:100%;background:var(--brown);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;}
+.sr-cancel{width:100%;background:transparent;border:none;color:var(--tl);font-size:13px;cursor:pointer;margin-top:10px;}
+.sr-overlay{position:fixed;inset:0;background:rgba(58,46,38,0.5);z-index:140;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.sr-overlay.show{opacity:1;pointer-events:all;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:11px 22px;border-radius:30px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(107,76,53,0.25);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.gold{background:var(--gold);color:var(--tx);}
@@ -259,6 +272,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
   <div class="ph-sub" id="ph-sub">등록된 전화번호를 입력하세요</div>
   <input class="ph-inp" id="ph-inp" type="tel" placeholder="000-000-000" maxlength="11">
   <button class="ph-go" id="ph-go">스탬프 카드 열기</button>
+  <div class="ph-new-hint" id="ph-new-hint">처음 오셨나요? 전화번호 입력 후 자동으로 등록돼요 😊</div>
   <div class="ph-back" id="ph-back">← 뒤로</div>
 </div>
 
@@ -376,6 +390,23 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
       <button class="m-del" id="del-confirm" style="flex:1;background:#c0392b;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;">삭제</button>
     </div>
   </div>
+</div>
+
+<!-- SELF REGISTER MODAL -->
+<div class="sr-overlay" id="sr-overlay" id="sr-overlay-btn"></div>
+<div class="self-reg" id="self-reg">
+  <div class="sr-title" id="sr-title">처음 오셨군요! 🐱</div>
+  <div class="sr-sub" id="sr-sub">이름과 전화번호를 입력하면 스탬프 카드가 바로 발급돼요</div>
+  <div class="sr-field">
+    <label id="sr-lbl-name">이름</label>
+    <input id="sr-name" maxlength="20">
+  </div>
+  <div class="sr-field">
+    <label id="sr-lbl-phone">전화번호</label>
+    <input id="sr-phone" type="tel" maxlength="11" placeholder="000-000-000">
+  </div>
+  <button class="sr-save" id="sr-save-btn" >스탬프 카드 발급받기 🐱</button>
+  <button class="sr-cancel" id="sr-cancel-btn" id="sr-overlay-btn">취소</button>
 </div>
 
 <!-- EDIT MODAL -->
@@ -602,6 +633,13 @@ function bindEvents() {
     if (e.target === this) this.classList.remove('show');
   });
   document.getElementById('m-phone').addEventListener('input', function() { fmtPhone(this); });
+  document.getElementById('sr-phone').addEventListener('input', function() { fmtPhone(this); });
+  var srOverlayBtn = document.getElementById('sr-overlay-btn');
+  if (srOverlayBtn) srOverlayBtn.addEventListener('click', closeSelfReg);
+  var srCancelBtn = document.getElementById('sr-cancel-btn');
+  if (srCancelBtn) srCancelBtn.addEventListener('click', closeSelfReg);
+  var srSaveBtn = document.getElementById('sr-save-btn');
+  if (srSaveBtn) srSaveBtn.addEventListener('click', selfRegister);
   document.getElementById('m-cancel').addEventListener('click', function() { document.getElementById('mbg').classList.remove('show'); });
   document.getElementById('del-cancel').addEventListener('click', function() { document.getElementById('del-modal').classList.remove('show'); });
   document.getElementById('del-confirm').addEventListener('click', confirmDelete);
@@ -733,6 +771,16 @@ function applyLang() {
   document.getElementById('m-del').textContent = t.mDel;
   document.getElementById('m-save').textContent = t.mSave;
   document.getElementById('rw-b').textContent = t.rwB;
+  var srTitle = document.getElementById('sr-title');
+  var srSub = document.getElementById('sr-sub');
+  var srSave = document.getElementById('sr-save-btn');
+  var srCancel = document.getElementById('sr-cancel-btn');
+  var phHint = document.getElementById('ph-new-hint');
+  if (srTitle) srTitle.textContent = t.srTitle || '처음 오셨군요! 🐱';
+  if (srSub) srSub.textContent = t.srSub || '이름과 전화번호를 입력하면 스탬프 카드가 바로 발급돼요';
+  if (srSave) srSave.textContent = t.srSave || '스탬프 카드 발급받기 🐱';
+  if (srCancel) srCancel.textContent = t.srCancel || '취소';
+  if (phHint) phHint.textContent = t.phNewHint || '처음 오셨나요? 전화번호 입력 후 자동으로 등록돼요 😊';
   var delLabel = document.getElementById('del-label');
   var delCancel = document.getElementById('del-cancel');
   var delConfirm = document.getElementById('del-confirm');
@@ -783,7 +831,40 @@ function findByPhone() {
   if (!phone) { showToast(T[lang].tPhone); return; }
   var key = phoneKey(phone);
   db.ref('ozik_customers/' + key).once('value').then(function(snap) {
-    if (!snap.exists()) { showToast(T[lang].phNotFound); return; }
+    if (!snap.exists()) {
+      // 신규 고객 → 셀프 등록 모달 열기
+      openSelfReg(phone);
+      return;
+    }
+    loadCard(phone);
+    goTo('p-card');
+  });
+}
+
+function openSelfReg(phone) {
+  document.getElementById('sr-phone').value = phone || '';
+  document.getElementById('sr-name').value = '';
+  document.getElementById('sr-overlay').classList.add('show');
+  document.getElementById('self-reg').classList.add('show');
+  setTimeout(function() { document.getElementById('sr-name').focus(); }, 400);
+}
+
+function closeSelfReg() {
+  document.getElementById('sr-overlay').classList.remove('show');
+  document.getElementById('self-reg').classList.remove('show');
+}
+
+function selfRegister() {
+  var name = document.getElementById('sr-name').value.trim();
+  var phone = document.getElementById('sr-phone').value.trim();
+  if (!name) { showToast(T[lang].tName); return; }
+  if (!phone) { showToast(T[lang].tPhone); return; }
+  var key = phoneKey(phone);
+  db.ref('ozik_customers/' + key).set({
+    name: name, phone: phone, stamps: 0, createdAt: new Date().toISOString()
+  }).then(function() {
+    closeSelfReg();
+    showToast('🐱 ' + name + (T[lang].toastCreated || ' 님, 카드 발급 완료!'), 'gold');
     loadCard(phone);
     goTo('p-card');
   });
