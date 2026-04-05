@@ -11,8 +11,6 @@
 <title>Ozik · 스탬프 카드</title>
 <link rel="manifest" href="ozik-manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/firebase@9.23.0/firebase-app-compat.js"></script>
-<script src="https://unpkg.com/firebase@9.23.0/firebase-database-compat.js"></script>
 <style>
 :root{--bg:#faf6f0;--card:#fff9f3;--brown:#6b4c35;--bl:#c4956a;--bp:#ede0ce;--gold:#d4a843;--green:#7a9e7e;--tx:#3a2e26;--tl:#a08070;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -194,6 +192,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .guest-hint{font-size:11px;color:var(--tl);}
 .staff-login-btn{background:transparent;border:1.5px solid var(--bp);border-radius:12px;padding:12px 32px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--tl);cursor:pointer;transition:all 0.2s;}
 .staff-login-btn:hover{border-color:var(--brown);color:var(--brown);}
+.new-card-btn{width:100%;max-width:300px;background:#fff;border:1.5px solid var(--brown);color:var(--brown);border-radius:16px;padding:16px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:block;margin:0 auto 8px;transition:all 0.2s;}
+.new-card-btn:active{background:var(--bp);}
+.new-card-hint{font-size:11px;color:var(--tl);}
 .ph-new-hint{font-size:11px;color:var(--tl);margin-top:8px;margin-bottom:4px;text-align:center;}
 .self-reg{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);transition:transform 0.35s cubic-bezier(0.77,0,0.18,1);z-index:150;border:0.5px solid var(--bp);}
 .self-reg.show{transform:translateX(-50%) translateY(0);}
@@ -241,7 +242,11 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <button class="guest-main-btn" id="guest-btn">📱 스탬프 카드 열기</button>
     <div class="guest-hint" id="guest-hint">전화번호로 바로 접속</div>
   </div>
-  <div style="padding:8px 24px 32px;text-align:center;">
+  <div style="padding:4px 24px 12px;text-align:center;">
+    <button class="new-card-btn" id="new-card-btn">🐱 카드 발급받기</button>
+    <div class="new-card-hint" id="new-card-hint">처음 오셨나요? 바로 가입하세요</div>
+  </div>
+  <div style="padding:8px 24px 28px;text-align:center;">
     <button class="staff-login-btn" id="staff-login-btn">🔒 직원 로그인</button>
   </div>
 </div>
@@ -426,8 +431,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 
 <div class="toast" id="toast"></div>
 
+<script src="https://unpkg.com/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://unpkg.com/firebase@9.23.0/firebase-database-compat.js"></script>
 <script>
-window.addEventListener("load", function() {
 
 firebase.initializeApp({
   apiKey: "AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
@@ -446,6 +452,8 @@ var T = {
   ko: {
     pinLbl:'PIN 입력',
     guestLabel:'내 스탬프 카드 보기',
+    newCardBtn:'🐱 카드 발급받기',
+    newCardHint:'처음 오셨나요? 바로 가입하세요',
     guestHint:'전화번호로 바로 접속',
     staffLogin:'🔒 직원 로그인', guestBtn:'📱 내 스탬프 보기', pinErr:'PIN이 올바르지 않습니다',
     phTitle:'전화번호로 접속', phSub:'등록된 전화번호를 입력하세요\n처음이라면 직원에게 등록을 요청하세요',
@@ -477,6 +485,8 @@ var T = {
   es: {
     pinLbl:'Ingresa el PIN',
     guestLabel:'Ver mi tarjeta de sellos',
+    newCardBtn:'🐱 Obtener mi tarjeta',
+    newCardHint:'¿Primera visita? Regístrate aquí',
     guestHint:'Accede con tu teléfono',
     staffLogin:'🔒 Acceso personal', guestBtn:'📱 Ver mis sellos', pinErr:'PIN incorrecto',
     phTitle:'Acceso con teléfono', phSub:'Ingresa tu número registrado\nSi es tu primera vez, pídele al personal',
@@ -510,6 +520,8 @@ var T = {
   en: {
     pinLbl:'Enter PIN',
     guestLabel:'View my stamp card',
+    newCardBtn:'🐱 Get my card',
+    newCardHint:'First visit? Sign up here',
     guestHint:'Access with your phone number',
     staffLogin:'🔒 Staff login', guestBtn:'📱 View my stamps', pinErr:'Incorrect PIN',
     phTitle:'Access with phone number', phSub:'Enter your registered phone number\nFirst time? Ask staff to register you',
@@ -590,6 +602,7 @@ function bindEvents() {
 
   // 홈 버튼
   document.getElementById('guest-btn').addEventListener('click', function() { goTo('p-phone'); });
+  document.getElementById('new-card-btn').addEventListener('click', function() { openSelfReg(''); });
   document.getElementById('staff-login-btn').addEventListener('click', function() { goTo('p-pin2'); });
   document.getElementById('pin-back').addEventListener('click', function() { goTo('p-pin'); });
 
@@ -728,6 +741,10 @@ function applyLang() {
   if (guestLabel) guestLabel.textContent = t.guestLabel || '내 스탬프 카드 보기';
   if (guestHint) guestHint.textContent = t.guestHint || '전화번호로 바로 접속';
   if (staffLoginBtn) staffLoginBtn.textContent = t.staffLogin || '🔒 직원 로그인';
+  var newCardBtn = document.getElementById('new-card-btn');
+  var newCardHint = document.getElementById('new-card-hint');
+  if (newCardBtn) newCardBtn.textContent = t.newCardBtn || '🐱 카드 발급받기';
+  if (newCardHint) newCardHint.textContent = t.newCardHint || '처음 오셨나요? 바로 가입하세요';
   document.getElementById('guest-btn').textContent = t.guestBtn;
   document.getElementById('pin-err').textContent = t.pinErr;
   document.getElementById('ph-title').textContent = t.phTitle;
@@ -1184,8 +1201,7 @@ applyLang();
 bindEvents();
 if (urlPhone) { loadCard(urlPhone); goTo('p-card'); }
 else { goTo('p-lang'); }
-
-});
 </script>
 </body>
-</html>
+</html
+>
