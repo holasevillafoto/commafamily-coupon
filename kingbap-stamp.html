@@ -121,6 +121,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .rwd-btn.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);color:var(--tx);}
 .rwd-btn.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);color:var(--tx);}
 .nc-btn{width:100%;background:#fff;border:1px solid var(--bp);border-radius:12px;padding:13px;color:var(--tl);font-size:13px;cursor:pointer;margin-bottom:22px;}
+.excel-btn{width:100%;background:#fff;border:1px solid #1d6f42;border-radius:12px;padding:11px;color:#1d6f42;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:14px;font-family:"Noto Sans KR",sans-serif;}
+.excel-btn:active{background:#f0faf4;}
 
 /* 고객 명단 */
 .ct{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--bp);}
@@ -346,6 +348,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <div class="sl" id="new-lbl">신규 고객</div>
     <button class="nc-btn" id="nc-btn">+ 신규 고객 등록</button>
     <div class="sl" id="list-lbl">고객 명단</div>
+    <button class="excel-btn" id="excel-btn">📊 엑셀 다운로드</button>
     <div class="ct">
       <div class="ct-head">
         <div id="th-n">이름</div><div id="th-p">전화번호</div><div id="th-s">스탬프</div>
@@ -429,6 +432,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/firebase@9.23.0/firebase-app-compat.js"></script>
 <script src="https://unpkg.com/firebase@9.23.0/firebase-database-compat.js"></script>
 <script>
@@ -463,7 +467,7 @@ var T = {
     ahT:'홈 화면에 추가하면 앱처럼!', ahD:'Safari → 공유 → "홈 화면에 추가" / Chrome → 메뉴 → "앱 설치"',
     staffLbl:'직원', backBtn:'← 나가기', searchLbl:'전화번호로 고객 조회',
     sBtn:'조회', newLbl:'신규 고객', listLbl:'고객 명단', ncBtn:'+ 신규 고객 등록',
-    addBtn:'🍚 스탬프 적립', rb10:'☕ 음료 무료 리워드 사용', rb20:'🍚 Kingbap 무료 리워드 사용',
+    addBtn:'🍚 스탬프 적립', rb10:'🍚 컵밥 무료 리워드 사용',
     thN:'이름', thP:'전화번호', thS:'스탬프',
     nt:'신규 고객 등록', ns:'이름과 전화번호를 입력하면\n스탬프 카드가 발급됩니다',
     flN:'이름', flP:'전화번호', crBtn:'카드 발급하기', bk:'← 돌아가기',
@@ -494,7 +498,7 @@ var T = {
     ahT:'¡Añade a pantalla de inicio!', ahD:'Safari → Compartir → "Añadir a inicio"',
     staffLbl:'Personal', backBtn:'← Salir', searchLbl:'Buscar por teléfono',
     sBtn:'Buscar', newLbl:'Nuevo cliente', listLbl:'Lista de clientes', ncBtn:'+ Registrar cliente',
-    addBtn:'🍚 Añadir sello', rb10:'☕ Canjear bebida gratis', rb20:'🍚 Canjear Kingbap gratis',
+    addBtn:'🍚 Añadir sello', rb10:'🍚 Canjear cup rice gratis',
     thN:'Nombre', thP:'Teléfono', thS:'Sellos',
     nt:'Registro de cliente', ns:'Escribe nombre y teléfono\npara obtener tu tarjeta',
     flN:'Nombre', flP:'Teléfono', crBtn:'Crear tarjeta', bk:'← Volver',
@@ -526,7 +530,7 @@ var T = {
     ahT:'Add to home screen for app-like use!', ahD:'Safari → Share → "Add to Home Screen"',
     staffLbl:'Staff', backBtn:'← Exit', searchLbl:'Search customer by phone',
     sBtn:'Search', newLbl:'New customer', listLbl:'Customer list', ncBtn:'+ Register customer',
-    addBtn:'🍚 Add stamp', rb10:'☕ Use free drink reward', rb20:'🍚 Use free Kingbap reward',
+    addBtn:'🍚 Add stamp', rb10:'🍚 Use free cup rice reward',
     thN:'Name', thP:'Phone', thS:'Stamps',
     nt:'New customer', ns:'Enter name and phone number\nto get a stamp card',
     flN:'Name', flP:'Phone number', crBtn:'Create card', bk:'← Back',
@@ -614,6 +618,7 @@ function bindEvents() {
   document.getElementById('add-btn').addEventListener('click', addStamp);
   document.getElementById('rb10').addEventListener('click', function() { useReward(10); });
   document.getElementById('nc-btn').addEventListener('click', function() { goTo('p-new'); });
+  document.getElementById('excel-btn').addEventListener('click', downloadExcel);
 
   // 신규 고객
   document.getElementById('np-inp').addEventListener('input', function() { fmtPhone(this); });
@@ -725,93 +730,68 @@ function setLang(l) {
 
 function applyLang() {
   var t = T[lang];
-  document.getElementById('pin-lbl').textContent = t.pinLbl;
-  var guestLabel = document.getElementById('guest-label');
-  var guestHint = document.getElementById('guest-hint');
-  var staffLoginBtn = document.getElementById('staff-login-btn');
-  if (guestLabel) guestLabel.textContent = t.guestLabel || '내 스탬프 카드 보기';
-  if (guestHint) guestHint.textContent = t.guestHint || '전화번호로 바로 접속';
-  if (staffLoginBtn) staffLoginBtn.textContent = t.staffLogin || '🔒 직원 로그인';
-  var newCardBtn = document.getElementById('new-card-btn');
-  var newCardHint = document.getElementById('new-card-hint');
-  if (newCardBtn) newCardBtn.textContent = t.newCardBtn || '🍚 카드 발급받기';
-  if (newCardHint) newCardHint.textContent = t.newCardHint || '처음 오셨나요? 바로 가입하세요';
-  document.getElementById('guest-btn').textContent = t.guestBtn;
-  document.getElementById('pin-err').textContent = t.pinErr;
-  document.getElementById('ph-title').textContent = t.phTitle;
-  document.getElementById('ph-sub').textContent = t.phSub;
-  document.getElementById('ph-go').textContent = t.phGo;
-  document.getElementById('ph-back').textContent = t.phBack;
-  document.getElementById('sc-title').textContent = t.scTitle;
-  document.getElementById('ssl1').textContent = t.ssl1;
-  document.getElementById('ssl2').textContent = t.ssl2;
-  document.getElementById('r10n').textContent = t.r10n;
-  document.getElementById('r10v').textContent = t.r10v;
-  document.getElementById('r20n').textContent = t.r20n;
-  document.getElementById('r20v').textContent = t.r20v;
-  document.getElementById('qrc-t').textContent = t.qrcT;
-  document.getElementById('qr-h').textContent = t.qrH;
-  document.getElementById('ah-t').textContent = t.ahT;
-  document.getElementById('ah-d').textContent = t.ahD;
-  document.getElementById('lang-mini').textContent = t.langMini;
-  document.getElementById('staff-lbl').textContent = t.staffLbl;
-  document.getElementById('back-btn').textContent = t.backBtn;
-  document.getElementById('search-lbl').textContent = t.searchLbl;
-  document.getElementById('s-btn').textContent = t.sBtn;
-  document.getElementById('new-lbl').textContent = t.newLbl;
-  document.getElementById('list-lbl').textContent = t.listLbl;
-  document.getElementById('nc-btn').textContent = t.ncBtn;
-  document.getElementById('add-btn').textContent = t.addBtn;
-  document.getElementById('rb10').textContent = t.rb10;
-  document.getElementById('rb20').textContent = t.rb20;
-  document.getElementById('th-n').textContent = t.thN;
-  document.getElementById('th-p').textContent = t.thP;
-  document.getElementById('th-s').textContent = t.thS;
-  document.getElementById('nt').textContent = t.nt;
-  document.getElementById('ns').textContent = t.ns;
-  document.getElementById('fl-n').textContent = t.flN;
-  document.getElementById('fl-p').textContent = t.flP;
-  document.getElementById('cr-btn').textContent = t.crBtn;
-  document.getElementById('bk').textContent = t.bk;
-  document.getElementById('m-title').textContent = t.mTitle;
-  document.getElementById('ml-n').textContent = t.mlN;
-  document.getElementById('ml-p').textContent = t.mlP;
-  document.getElementById('ml-s').textContent = t.mlS;
-  document.getElementById('m-cancel').textContent = t.mCancel;
-  document.getElementById('m-del').textContent = t.mDel;
-  document.getElementById('m-save').textContent = t.mSave;
-  document.getElementById('rw-b').textContent = t.rwB;
-  var srTitle = document.getElementById('sr-title');
-  var srSub = document.getElementById('sr-sub');
-  var srSave = document.getElementById('sr-save-btn');
-  var srCancel = document.getElementById('sr-cancel-btn');
-  var phHint = document.getElementById('ph-new-hint');
-  if (srTitle) srTitle.textContent = t.srTitle || '처음 오셨군요! 🍚';
-  if (srSub) srSub.textContent = t.srSub || '이름과 전화번호를 입력하면 스탬프 카드가 바로 발급돼요';
-  if (srSave) srSave.textContent = t.srSave || '스탬프 카드 발급받기 🍚';
-  if (srCancel) srCancel.textContent = t.srCancel || '취소';
-  if (phHint) phHint.textContent = t.phNewHint || '처음 오셨나요? 전화번호 입력 후 자동으로 등록돼요 😊';
-  var delLabel = document.getElementById('del-label');
-  var delCancel = document.getElementById('del-cancel');
-  var delConfirm = document.getElementById('del-confirm');
-  if (delLabel) delLabel.textContent = t.mDelConfirm || '정말 삭제하시겠습니까?';
-  if (delCancel) delCancel.textContent = t.mCancel || '취소';
-  if (delConfirm) delConfirm.textContent = t.mDel ? t.mDel.replace('🗑 ', '') : '삭제';
-  var iosS1 = document.getElementById('ios-s1');
-  var iosS2 = document.getElementById('ios-s2');
-  var iosS3 = document.getElementById('ios-s3');
-  var iosClose = document.getElementById('ios-close');
-  var installBtn = document.getElementById('install-btn');
-  if (iosS1) iosS1.textContent = t.iosS1 || '하단 공유 버튼 탭';
-  if (iosS2) iosS2.textContent = t.iosS2 || '"홈 화면에 추가" 선택';
-  if (iosS3) iosS3.textContent = t.iosS3 || '"추가" 탭';
-  if (iosClose) iosClose.textContent = t.iosClose || '닫기';
-  if (installBtn && deferredPrompt) updateInstallBtn();
-  document.getElementById('ah-d').textContent = t.ahD || '';
-  document.getElementById('clist-loading').textContent = t.tLoading;
+  function setText(id, val) { var el=document.getElementById(id); if(el) el.textContent=val; }
+  setText('pin-lbl', t.pinLbl);
+  setText('guest-btn', t.guestBtn);
+  setText('pin-err', t.pinErr);
+  setText('ph-title', t.phTitle);
+  setText('ph-sub', t.phSub);
+  setText('ph-go', t.phGo);
+  setText('ph-back', t.phBack);
+  setText('sc-title', t.scTitle);
+  setText('ssl1', t.ssl1);
+  setText('r10n', t.r10n);
+  setText('r10v', t.r10v);
+  setText('qrc-t', t.qrcT);
+  setText('qr-h', t.qrH);
+  setText('ah-t', t.ahT);
+  setText('ah-d', t.ahD);
+  setText('lang-mini', t.langMini);
+  setText('staff-lbl', t.staffLbl);
+  setText('back-btn', t.backBtn);
+  setText('search-lbl', t.searchLbl);
+  setText('s-btn', t.sBtn);
+  setText('new-lbl', t.newLbl);
+  setText('list-lbl', t.listLbl);
+  setText('nc-btn', t.ncBtn);
+  setText('add-btn', t.addBtn);
+  setText('rb10', t.rb10);
+  setText('th-n', t.thN);
+  setText('th-p', t.thP);
+  setText('th-s', t.thS);
+  setText('nt', t.nt);
+  setText('ns', t.ns);
+  setText('fl-n', t.flN);
+  setText('fl-p', t.flP);
+  setText('cr-btn', t.crBtn);
+  setText('bk', t.bk);
+  setText('m-title', t.mTitle);
+  setText('ml-n', t.mlN);
+  setText('ml-p', t.mlP);
+  setText('ml-s', t.mlS);
+  setText('m-cancel', t.mCancel);
+  setText('m-del', t.mDel);
+  setText('m-save', t.mSave);
+  setText('rw-b', t.rwB);
+  setText('guest-label', t.guestLabel || '내 스탬프 카드 보기');
+  setText('guest-hint', t.guestHint || '전화번호로 바로 접속');
+  setText('staff-login-btn', t.staffLogin || '🔒 직원 로그인');
+  setText('new-card-btn', t.newCardBtn || '🍚 카드 발급받기');
+  setText('new-card-hint', t.newCardHint || '처음 오셨나요? 바로 가입하세요');
+  var iosS1=document.getElementById('ios-s1'); if(iosS1) iosS1.textContent=t.iosS1||'하단 공유 버튼 탭';
+  var iosS2=document.getElementById('ios-s2'); if(iosS2) iosS2.textContent=t.iosS2||'"홈 화면에 추가" 선택';
+  var iosS3=document.getElementById('ios-s3'); if(iosS3) iosS3.textContent=t.iosS3||'"추가" 탭';
+  var iosClose=document.getElementById('ios-close'); if(iosClose) iosClose.textContent=t.iosClose||'닫기';
+  var srTitle=document.getElementById('sr-title'); if(srTitle) srTitle.textContent=t.srTitle||'처음 오셨군요! 🍚';
+  var srSub=document.getElementById('sr-sub'); if(srSub) srSub.textContent=t.srSub||'이름과 전화번호를 입력하면 스탬프 카드가 발급돼요';
+  var srSave=document.getElementById('sr-save-btn'); if(srSave) srSave.textContent=t.srSave||'스탬프 카드 발급받기 🍚';
+  var srCancel=document.getElementById('sr-cancel-btn'); if(srCancel) srCancel.textContent=t.srCancel||'취소';
+  var phHint=document.getElementById('ph-new-hint'); if(phHint) phHint.textContent=t.phNewHint||'처음 오셨나요? 전화번호 입력 후 자동으로 등록돼요 😊';
+  var delLabel=document.getElementById('del-label'); if(delLabel) delLabel.textContent=t.mDelConfirm||'정말 삭제하시겠습니까?';
+  var delCancel=document.getElementById('del-cancel'); if(delCancel) delCancel.textContent=t.mCancel||'취소';
+  var delConfirm=document.getElementById('del-confirm'); if(delConfirm) delConfirm.textContent='삭제';
 }
 
-// PIN
 function ep(v) {
   if (v === 'del') pinBuf = pinBuf.slice(0, -1);
   else if (v === 'clr') pinBuf = '';
@@ -1166,6 +1146,28 @@ function confirmDelete() {
     searchedPhone = null;
     editingPhone = null;
     showToast(T[lang].tDeleted);
+  });
+}
+
+function downloadExcel() {
+  showToast('📊 다운로드 중...', '');
+  db.ref('kingbap_customers').once('value').then(function(snap) {
+    if (!snap.exists()) { showToast('데이터가 없습니다'); return; }
+    var rows = [['이름', '전화번호', '스탬프 수', '등록일', '마지막 적립일']];
+    snap.forEach(function(s) {
+      var d = s.val();
+      var regDate = d.createdAt ? d.createdAt.slice(0,10) : '-';
+      var lastDate = d.lastStamp ? d.lastStamp.slice(0,10) : '-';
+      rows.push([d.name || '-', d.phone || '-', d.stamps || 0, regDate, lastDate]);
+    });
+    rows.sort(function(a,b) { return (b[2]||0) - (a[2]||0); });
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:14},{wch:16},{wch:10},{wch:14},{wch:14}];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Kingbap 고객');
+    var today = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb, 'Kingbap_고객명단_' + today + '.xlsx');
+    showToast('✅ 다운로드 완료!', 'gold');
   });
 }
 
