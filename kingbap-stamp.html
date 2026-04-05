@@ -820,7 +820,7 @@ function findByPhone() {
   var phone = document.getElementById('ph-inp').value.trim();
   if (!phone) { showToast(T[lang].tPhone); return; }
   var key = phoneKey(phone);
-  db.ref('ozik_customers/' + key).once('value').then(function(snap) {
+  db.ref('kingbap_customers/' + key).once('value').then(function(snap) {
     if (!snap.exists()) {
       // 신규 고객 → 셀프 등록 모달 열기
       openSelfReg(phone);
@@ -850,7 +850,7 @@ function selfRegister() {
   if (!name) { showToast(T[lang].tName); return; }
   if (!phone) { showToast(T[lang].tPhone); return; }
   var key = phoneKey(phone);
-  db.ref('ozik_customers/' + key).set({
+  db.ref('kingbap_customers/' + key).set({
     name: name, phone: phone, stamps: 0, createdAt: new Date().toISOString()
   }).then(function() {
     closeSelfReg();
@@ -864,7 +864,7 @@ function loadCard(phone) {
   var link = location.origin + location.pathname + '?p=' + encodeURIComponent(phone) + '&lang=' + lang;
   document.getElementById('qr-ph').textContent = phone;
   document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' + encodeURIComponent(link);
-  db.ref('ozik_customers/' + phoneKey(phone)).on('value', function(snap) {
+  db.ref('kingbap_customers/' + phoneKey(phone)).on('value', function(snap) {
     if (!snap.exists()) return;
     var c = snap.val();
     window._r10used = c.reward10used || false;
@@ -930,7 +930,7 @@ function renderStamps(total) {
 function staffSearch() {
   var phone = document.getElementById('si').value.trim();
   if (!phone) { showToast(T[lang].tPhone); return; }
-  db.ref('ozik_customers/' + phoneKey(phone)).once('value').then(function(snap) {
+  db.ref('kingbap_customers/' + phoneKey(phone)).once('value').then(function(snap) {
     var rc = document.getElementById('rc');
     if (!snap.exists()) { showToast(T[lang].tNotFound); rc.classList.remove('show'); return; }
     var c = snap.val();
@@ -959,10 +959,10 @@ function addStamp() {
   if (!searchedPhone) return;
   var btn = document.getElementById('add-btn');
   btn.disabled = true;
-  db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
+  db.ref('kingbap_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
     var cu = snap.val();
     var ns = (cu.stamps || 0) + 1;
-    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update({ stamps: ns, lastStamp: new Date().toISOString() }).then(function() {
+    return db.ref('kingbap_customers/' + phoneKey(searchedPhone)).update({ stamps: ns, lastStamp: new Date().toISOString() }).then(function() {
       showToast(cu.name + T[lang].tStamp);
       // 리워드 버튼 즉시 업데이트
       var r10used = cu.reward10used || false;
@@ -990,7 +990,7 @@ function addStamp() {
 
 function useReward(n) {
   if (!searchedPhone) return;
-  db.ref('ozik_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
+  db.ref('kingbap_customers/' + phoneKey(searchedPhone)).once('value').then(function(snap) {
     var cu = snap.val();
     var stamps = cu.stamps || 0;
     var updates = {};
@@ -1004,7 +1004,7 @@ function useReward(n) {
       updates.stamps = 0;
     }
     updates.lastReward = new Date().toISOString();
-    return db.ref('ozik_customers/' + phoneKey(searchedPhone)).update(updates);
+    return db.ref('kingbap_customers/' + phoneKey(searchedPhone)).update(updates);
   }).then(function() {
     showToast(T[lang].tReward, 'gold');
     staffSearch();
@@ -1025,7 +1025,7 @@ function createCustomer() {
   if (!name) { showToast(T[lang].tName); return; }
   if (!phone) { showToast(T[lang].tPhone); return; }
   var key = phoneKey(phone);
-  db.ref('ozik_customers/' + key).set({
+  db.ref('kingbap_customers/' + key).set({
     name: name, phone: phone, stamps: 0, createdAt: new Date().toISOString()
   }).then(function() {
     document.getElementById('n-inp').value = '';
@@ -1108,14 +1108,14 @@ function saveEdit() {
   var newKey = phoneKey(newPhone);
   var p;
   if (oldKey !== newKey) {
-    p = db.ref('ozik_customers/' + oldKey).once('value').then(function(snap) {
+    p = db.ref('kingbap_customers/' + oldKey).once('value').then(function(snap) {
       var old = snap.val();
-      return db.ref('ozik_customers/' + newKey).set(Object.assign({}, old, { name: newName, phone: newPhone, stamps: newStamps }));
+      return db.ref('kingbap_customers/' + newKey).set(Object.assign({}, old, { name: newName, phone: newPhone, stamps: newStamps }));
     }).then(function() {
-      return db.ref('ozik_customers/' + oldKey).remove();
+      return db.ref('kingbap_customers/' + oldKey).remove();
     });
   } else {
-    p = db.ref('ozik_customers/' + oldKey).update({ name: newName, phone: newPhone, stamps: newStamps });
+    p = db.ref('kingbap_customers/' + oldKey).update({ name: newName, phone: newPhone, stamps: newStamps });
   }
   p.then(function() {
     document.getElementById('mbg').classList.remove('show');
@@ -1140,7 +1140,7 @@ function deleteCustomer() {
 function confirmDelete() {
   document.getElementById('del-modal').classList.remove('show');
   if (!editingPhone) return;
-  db.ref('ozik_customers/' + phoneKey(editingPhone)).remove().then(function() {
+  db.ref('kingbap_customers/' + phoneKey(editingPhone)).remove().then(function() {
     document.getElementById('mbg').classList.remove('show');
     document.getElementById('rc').classList.remove('show');
     searchedPhone = null;
