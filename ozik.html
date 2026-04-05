@@ -11,8 +11,8 @@
 <title>Ozik · 스탬프 카드</title>
 <link rel="manifest" href="ozik-manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
+<script src="https://unpkg.com/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://unpkg.com/firebase@9.23.0/firebase-database-compat.js"></script>
 <style>
 :root{--bg:#faf6f0;--card:#fff9f3;--brown:#6b4c35;--bl:#c4956a;--bp:#ede0ce;--gold:#d4a843;--green:#7a9e7e;--tx:#3a2e26;--tl:#a08070;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -427,6 +427,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 <div class="toast" id="toast"></div>
 
 <script>
+window.addEventListener("load", function() {
+
 firebase.initializeApp({
   apiKey: "AIzaSyBHhZQIXq-fBCOi2Lud5XgdB231UVPCMEg",
   authDomain: "comma-family.firebaseapp.com",
@@ -1182,6 +1184,8 @@ applyLang();
 bindEvents();
 if (urlPhone) { loadCard(urlPhone); goTo('p-card'); }
 else { goTo('p-lang'); }
+
+});
 </script>
 </body>
 </html>
