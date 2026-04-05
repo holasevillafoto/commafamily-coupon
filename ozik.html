@@ -121,6 +121,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 .rwd-btn.r10{background:linear-gradient(135deg,#fef3d0,#fde68a);color:var(--tx);}
 .rwd-btn.r20{background:linear-gradient(135deg,#d4ead5,#a8c5aa);color:var(--tx);}
 .nc-btn{width:100%;background:#fff;border:1px solid var(--bp);border-radius:12px;padding:13px;color:var(--tl);font-size:13px;cursor:pointer;margin-bottom:22px;}
+.excel-btn{width:100%;background:#fff;border:1px solid #1d6f42;border-radius:12px;padding:11px;color:#1d6f42;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:14px;font-family:"Noto Sans KR",sans-serif;}
+.excel-btn:active{background:#f0faf4;}
 
 /* 고객 명단 */
 .ct{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--bp);}
@@ -348,6 +350,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
     <div class="sl" id="new-lbl">신규 고객</div>
     <button class="nc-btn" id="nc-btn">+ 신규 고객 등록</button>
     <div class="sl" id="list-lbl">고객 명단</div>
+    <button class="excel-btn" id="excel-btn" onclick="">📊 엑셀 다운로드</button>
     <div class="ct">
       <div class="ct-head">
         <div id="th-n">이름</div><div id="th-p">전화번호</div><div id="th-s">스탬프</div>
@@ -431,6 +434,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto San
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/firebase@9.23.0/firebase-app-compat.js"></script>
 <script src="https://unpkg.com/firebase@9.23.0/firebase-database-compat.js"></script>
 <script>
@@ -623,6 +627,7 @@ function bindEvents() {
   document.getElementById('rb10').addEventListener('click', function() { useReward(10); });
   document.getElementById('rb20').addEventListener('click', function() { useReward(20); });
   document.getElementById('nc-btn').addEventListener('click', function() { goTo('p-new'); });
+  document.getElementById('excel-btn').addEventListener('click', downloadExcel);
 
   // 신규 고객
   document.getElementById('np-inp').addEventListener('input', function() { fmtPhone(this); });
@@ -1183,6 +1188,28 @@ function confirmDelete() {
     searchedPhone = null;
     editingPhone = null;
     showToast(T[lang].tDeleted);
+  });
+}
+
+function downloadExcel() {
+  showToast('📊 다운로드 중...', '');
+  db.ref('ozik_customers').once('value').then(function(snap) {
+    if (!snap.exists()) { showToast('데이터가 없습니다'); return; }
+    var rows = [['이름', '전화번호', '스탬프 수', '등록일', '마지막 적립일']];
+    snap.forEach(function(s) {
+      var d = s.val();
+      var regDate = d.createdAt ? d.createdAt.slice(0,10) : '-';
+      var lastDate = d.lastStamp ? d.lastStamp.slice(0,10) : '-';
+      rows.push([d.name || '-', d.phone || '-', d.stamps || 0, regDate, lastDate]);
+    });
+    rows.sort(function(a,b) { return (b[2]||0) - (a[2]||0); });
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:14},{wch:16},{wch:10},{wch:14},{wch:14}];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Ozik 고객');
+    var today = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb, 'Ozik_고객명단_' + today + '.xlsx');
+    showToast('✅ 다운로드 완료!', 'gold');
   });
 }
 
