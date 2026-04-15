@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>찰칵세비야 — 직원 전용 캡션 생성기</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EFE6;
+    --amber: #C8883A;
+    --rust: #A0522D;
+    --deep: #1A1209;
+    --gold: #E4B87A;
+    --ink: #2D2010;
+    --light: #FBF7F1;
+    --muted: #8C7355;
+    --success: #5A8A5A;
+    --danger: #B03030;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── 잠금 화면 ── */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+  }
+
+  #lock-screen.hidden { display: none; }
+
+  .lock-card {
+    background: var(--light);
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+
+  .lock-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 4px;
+  }
+
+  .lock-logo em { font-style: italic; color: var(--amber); }
+
+  .lock-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--gold);
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin: 10px 0 32px;
+  }
+
+  .lock-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+
+  .lock-input {
+    width: 100%;
+    background: white;
+    border: 1.5px solid rgba(200,136,58,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 18px;
+    letter-spacing: 6px;
+    text-align: center;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 16px;
+  }
+
+  .lock-input:focus {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(200,136,58,0.12);
+  }
+
+  .lock-input.error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(176,48,48,0.12);
+    animation: shake 0.35s ease;
+  }
+
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-5px)}
+    80%{transform:translateX(5px)}
+  }
+
+  .lock-error {
+    font-size: 12px;
+    color: var(--danger);
+    margin-bottom: 14px;
+    min-height: 18px;
+    font-weight: 500;
+  }
+
+  .btn-unlock {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--rust) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn-unlock:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(160,82,45,0.35);
+  }
+
+  .lock-hint {
+    margin-top: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ── 메인 앱 ── */
+  #app { display: none; position: relative; z-index: 1; }
+  #app.visible { display: block; }
+
+  .wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* 상단 직원 배지 */
+  .staff-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--deep);
+    color: rgba(255,255,255,0.7);
+    padding: 10px 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+  }
+
+  .staff-bar .brand { color: var(--gold); font-weight: 700; }
+
+  .btn-logout {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn-logout:hover {
+    border-color: rgba(255,255,255,0.5);
+    color: white;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 40px;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--gold);
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 5vw, 40px);
+    font-weight: 700;
+    color: var(--deep);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .header h1 em { font-style: italic; color: var(--amber); }
+  .header p { font-size: 13px; color: var(--muted); font-weight: 300; }
+
+  /* 폼 */
+  .form-card {
+    background: var(--light);
+    border: 1px solid rgba(200,136,58,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 24px rgba(26,18,9,0.06);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  select, input[type="text"], input[type="password"], textarea {
+    background: white;
+    border: 1.5px solid rgba(200,136,58,0.25);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+
+  select:focus, textarea:focus {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(200,136,58,0.12);
+  }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  .tone-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .tone-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border: 1.5px solid rgba(200,136,58,0.25);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    background: white;
+    color: var(--muted);
+  }
+
+  .tone-chip input { display: none; }
+
+  .tone-chip:has(input:checked) {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: white;
+    font-weight: 500;
+  }
+
+  .btn-generate {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--rust) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-generate:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(160,82,45,0.35);
+  }
+
+  .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* 전문가 카드 */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(200,136,58,0.2);
+  }
+
+  .expert-card {
+    background: white;
+    border: 1px solid rgba(200,136,58,0.15);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 14px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s;
+    box-shadow: 0 2px 12px rgba(26,18,9,0.04);
+  }
+
+  .expert-card.visible { opacity: 1; transform: translateY(0); }
+
+  .expert-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .expert-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .expert-meta { flex: 1; }
+
+  .expert-name { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+
+  .expert-role {
+    font-size: 10px; font-weight: 500; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 8px;
+    border-radius: 10px; display: inline-block;
+  }
+
+  .card-copywriter .expert-avatar { background: #FEF3E2; }
+  .card-copywriter .expert-role { background: #FEF3E2; color: var(--amber); }
+  .card-storyteller .expert-avatar { background: #E8F4F8; }
+  .card-storyteller .expert-role { background: #E8F4F8; color: #3A7A9C; }
+  .card-hashtag .expert-avatar { background: #F0EAF8; }
+  .card-hashtag .expert-role { background: #F0EAF8; color: #7A5CAA; }
+  .card-seo .expert-avatar { background: #EAF4EC; }
+  .card-seo .expert-role { background: #EAF4EC; color: #3A7A5C; }
+
+  .expert-content {
+    font-size: 14px; line-height: 1.8; color: var(--ink);
+    white-space: pre-wrap; word-break: break-word;
+  }
+
+  .expert-content.loading {
+    color: var(--muted); font-style: italic;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .expert-footer {
+    display: flex; justify-content: flex-end; gap: 8px;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid rgba(200,136,58,0.1);
+  }
+
+  .btn-copy {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 14px; border-radius: 8px;
+    border: 1.5px solid rgba(200,136,58,0.3);
+    background: transparent; color: var(--amber);
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .btn-copy:hover { background: var(--amber); border-color: var(--amber); color: white; }
+  .btn-copy.copied { background: var(--success); border-color: var(--success); color: white; }
+
+  .spinner {
+    width: 17px; height: 17px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading .spinner { display: block; }
+  .loading .btn-text { display: none; }
+
+  .empty-state {
+    text-align: center; padding: 48px 24px; color: var(--muted);
+  }
+
+  .empty-state .icon { font-size: 38px; margin-bottom: 10px; opacity: 0.5; }
+  .empty-state p { font-size: 13px; font-weight: 300; line-height: 1.7; }
+
+  .footer {
+    text-align: center; padding: 28px 0 14px;
+    font-size: 11px; color: var(--muted); font-weight: 300;
+  }
+
+  .footer strong { color: var(--amber); font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-card { padding: 20px 16px; }
+    .wrapper { padding: 20px 14px; }
+    .lock-card { padding: 36px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── 잠금 화면 ── -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-logo">찰칵 <em>세비야</em></div>
+    <div class="lock-badge">Staff Only</div>
+    <label class="lock-label">🔐 접속 비밀번호</label>
+    <input
+      type="password"
+      id="pw-input"
+      class="lock-input"
+      placeholder="• • • • • •"
+      maxlength="20"
+      autocomplete="off"
+      onkeydown="if(event.key==='Enter') tryUnlock()"
+    />
+    <div class="lock-error" id="lock-error"></div>
+    <button class="btn-unlock" onclick="tryUnlock()">입장하기</button>
+    <p class="lock-hint">찰칵세비야 직원 전용 페이지입니다<br>비밀번호는 대표님께 문의해주세요</p>
+  </div>
+</div>
+
+<!-- ── 메인 앱 ── -->
+<div id="app">
+  <div class="staff-bar">
+    <span><span class="brand">찰칵세비야</span> · 직원 전용 캡션 생성기</span>
+    <button class="btn-logout" onclick="logout()">로그아웃</button>
+  </div>
+
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-tag">✦ AI Caption Studio — Staff</div>
+      <h1>인스타그램<br><em>캡션 자동 생성기</em></h1>
+      <p>촬영 정보를 입력하면 전문가 4인이 각자의 스타일로 캡션을 작성합니다</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>📸 촬영 구성</label>
+          <select id="composition">
+            <option value="">선택해주세요</option>
+            <option value="solo_female">여성 단독</option>
+            <option value="solo_male">남성 단독</option>
+            <option value="couple">커플</option>
+            <option value="friends_2">우정샷 (2인)</option>
+            <option value="friends_group">우정샷 (3인+)</option>
+            <option value="family">가족</option>
+            <option value="honeymoon">신혼여행</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>📍 촬영 장소</label>
+          <select id="location">
+            <option value="">선택해주세요</option>
+            <option value="plaza_espana">스페인광장 (Plaza de España)</option>
+            <option value="cathedral">대성당 앞 (Catedral de Sevilla)</option>
+            <option value="santa_cruz">산타크루스 골목 (Barrio de Santa Cruz)</option>
+            <option value="riverside">강변 (Río Guadalquivir)</option>
+            <option value="old_town">구시가지 (Casco Antiguo)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🕐 촬영 시간대</label>
+          <select id="timeofday">
+            <option value="">선택해주세요</option>
+            <option value="morning">오전</option>
+            <option value="afternoon">오후</option>
+            <option value="sunset">석양</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🎭 분위기 / 테마</label>
+          <select id="mood">
+            <option value="">선택해주세요</option>
+            <option value="romantic">로맨틱 &amp; 감성적</option>
+            <option value="bright_cheerful">밝고 경쾌함</option>
+            <option value="elegant">우아하고 클래식</option>
+            <option value="adventurous">자유로운 여행자</option>
+            <option value="dreamy">몽환적 &amp; 필름감성</option>
+            <option value="festive">축제 &amp; 에너지</option>
+            <option value="peaceful">여유롭고 평화로움</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>✍️ 추가 메모 (선택사항)</label>
+          <textarea id="notes" placeholder="예: Feria de Abril 기간 촬영, 플라멩코 드레스 착용, 특별한 스토리 등"></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label>🎨 원하는 톤 (복수 선택 가능)</label>
+          <div class="tone-grid">
+            <label class="tone-chip"><input type="checkbox" name="tone" value="emotional"> 💕 감성적</label>
+            <label class="tone-chip"><input type="checkbox" name="tone" value="informative"> 📖 정보형</label>
+            <label class="tone-chip"><input type="checkbox" name="tone" value="witty"> 😄 위트있게</label>
+            <label class="tone-chip"><input type="checkbox" name="tone" value="poetic"> 🌸 시적으로</label>
+            <label class="tone-chip"><input type="checkbox" name="tone" value="travel"> ✈️ 여행자시각</label>
+            <label class="tone-chip"><input type="checkbox" name="tone" value="luxury"> 💎 프리미엄</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-generate" id="generateBtn" onclick="generateCaptions()">
+        <div class="spinner"></div>
+        <span class="btn-text">✦ 전문가 4인에게 캡션 의뢰하기</span>
+      </button>
+    </div>
+
+    <div id="resultsSection">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">📝</div>
+        <p>촬영 정보를 입력하고 생성 버튼을 눌러주세요<br>4명의 전문가가 각자의 스타일로 캡션을 작성합니다</p>
+      </div>
+      <div id="expertCards" style="display:none;">
+        <div class="section-title">전문가 패널 결과</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>찰칵세비야</strong> × Comma Family S.L. — Staff Tool v1.0
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 비밀번호 설정 (여기만 바꾸면 됩니다) ──
+const STAFF_PASSWORD = 'chalcak2025';
+const SESSION_KEY = 'chalcak_staff_auth';
+
+// ── 세션 확인 (새로고침 시 유지) ──
+(function() {
+  if (sessionStorage.getItem(SESSION_KEY) === 'ok') {
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+  }
+})();
+
+function tryUnlock() {
+  const input = document.getElementById('pw-input');
+  const errEl = document.getElementById('lock-error');
+  const val = input.value.trim();
+
+  if (val === STAFF_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, 'ok');
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    errEl.textContent = '';
+  } else {
+    input.classList.add('error');
+    errEl.textContent = '비밀번호가 틀렸습니다. 다시 확인해주세요.';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 500);
+    input.focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('lock-error').textContent = '';
+}
+
+// ── 전문가 정의 ──
+const EXPERTS = [
+  {
+    id: 'copywriter',
+    name: '김유진 카피라이터',
+    role: '🎯 감성 카피라이터',
+    emoji: '✍️',
+    cardClass: 'card-copywriter',
+    persona: '10년 경력의 감성 여행 카피라이터. 짧고 강렬한 문장으로 클릭을 유도하는 전문가. 인스타그램 알고리즘과 한국인 여행자 심리를 꿰뚫고 있음.'
+  },
+  {
+    id: 'storyteller',
+    name: '박세준 스토리텔러',
+    role: '📖 여행 스토리텔러',
+    emoji: '🗺️',
+    cardClass: 'card-storyteller',
+    persona: '세비야 거주 7년차 여행 작가. 현지인 시각으로 세비야의 숨겨진 이야기를 풀어내는 전문가. 독자가 실제로 그 장면에 있는 듯한 몰입감을 만들어냄.'
+  },
+  {
+    id: 'hashtag',
+    name: '이소현 소셜미디어 매니저',
+    role: '📱 SNS 전략가',
+    emoji: '📲',
+    cardClass: 'card-hashtag',
+    persona: '인스타그램 성장 전문가. 해시태그 최적화, 도달률 극대화, 저장·공유 유도 전략의 달인. 찰칵세비야 타겟층인 2030 한국 여행자의 언어를 정확히 구사함.'
+  },
+  {
+    id: 'seo',
+    name: '최민혁 콘텐츠 디렉터',
+    role: '🔍 SEO & 전환 전문가',
+    emoji: '📊',
+    cardClass: 'card-seo',
+    persona: '검색 최적화와 예약 전환을 동시에 잡는 전략가. 네이버·인스타그램 검색 노출과 예약 CTA를 자연스럽게 녹여내는 기술로 유명함.'
+  }
+];
+
+function getFormData() {
+  const compositionMap = {
+    solo_female: '여성 단독 촬영', solo_male: '남성 단독 촬영',
+    couple: '커플 촬영', friends_2: '우정샷 2인',
+    friends_group: '우정샷 3인 이상', family: '가족 촬영',
+    honeymoon: '신혼여행 커플'
+  };
+  const locationMap = {
+    plaza_espana: '스페인광장 (Plaza de España)',
+    cathedral: '대성당 앞 (Catedral de Sevilla)',
+    santa_cruz: '산타크루스 골목 (Barrio de Santa Cruz)',
+    riverside: '강변 (Río Guadalquivir)',
+    old_town: '구시가지 (Casco Antiguo de Sevilla)'
+  };
+  const timeMap = {
+    morning: '오전 (맑은 아침 햇살)',
+    afternoon: '오후 (따뜻한 빛)',
+    sunset: '석양 (붉은 노을 골든아워)'
+  };
+  const moodMap = {
+    romantic: '로맨틱하고 감성적인', bright_cheerful: '밝고 경쾌한',
+    elegant: '우아하고 클래식한', adventurous: '자유로운 여행자 스타일',
+    dreamy: '몽환적이고 필름 감성', festive: '축제적이고 에너지 넘치는',
+    peaceful: '여유롭고 평화로운'
+  };
+  const tones = Array.from(document.querySelectorAll('input[name="tone"]:checked')).map(el => el.value);
+  const toneLabels = { emotional: '감성적', informative: '정보형', witty: '위트있게', poetic: '시적으로', travel: '여행자시각', luxury: '프리미엄' };
+
+  return {
+    composition: compositionMap[document.getElementById('composition').value] || '',
+    location: locationMap[document.getElementById('location').value] || '',
+    timeofday: timeMap[document.getElementById('timeofday').value] || '',
+    mood: moodMap[document.getElementById('mood').value] || '',
+    notes: document.getElementById('notes').value.trim(),
+    tones: tones.map(t => toneLabels[t]).join(', ')
+  };
+}
+
+function buildPrompt(expert, formData) {
+  return `당신은 ${expert.name}입니다. ${expert.persona}
+
+찰칵세비야는 스페인 세비야에서 한국인 여행자를 대상으로 운영하는 프리미엄 스냅 촬영 서비스입니다.
+
+[촬영 정보]
+- 구성: ${formData.composition}
+- 장소: ${formData.location}
+- 시간대: ${formData.timeofday}
+- 분위기: ${formData.mood}
+${formData.notes ? `- 추가 메모: ${formData.notes}` : ''}
+${formData.tones ? `- 요청 톤: ${formData.tones}` : ''}
+
+위 정보를 바탕으로 찰칵세비야 인스타그램 포스팅 캡션을 작성해주세요.
+
+반드시 포함할 요소:
+1. 감성적인 첫 문장 (눈길을 끄는 훅)
+2. 본문 (장소/분위기/감정을 녹인 짧은 스토리, 현지인 시각)
+3. 예약 CTA: "세비야 스냅 촬영 예약은 카카오채널 '찰칵세비야', 네이버 스마트스토어, 마이리얼트립, NOL, 인터파크, 트리플에서 가능합니다 📸"
+4. 해시태그 20개 (#세비야스냅 #스페인여행 반드시 포함)
+
+톤: 친근하고 따뜻한 말투(~했어요, ~예요), 진정성, 2030 한국 여행자에게 공감되는 언어
+길이: 캡션 본문은 줄바꿈 포함 10줄 이내로 압축. 해시태그는 본문 아래 별도로.
+
+당신만의 고유한 스타일로, 다른 전문가와 완전히 다른 접근법으로 작성하세요.`;
+}
+
+async function generateSingleCaption(expert, formData, cardEl) {
+  const contentEl = cardEl.querySelector('.expert-content');
+  const footer = cardEl.querySelector('.expert-footer');
+  contentEl.textContent = '전문가가 캡션을 작성하고 있습니다...';
+  contentEl.classList.add('loading');
+  footer.style.display = 'none';
+  footer.innerHTML = `<button class="btn-copy" onclick="copyCaption('${expert.id}', this)">📋 복사하기</button>`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: buildPrompt(expert, formData) }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      const errMsg = data.error?.message || `HTTP ${response.status}`;
+      contentEl.textContent = `⚠️ API 오류: ${errMsg}`;
+      contentEl.classList.remove('loading');
+      footer.innerHTML = `<button class="btn-copy" style="color:var(--danger);border-color:var(--danger);" onclick="retrySingle('${expert.id}')">🔄 다시 시도</button>`;
+      footer.style.display = 'flex';
+      return;
+    }
+
+    const text = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
+
+    if (!text) {
+      contentEl.textContent = '⚠️ 응답이 비어있습니다. 다시 시도해주세요.';
+      contentEl.classList.remove('loading');
+      footer.innerHTML = `<button class="btn-copy" style="color:var(--danger);border-color:var(--danger);" onclick="retrySingle('${expert.id}')">🔄 다시 시도</button>`;
+      footer.style.display = 'flex';
+      return;
+    }
+
+    contentEl.textContent = text;
+    contentEl.classList.remove('loading');
+    footer.style.display = 'flex';
+
+  } catch (err) {
+    contentEl.textContent = `⚠️ 네트워크 오류: ${err.message}`;
+    contentEl.classList.remove('loading');
+    footer.innerHTML = `<button class="btn-copy" style="color:var(--danger);border-color:var(--danger);" onclick="retrySingle('${expert.id}')">🔄 다시 시도</button>`;
+    footer.style.display = 'flex';
+  }
+}
+
+function retrySingle(expertId) {
+  const expert = EXPERTS.find(e => e.id === expertId);
+  const cardEl = document.getElementById(`card-${expertId}`);
+  const formData = getFormData();
+  if (expert && cardEl) generateSingleCaption(expert, formData, cardEl);
+}
+
+function createExpertCard(expert) {
+  const card = document.createElement('div');
+  card.className = `expert-card ${expert.cardClass}`;
+  card.id = `card-${expert.id}`;
+  card.innerHTML = `
+    <div class="expert-header">
+      <div class="expert-avatar">${expert.emoji}</div>
+      <div class="expert-meta">
+        <div class="expert-name">${expert.name}</div>
+        <div class="expert-role">${expert.role}</div>
+      </div>
+    </div>
+    <div class="expert-content"></div>
+    <div class="expert-footer" style="display:none;">
+      <button class="btn-copy" onclick="copyCaption('${expert.id}', this)">📋 복사하기</button>
+    </div>
+  `;
+  return card;
+}
+
+function copyCaption(expertId, btn) {
+  const content = document.querySelector(`#card-${expertId} .expert-content`).textContent;
+  navigator.clipboard.writeText(content).then(() => {
+    btn.textContent = '✓ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 복사하기';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+async function generateCaptions() {
+  const formData = getFormData();
+  if (!formData.composition || !formData.location) {
+    alert('촬영 구성과 장소는 필수 항목입니다.');
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  document.getElementById('emptyState').style.display = 'none';
+  const cardsContainer = document.getElementById('expertCards');
+  cardsContainer.style.display = 'block';
+  cardsContainer.innerHTML = '<div class="section-title">전문가 패널 결과</div>';
+
+  const cards = EXPERTS.map(expert => {
+    const card = createExpertCard(expert);
+    cardsContainer.appendChild(card);
+    setTimeout(() => card.classList.add('visible'), 50);
+    return { expert, card };
+  });
+
+  await Promise.all(
+    cards.map(({ expert, card }) => generateSingleCaption(expert, formData, card))
+  );
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  btn.querySelector('.btn-text').textContent = '✦ 다시 생성하기';
+}
+</script>
+</body>
+</html>
