@@ -5,83 +5,90 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About · Comma Family S.L</title>
 <meta name="description" content="COMMA FAMILY S.L — 세비야에서 진짜 한국을 전하는 호스피탈리티 전문 기업.">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fbfaf8;--ink:#211d1b;--muted:#8c847c;
-  --oxblood:#7a3328;--terra:#a85d44;--line:#e9e3da;
+  --bg:#ffffff;--ink:#2b303b;--muted:#8a8d94;
+  --accent:#fbd641;--line:#e9e9ec;--thumb:#f3f3f1;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);font-family:'Montserrat','Noto Sans KR',sans-serif;color:var(--ink);font-weight:300;line-height:1.7;overflow-x:hidden;}
+body{background:var(--bg);font-family:'Poppins','Noto Sans KR',sans-serif;color:var(--ink);font-weight:400;line-height:1.7;overflow-x:hidden;}
 a{text-decoration:none;color:inherit;}
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(251,250,248,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:100;}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:0.22em;font-weight:600;}
-.nav-logo .c{color:var(--oxblood);}
-.nav-right{display:flex;align-items:center;gap:22px;}
-.nav-link{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:400;transition:color 0.2s;}
+.nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:100;}
+.nav-logo{display:flex;align-items:center;}
+.nav-logo img{height:22px;width:auto;display:block;}
+.nav-right{display:flex;align-items:center;gap:18px;}
+.nav-link{font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:600;transition:color 0.2s;}
 .nav-link:hover{color:var(--ink);}
 .lang-bar{display:flex;gap:2px;}
-.lb{background:transparent;border:none;padding:5px 7px;font-size:11px;color:var(--muted);cursor:pointer;transition:color 0.2s;font-family:inherit;letter-spacing:0.08em;}
-.lb.active{color:var(--oxblood);font-weight:500;}
+.lb{background:transparent;border:none;padding:5px 8px;font-size:11px;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit;font-weight:700;letter-spacing:0.04em;}
+.lb.active{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:4px;}
 
 /* HERO */
-.about-hero{padding:150px 24px 60px;text-align:center;}
-.ah-kicker{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.5em;color:var(--terra);text-transform:uppercase;margin-bottom:26px;}
-.ah-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,7vw,58px);font-weight:500;letter-spacing:0.03em;line-height:1.16;}
-.ah-title .c{color:var(--oxblood);}
-.ah-line{width:40px;height:1px;background:var(--terra);margin:30px auto 0;}
+.about-hero{padding:148px 24px 50px;text-align:center;}
+.ah-kicker{font-size:11px;letter-spacing:0.4em;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:22px;}
+.ah-title{font-size:clamp(28px,6.4vw,50px);font-weight:700;line-height:1.2;letter-spacing:-0.01em;}
+.ah-title .c{color:var(--ink);position:relative;}
+.ah-title .hl{background:linear-gradient(transparent 62%,var(--accent) 62%);padding:0 4px;}
+
+/* MARQUEE */
+.marquee{background:var(--ink);overflow:hidden;white-space:nowrap;padding:15px 0;margin-top:40px;}
+.marquee-track{display:inline-block;animation:scroll 26s linear infinite;}
+.marquee-track span{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:0.05em;color:#fff;text-transform:uppercase;margin:0 6px;vertical-align:middle;}
+.marquee-track .dot{color:var(--accent);margin:0 14px;font-size:14px;}
+@keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* CONTENT */
-.wrap{max-width:720px;margin:0 auto;padding:60px 26px 0;}
-.block{margin-bottom:66px;}
-.block h2{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--terra);font-weight:500;margin-bottom:22px;}
-.block p{font-size:16px;color:#494440;font-weight:300;line-height:2;margin-bottom:16px;}
-.lead{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,4.6vw,30px);font-weight:500;line-height:1.5;color:var(--ink);letter-spacing:0.01em;}
-.lead .em{color:var(--oxblood);}
+.wrap{max-width:720px;margin:0 auto;padding:60px 24px 0;}
+.block{margin-bottom:62px;}
+.block h2{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink);margin-bottom:20px;}
+.block p{font-size:15.5px;color:#555a64;font-weight:400;line-height:1.95;margin-bottom:14px;}
+.lead{font-size:clamp(19px,4.4vw,25px);font-weight:600;line-height:1.55;color:var(--ink);font-family:'Poppins',sans-serif;}
+.lead .em{background:linear-gradient(transparent 60%,var(--accent) 60%);}
 
 /* VALUES */
-.values{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
-.value{background:var(--bg);padding:30px 26px;}
-.value .vm{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--oxblood);font-weight:600;margin-bottom:14px;}
-.value h3{font-size:14px;font-weight:500;margin-bottom:9px;letter-spacing:0.03em;}
-.value p{font-size:13px;color:var(--muted);line-height:1.7;margin:0;font-weight:300;}
+.values{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.value{border:1px solid var(--line);border-radius:14px;padding:28px 24px;}
+.value .vm{font-family:'Anton',sans-serif;font-size:30px;color:var(--accent);-webkit-text-stroke:1px var(--ink);margin-bottom:12px;line-height:1;}
+.value h3{font-size:15px;font-weight:700;margin-bottom:8px;}
+.value p{font-size:13px;color:var(--muted);line-height:1.65;margin:0;}
 
 /* BRANDS */
 .brands{border-top:1px solid var(--line);}
 .brand{display:flex;align-items:baseline;gap:18px;padding:20px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
-.brand .bn{font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:0.06em;font-weight:600;min-width:170px;}
-.brand .bc{font-size:10px;color:var(--terra);letter-spacing:0.2em;text-transform:uppercase;min-width:120px;font-weight:500;}
-.brand .bd{font-size:13.5px;color:var(--muted);flex:1;min-width:200px;font-weight:300;}
+.brand .bn{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:0.03em;text-transform:uppercase;min-width:180px;}
+.brand .bc{font-size:10px;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;min-width:110px;font-weight:600;}
+.brand .bd{font-size:13.5px;color:var(--muted);flex:1;min-width:190px;font-weight:300;}
 
 /* LOCATION */
-.loc{border:1px solid var(--line);padding:34px 30px;text-align:center;}
-.loc .city{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;letter-spacing:0.05em;margin-bottom:6px;}
-.loc .country{font-size:10px;letter-spacing:0.26em;color:var(--terra);text-transform:uppercase;margin-bottom:16px;}
-.loc p{font-size:13px;color:var(--muted);margin:0;line-height:1.7;font-weight:300;}
+.loc{border:1px solid var(--line);border-radius:14px;padding:36px 30px;text-align:center;}
+.loc .city{font-family:'Anton',sans-serif;font-size:40px;letter-spacing:0.02em;margin-bottom:4px;}
+.loc .country{font-size:10px;letter-spacing:0.24em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;font-weight:700;}
+.loc p{font-size:13px;color:var(--muted);margin:0;line-height:1.7;}
 
 /* CTA */
-.cta{text-align:center;padding:54px 26px;border:1px solid var(--line);}
-.cta p{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--ink);margin-bottom:24px;font-weight:500;}
-.cta a{display:inline-block;background:var(--oxblood);color:#fff;padding:13px 32px;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;transition:background 0.2s;border-radius:1px;}
-.cta a:hover{background:#65281f;}
+.cta{text-align:center;background:var(--ink);border-radius:16px;padding:54px 26px;}
+.cta p{font-family:'Anton',sans-serif;font-size:clamp(24px,5vw,34px);color:#fff;margin-bottom:24px;text-transform:uppercase;letter-spacing:0.02em;}
+.cta p .y{color:var(--accent);}
+.cta a{display:inline-block;background:var(--accent);color:var(--ink);padding:14px 32px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-radius:8px;transition:transform 0.2s;}
+.cta a:hover{transform:translateY(-2px);}
 
 /* FOOTER */
-.footer{text-align:center;padding:80px 24px 56px;margin-top:80px;border-top:1px solid var(--line);}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.2em;font-weight:600;color:#a59c92;}
-.footer-logo .c{color:var(--oxblood);}
-.footer-meta{font-size:11px;color:#bcb4aa;margin-top:12px;line-height:2;letter-spacing:0.04em;}
+.footer{text-align:center;padding:68px 24px 52px;margin-top:80px;border-top:1px solid var(--line);}
+.footer-logo img{height:28px;width:auto;opacity:0.85;}
+.footer-meta{font-size:12px;color:#a4a7ad;margin-top:14px;line-height:1.9;}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav class="nav">
-<a href="index.html" class="nav-logo">COMMA<span class="c">,</span> FAMILY</a>
+<a href="index.html" class="nav-logo"><img src="comma-wordmark.png" alt="Comma Family"></a>
 <div class="nav-right">
 <a href="index.html" class="nav-link" data-ko="홈" data-es="Inicio" data-en="Home">홈</a>
 <div class="lang-bar">
@@ -96,20 +103,27 @@ a{text-decoration:none;color:inherit;}
 <header class="about-hero">
 <div class="ah-kicker">Comma Family S.L</div>
 <div class="ah-title"
-  data-ko="잠시<span class='c'>,</span> 쉬어가는 진짜 한국"
-  data-es="Una coma<span class='c'>,</span> una pausa de la Corea auténtica"
-  data-en="A comma<span class='c'>,</span> a pause of real Korea">잠시<span class="c">,</span> 쉬어가는 진짜 한국</div>
-<div class="ah-line"></div>
+  data-ko="잠시 쉬어가는 <span class='hl'>진짜 한국</span>"
+  data-es="Una pausa de la <span class='hl'>Corea auténtica</span>"
+  data-en="A pause of <span class='hl'>real Korea</span>">잠시 쉬어가는 <span class="hl">진짜 한국</span></div>
 </header>
+
+<!-- MARQUEE -->
+<div class="marquee">
+<div class="marquee-track">
+<span>HOLA SEVILLA</span><span class="dot">✦</span><span>COCODAK</span><span class="dot">✦</span><span>COCOBUNSIK</span><span class="dot">✦</span><span>OZIK</span><span class="dot">✦</span><span>CHALKAK STUDIO</span><span class="dot">✦</span><span>EST 2020</span><span class="dot">✦</span>
+<span>HOLA SEVILLA</span><span class="dot">✦</span><span>COCODAK</span><span class="dot">✦</span><span>COCOBUNSIK</span><span class="dot">✦</span><span>OZIK</span><span class="dot">✦</span><span>CHALKAK STUDIO</span><span class="dot">✦</span><span>EST 2020</span><span class="dot">✦</span>
+</div>
+</div>
 
 <div class="wrap">
 
 <!-- STORY -->
 <div class="block">
 <p class="lead"
-  data-ko="콤마(,)는 잠시 쉬어가는 쉼표입니다. <span class='em'>COMMA FAMILY</span>는 세비야를 여행하는 분들에게 진짜 한국의 맛으로 따뜻한 쉼표가 되어 드립니다."
-  data-es="Una coma (,) es una breve pausa. <span class='em'>COMMA FAMILY</span> quiere ser esa pausa cálida para quienes viajan por Sevilla, con el auténtico sabor de Corea."
-  data-en="A comma (,) is a brief pause. <span class='em'>COMMA FAMILY</span> aims to be that warm pause for travelers in Sevilla — with the real taste of Korea.">콤마(,)는 잠시 쉬어가는 쉼표입니다. <span class="em">COMMA FAMILY</span>는 세비야를 여행하는 분들에게 진짜 한국의 맛으로 따뜻한 쉼표가 되어 드립니다.</p>
+  data-ko="콤마(,)는 잠시 쉬어가는 쉼표입니다. <span class='em'>COMMA FAMILY</span>는 세비야를 여행하는 분들에게 진짜 한국의 맛으로 즐거운 쉼표가 되어 드립니다."
+  data-es="Una coma (,) es una breve pausa. <span class='em'>COMMA FAMILY</span> quiere ser esa pausa alegre para quienes viajan por Sevilla, con el auténtico sabor de Corea."
+  data-en="A comma (,) is a brief pause. <span class='em'>COMMA FAMILY</span> aims to be that joyful pause for travelers in Sevilla — with the real taste of Korea.">콤마(,)는 잠시 쉬어가는 쉼표입니다. <span class="em">COMMA FAMILY</span>는 세비야를 여행하는 분들에게 진짜 한국의 맛으로 즐거운 쉼표가 되어 드립니다.</p>
 </div>
 
 <!-- WHO -->
@@ -125,21 +139,21 @@ a{text-decoration:none;color:inherit;}
 <h2 data-ko="우리가 지키는 것" data-es="Nuestros valores" data-en="What we value">우리가 지키는 것</h2>
 <div class="values">
 <div class="value">
-<div class="vm">I</div>
+<div class="vm">01</div>
 <h3 data-ko="정성과 환대" data-es="Esmero y hospitalidad" data-en="Care &amp; hospitality">정성과 환대</h3>
 <p data-ko="가족을 대하듯 진심을 담아 손님을 맞이합니다."
    data-es="Recibimos a cada huésped con el corazón, como a la familia."
    data-en="We welcome every guest from the heart, like family.">가족을 대하듯 진심을 담아 손님을 맞이합니다.</p>
 </div>
 <div class="value">
-<div class="vm">II</div>
+<div class="vm">02</div>
 <h3 data-ko="진짜 한국의 맛" data-es="Sabor auténtico" data-en="Authentic taste">진짜 한국의 맛</h3>
 <p data-ko="세비야에서도 타협 없는 진짜 한국의 맛을 전합니다."
    data-es="El verdadero sabor de Corea, sin concesiones, en Sevilla."
    data-en="The real taste of Korea, no compromises, in Sevilla.">세비야에서도 타협 없는 진짜 한국의 맛을 전합니다.</p>
 </div>
 <div class="value">
-<div class="vm">III</div>
+<div class="vm">03</div>
 <h3 data-ko="기억에 남는 순간" data-es="Momentos memorables" data-en="Moments to keep">기억에 남는 순간</h3>
 <p data-ko="여행의 한 장면 한 장면이 오래 남도록 함께합니다."
    data-es="Acompañamos cada escena del viaje para que perdure."
@@ -164,7 +178,7 @@ a{text-decoration:none;color:inherit;}
 <div class="block">
 <h2 data-ko="우리가 있는 곳" data-es="Dónde estamos" data-en="Where we are">우리가 있는 곳</h2>
 <div class="loc">
-<div class="city">Sevilla</div>
+<div class="city">SEVILLA</div>
 <div class="country">España</div>
 <p data-ko="안녕세비야 · COCODAK · COCOBUNSIK · OZIK · CHALKAK STUDIO"
    data-es="Hola Sevilla · Cocodak · Cocobunsik · Ozik · Chalkak Studio"
@@ -175,7 +189,7 @@ a{text-decoration:none;color:inherit;}
 <!-- CTA -->
 <div class="block">
 <div class="cta">
-<p data-ko="세비야에서 만나요." data-es="Te esperamos en Sevilla." data-en="See you in Sevilla.">세비야에서 만나요.</p>
+<p data-ko="세비야에서 <span class='y'>만나요!</span>" data-es="¡Nos vemos en <span class='y'>Sevilla!</span>" data-en="See you in <span class='y'>Sevilla!</span>">세비야에서 <span class="y">만나요!</span></p>
 <a href="index.html" data-ko="사업장 둘러보기" data-es="Ver nuestros negocios" data-en="Explore our places">사업장 둘러보기</a>
 </div>
 </div>
@@ -184,11 +198,11 @@ a{text-decoration:none;color:inherit;}
 
 <!-- FOOTER -->
 <footer class="footer">
-<div class="footer-logo">COMMA<span class="c">,</span> FAMILY</div>
+<div class="footer-logo"><img src="comma-wordmark.png" alt="Comma Family"></div>
 <div class="footer-meta">
 COMMA FAMILY S.L · Sevilla, España<br>
 hola_sevilla@naver.com<br>
-<span data-ko="ⓒ 2026 COMMA FAMILY S.L." data-es="ⓒ 2026 COMMA FAMILY S.L." data-en="ⓒ 2026 COMMA FAMILY S.L.">ⓒ 2026 COMMA FAMILY S.L.</span>
+<span>ⓒ 2026 COMMA FAMILY S.L.</span>
 </div>
 </footer>
 

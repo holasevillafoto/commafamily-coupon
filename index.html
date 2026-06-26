@@ -5,69 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comma Family S.L · Sevilla</title>
 <meta name="description" content="The real Korea in Sevilla — Hola Sevilla, Cocodak, Cocobunsik, Ozik, Chalkak Studio. Comma Family S.L.">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fbfaf8;--ink:#211d1b;--muted:#8c847c;
-  --oxblood:#7a3328;--terra:#a85d44;--line:#e9e3da;
+  --bg:#ffffff;--ink:#2b303b;--muted:#8a8d94;
+  --accent:#fbd641;--line:#e9e9ec;--thumb:#f3f3f1;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);font-family:'Montserrat','Noto Sans KR',sans-serif;color:var(--ink);font-weight:300;line-height:1.6;overflow-x:hidden;}
+body{background:var(--bg);font-family:'Poppins','Noto Sans KR',sans-serif;color:var(--ink);font-weight:400;line-height:1.6;overflow-x:hidden;}
 a{text-decoration:none;color:inherit;}
 
 /* NAV */
-.nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(251,250,248,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:100;}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:0.22em;font-weight:600;}
-.nav-logo .c{color:var(--oxblood);}
-.nav-right{display:flex;align-items:center;gap:22px;}
-.nav-link{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:400;transition:color 0.2s;}
+.nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:100;}
+.nav-logo{display:flex;align-items:center;}
+.nav-logo img{height:22px;width:auto;display:block;}
+.nav-right{display:flex;align-items:center;gap:18px;}
+.nav-link{font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:600;transition:color 0.2s;}
 .nav-link:hover{color:var(--ink);}
 .lang-bar{display:flex;gap:2px;}
-.lb{background:transparent;border:none;padding:5px 7px;font-size:11px;color:var(--muted);cursor:pointer;transition:color 0.2s;font-family:inherit;letter-spacing:0.08em;}
-.lb.active{color:var(--oxblood);font-weight:500;}
+.lb{background:transparent;border:none;padding:5px 8px;font-size:11px;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit;font-weight:700;letter-spacing:0.04em;}
+.lb.active{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:4px;}
 
 /* HERO */
-.hero{min-height:84vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px 24px 70px;}
-.hero-mark{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:var(--terra);margin-bottom:30px;}
-.hero-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(50px,12vw,108px);letter-spacing:0.05em;font-weight:500;line-height:0.98;}
-.hero-logo .c{color:var(--oxblood);}
-.hero-line{width:40px;height:1px;background:var(--terra);margin:32px auto;}
-.hero-tag{font-size:clamp(14px,3.6vw,17px);color:#54504b;letter-spacing:0.06em;font-weight:300;max-width:560px;}
-.hero-sub{margin-top:16px;font-size:10px;letter-spacing:0.4em;color:#b6aea4;text-transform:uppercase;}
+.hero{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:128px 24px 54px;}
+.hero-logo-img{width:min(430px,80vw);height:auto;display:block;}
+.hero-tag{margin-top:30px;font-size:clamp(15px,3.6vw,19px);color:#555a64;font-weight:400;max-width:540px;}
+.hero-sub{margin-top:14px;font-size:11px;letter-spacing:0.32em;color:var(--muted);text-transform:uppercase;font-weight:700;}
+
+/* MARQUEE */
+.marquee{background:var(--ink);overflow:hidden;white-space:nowrap;padding:15px 0;}
+.marquee-track{display:inline-block;animation:scroll 26s linear infinite;}
+.marquee-track span{font-family:'Anton',sans-serif;font-size:18px;letter-spacing:0.05em;color:#fff;text-transform:uppercase;margin:0 6px;vertical-align:middle;}
+.marquee-track .dot{color:var(--accent);margin:0 14px;font-size:14px;}
+@keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* LIST */
-.section{max-width:760px;margin:0 auto;padding:30px 24px 0;}
-.sec-eyebrow{text-align:center;font-size:10px;letter-spacing:0.36em;text-transform:uppercase;color:var(--terra);margin-bottom:40px;}
-.row{display:flex;align-items:center;gap:28px;padding:30px 4px;border-bottom:1px solid var(--line);opacity:0;transform:translateY(16px);transition:opacity 0.7s ease,transform 0.7s ease;}
-.row.in{opacity:1;transform:none;}
-.row:first-of-type{border-top:1px solid var(--line);}
-.mono{width:64px;height:64px;border-radius:50%;border:1px solid var(--oxblood);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;letter-spacing:0.08em;color:var(--oxblood);}
-.row-body{flex:1;min-width:0;}
-.row-kr{font-family:'Noto Sans KR',sans-serif;font-size:11px;color:var(--terra);font-weight:500;letter-spacing:0.04em;margin-bottom:3px;}
-.row-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;letter-spacing:0.06em;line-height:1.05;}
-.row-cat{font-size:9.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted);margin:8px 0 8px;font-weight:500;}
-.row-desc{font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;}
-.row-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:250px;}
-.bt{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:1px;padding:9px 15px;font-family:'Montserrat',sans-serif;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all 0.22s;white-space:nowrap;font-weight:400;}
+.section{max-width:780px;margin:0 auto;padding:56px 22px 0;}
+.sec-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:30px;}
+.sec-eyebrow .line{flex:1;height:1px;background:var(--line);}
+.sec-eyebrow .txt{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);}
+.card{display:flex;align-items:center;gap:24px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;transition:transform 0.24s ease,box-shadow 0.24s ease,border-color 0.24s;opacity:0;transform:translateY(16px);}
+.card.in{opacity:1;transform:none;}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(43,48,59,0.12);border-color:var(--ink);}
+.thumb{width:120px;height:120px;border-radius:12px;background:var(--thumb);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:14px;}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block;}
+.thumb.tight img{width:74%;height:74%;}
+.thumb-mark{font-family:'Anton',sans-serif;font-size:32px;color:var(--ink);letter-spacing:0.02em;}
+.body{flex:1;min-width:0;}
+.body-kr{font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:3px;}
+.body-name{font-family:'Anton',sans-serif;font-size:27px;letter-spacing:0.02em;line-height:1;text-transform:uppercase;}
+.body-cat{font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin:7px 0 8px;font-weight:600;}
+.body-desc{font-size:13.5px;color:#6e727b;line-height:1.55;}
+.actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:230px;}
+.bt{font-family:'Poppins',sans-serif;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:9px 15px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .bt:hover{border-color:var(--ink);}
-.bt.primary{background:var(--oxblood);border-color:var(--oxblood);color:#fff;}
-.bt.primary:hover{background:#65281f;border-color:#65281f;}
-.bt.disabled{opacity:0.35;pointer-events:none;}
+.bt.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.bt.primary:hover{background:#1c2029;}
+.bt.disabled{opacity:0.4;pointer-events:none;}
 
 /* FOOTER */
-.footer{text-align:center;padding:80px 24px 56px;margin-top:70px;border-top:1px solid var(--line);}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.2em;font-weight:600;color:#a59c92;}
-.footer-logo .c{color:var(--oxblood);}
-.footer-meta{font-size:11px;color:#bcb4aa;margin-top:12px;line-height:2;letter-spacing:0.04em;}
-.footer-meta a{color:#9a9088;border-bottom:1px solid transparent;}
-.footer-meta a:hover{border-color:#9a9088;}
+.footer{text-align:center;padding:68px 24px 52px;margin-top:60px;border-top:1px solid var(--line);}
+.footer-logo img{height:28px;width:auto;opacity:0.85;}
+.footer-meta{font-size:12px;color:#a4a7ad;margin-top:14px;line-height:1.9;letter-spacing:0.02em;}
+.footer-meta a{color:#6c7079;}
+.footer-meta a:hover{text-decoration:underline;text-decoration-color:var(--accent);}
 
-@media(max-width:640px){
-  .row{flex-direction:column;align-items:flex-start;gap:16px;padding:26px 2px;}
-  .row-actions{justify-content:flex-start;max-width:none;}
+@media(max-width:620px){
+  .card{flex-direction:column;align-items:flex-start;gap:16px;}
+  .thumb{width:100%;height:150px;}
+  .actions{justify-content:flex-start;max-width:none;}
 }
 </style>
 </head>
@@ -75,7 +85,7 @@ a{text-decoration:none;color:inherit;}
 
 <!-- NAV -->
 <nav class="nav">
-<a href="index.html" class="nav-logo">COMMA<span class="c">,</span> FAMILY</a>
+<a href="index.html" class="nav-logo"><img src="comma-wordmark.png" alt="Comma Family"></a>
 <div class="nav-right">
 <a href="about.html" class="nav-link" data-ko="회사소개" data-es="Nosotros" data-en="About">회사소개</a>
 <div class="lang-bar">
@@ -88,9 +98,7 @@ a{text-decoration:none;color:inherit;}
 
 <!-- HERO -->
 <header class="hero">
-<div class="hero-mark">Comma Family S.L</div>
-<div class="hero-logo">COMMA<span class="c">,</span> FAMILY</div>
-<div class="hero-line"></div>
+<img class="hero-logo-img" src="comma-logo.png" alt="Comma, Family — EST 2020">
 <div class="hero-tag"
   data-ko="세비야에서 만나는 진짜 한국!"
   data-es="¡La auténtica Corea, en Sevilla!"
@@ -98,23 +106,31 @@ a{text-decoration:none;color:inherit;}
 <div class="hero-sub">Sevilla · España</div>
 </header>
 
+<!-- MARQUEE -->
+<div class="marquee">
+<div class="marquee-track">
+<span>HOLA SEVILLA</span><span class="dot">✦</span><span>COCODAK</span><span class="dot">✦</span><span>COCOBUNSIK</span><span class="dot">✦</span><span>OZIK</span><span class="dot">✦</span><span>CHALKAK STUDIO</span><span class="dot">✦</span><span>REAL KOREA IN SEVILLA</span><span class="dot">✦</span>
+<span>HOLA SEVILLA</span><span class="dot">✦</span><span>COCODAK</span><span class="dot">✦</span><span>COCOBUNSIK</span><span class="dot">✦</span><span>OZIK</span><span class="dot">✦</span><span>CHALKAK STUDIO</span><span class="dot">✦</span><span>REAL KOREA IN SEVILLA</span><span class="dot">✦</span>
+</div>
+</div>
+
 <!-- LIST -->
 <section class="section">
-<div class="sec-eyebrow" data-ko="브랜드" data-es="Nuestras marcas" data-en="Our brands">브랜드</div>
+<div class="sec-eyebrow"><span class="line"></span><span class="txt">Our Brands</span><span class="line"></span></div>
 
 <!-- HOLA SEVILLA -->
-<div class="row">
-<div class="mono">HS</div>
-<div class="row-body">
-<div class="row-kr">안녕세비야</div>
-<div class="row-name">HOLA SEVILLA</div>
-<div class="row-cat">Korean Guesthouse</div>
-<div class="row-desc"
+<div class="card">
+<div class="thumb"><span class="thumb-mark">HS</span></div>
+<div class="body">
+<div class="body-kr">안녕세비야</div>
+<div class="body-name">HOLA SEVILLA</div>
+<div class="body-cat">Korean Guesthouse</div>
+<div class="body-desc"
   data-ko="세비야 중심가의 편안한 한인 게스트하우스."
   data-es="Acogedora guesthouse coreana en el centro de Sevilla."
   data-en="A comfortable Korean guesthouse in central Sevilla.">세비야 중심가의 편안한 한인 게스트하우스.</div>
 </div>
-<div class="row-actions">
+<div class="actions">
 <a class="bt" data-href-map="https://maps.app.goo.gl/SFVfg14BCNf8ThVD9" target="_blank" data-ko="위치" data-es="Mapa" data-en="Map">위치</a>
 <a class="bt primary" data-href-book="https://www.theminda.com/main/view.php?goodsno=1310" target="_blank">민다</a>
 <a class="bt" data-href-book="https://accommodation.myrealtrip.com/union/products/5008284" target="_blank">마이리얼트립</a>
@@ -122,17 +138,17 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <!-- COCODAK -->
-<div class="row">
-<div class="mono">CD</div>
-<div class="row-body">
-<div class="row-name">COCODAK</div>
-<div class="row-cat">Korean Restaurant</div>
-<div class="row-desc"
+<div class="card">
+<div class="thumb"><img src="cocodak-logo.png" alt="COCODAK"></div>
+<div class="body">
+<div class="body-name">COCODAK</div>
+<div class="body-cat">Korean Restaurant</div>
+<div class="body-desc"
   data-ko="한국 입맛 그대로인 한식당!"
   data-es="¡Un restaurante coreano con el sabor de casa!"
   data-en="A Korean restaurant with the authentic taste of home!">한국 입맛 그대로인 한식당!</div>
 </div>
-<div class="row-actions">
+<div class="actions">
 <a class="bt" data-href-map="https://maps.app.goo.gl/jbD4xNncL5nuWShM7" target="_blank" data-ko="위치" data-es="Mapa" data-en="Map">위치</a>
 <a class="bt" data-href-ig="https://www.instagram.com/cocodak.sevilla/" target="_blank">Instagram</a>
 <a class="bt primary" data-href-book="https://www.google.com/maps/reserve/v/dine/c/cY5NogY4fLw?source=pa&opi=79508299&hl=ko" target="_blank" data-ko="예약" data-es="Reservar" data-en="Book">예약</a>
@@ -140,17 +156,17 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <!-- COCOBUNSIK -->
-<div class="row">
-<div class="mono">CB</div>
-<div class="row-body">
-<div class="row-name">COCOBUNSIK</div>
-<div class="row-cat">Korean Bunsik</div>
-<div class="row-desc"
+<div class="card">
+<div class="thumb tight"><img src="cocobunsik-logo.png" alt="COCOBUNSIK 꼬꼬분식"></div>
+<div class="body">
+<div class="body-name">COCOBUNSIK</div>
+<div class="body-cat">Korean Bunsik</div>
+<div class="body-desc"
   data-ko="먹는 재미! 한국식 분식."
   data-es="¡Diversión al comer! Bunsik coreano."
   data-en="Fun to eat! Korean bunsik street food.">먹는 재미! 한국식 분식.</div>
 </div>
-<div class="row-actions">
+<div class="actions">
 <a class="bt" data-href-map="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" data-ko="위치" data-es="Mapa" data-en="Map">위치</a>
 <a class="bt" data-href-ig="https://www.instagram.com/kingbap_masitta/" target="_blank">Instagram</a>
 <a class="bt primary" href="cocobunsik-menu.html" data-ko="메뉴보기" data-es="Ver menú" data-en="Menu">메뉴보기</a>
@@ -158,17 +174,17 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <!-- OZIK -->
-<div class="row">
-<div class="mono">OZ</div>
-<div class="row-body">
-<div class="row-name">OZIK</div>
-<div class="row-cat">Korean Café · One and Only</div>
-<div class="row-desc"
+<div class="card">
+<div class="thumb tight"><img src="ozik-logo.png" alt="OZIK"></div>
+<div class="body">
+<div class="body-name">OZIK</div>
+<div class="body-cat">Korean Café · One and Only</div>
+<div class="body-desc"
   data-ko="한국인이 운영하는 한국식 카페."
   data-es="Café coreano gestionado por coreanos."
   data-en="A Korean café run by Koreans.">한국인이 운영하는 한국식 카페.</div>
 </div>
-<div class="row-actions">
+<div class="actions">
 <a class="bt" data-href-map="https://maps.app.goo.gl/GKi4yyCRAfQmHSQa7" target="_blank" data-ko="위치" data-es="Mapa" data-en="Map">위치</a>
 <a class="bt" data-href-ig="https://www.instagram.com/cafeozikoneandonly/" target="_blank">Instagram</a>
 <a class="bt primary" href="ozik.html" data-ko="쿠폰 발행" data-es="Cupón" data-en="Coupon">쿠폰 발행</a>
@@ -176,17 +192,17 @@ a{text-decoration:none;color:inherit;}
 </div>
 
 <!-- CHALKAK STUDIO -->
-<div class="row">
-<div class="mono">CH</div>
-<div class="row-body">
-<div class="row-name">CHALKAK STUDIO</div>
-<div class="row-cat">Snapshot Photography</div>
-<div class="row-desc"
+<div class="card">
+<div class="thumb"><img src="chalkak-logo.png" alt="Chalkak Sevilla"></div>
+<div class="body">
+<div class="body-name">CHALKAK STUDIO</div>
+<div class="body-cat">Snapshot Photography</div>
+<div class="body-desc"
   data-ko="세비야 여행을 인생샷으로. 전문 스냅 촬영."
   data-es="Tus mejores fotos en Sevilla. Sesiones profesionales."
   data-en="Your best photos in Sevilla. Professional snapshot sessions.">세비야 여행을 인생샷으로. 전문 스냅 촬영.</div>
 </div>
-<div class="row-actions">
+<div class="actions">
 <a class="bt" data-href-ig="https://www.instagram.com/chalkak_sevilla/" target="_blank">Instagram</a>
 <a class="bt primary" data-href-book="https://smartstore.naver.com/holasevilla/products/10579285241" target="_blank" data-ko="예약 문의" data-es="Reservar" data-en="Book">예약 문의</a>
 </div>
@@ -196,13 +212,11 @@ a{text-decoration:none;color:inherit;}
 
 <!-- FOOTER -->
 <footer class="footer">
-<div class="footer-logo">COMMA<span class="c">,</span> FAMILY</div>
+<div class="footer-logo"><img src="comma-wordmark.png" alt="Comma Family"></div>
 <div class="footer-meta">
 COMMA FAMILY S.L · Sevilla, España<br>
 <a href="about.html" data-ko="회사소개" data-es="Sobre nosotros" data-en="About us">회사소개</a> &nbsp;·&nbsp; hola_sevilla@naver.com<br>
-<span data-ko="ⓒ 2026 COMMA FAMILY S.L."
-      data-es="ⓒ 2026 COMMA FAMILY S.L."
-      data-en="ⓒ 2026 COMMA FAMILY S.L.">ⓒ 2026 COMMA FAMILY S.L.</span>
+<span>ⓒ 2026 COMMA FAMILY S.L.</span>
 </div>
 </footer>
 
@@ -218,8 +232,8 @@ document.querySelectorAll('[data-href-map],[data-href-ig],[data-href-book]').for
   else{a.classList.add('disabled');a.removeAttribute('target');}
 });
 function reveal(){
-  document.querySelectorAll('.row:not(.in)').forEach(r=>{
-    if(r.getBoundingClientRect().top < window.innerHeight - 50) r.classList.add('in');
+  document.querySelectorAll('.card:not(.in)').forEach(c=>{
+    if(c.getBoundingClientRect().top < window.innerHeight - 50) c.classList.add('in');
   });
 }
 reveal();
