@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comma Family S.L · Sevilla</title>
+<meta name="description" content="A taste of Korea in Sevilla — Hola Sevilla, Cocodak, Cocobunsik, Ozik, Chalkak Studio. Comma Family S.L.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f7f5f1;--ink:#1c1c1c;--muted:#717171;
+  --red:#c0392b;--gold:#a87f33;--line:#e8e4dc;--card:#ffffff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:'Montserrat','Noto Sans KR',sans-serif;color:var(--ink);font-weight:300;line-height:1.6;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(255,255,255,0.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:100;}
+.nav-logo{font-size:15px;letter-spacing:0.34em;font-weight:400;}
+.nav-logo .c{color:var(--red);}
+.nav-right{display:flex;align-items:center;gap:18px;}
+.nav-link{font-size:12px;letter-spacing:0.12em;color:var(--muted);font-weight:400;transition:color 0.2s;}
+.nav-link:hover{color:var(--ink);}
+.lang-bar{display:flex;gap:3px;}
+.lb{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 9px;font-size:10px;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:inherit;letter-spacing:0.05em;}
+.lb.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+/* HERO */
+.hero{min-height:78vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 22px 60px;background:linear-gradient(180deg,#fff 0%,var(--bg2) 100%);}
+.hero-logo{font-size:clamp(40px,11vw,86px);letter-spacing:0.16em;font-weight:200;line-height:1.02;}
+.hero-logo .c{color:var(--red);font-weight:300;}
+.hero-logo b{font-weight:400;}
+.hero-line{width:46px;height:1px;background:var(--gold);margin:26px auto;}
+.hero-tag{font-size:clamp(14px,3.6vw,18px);color:#444;letter-spacing:0.04em;font-weight:300;max-width:560px;}
+.hero-sub{margin-top:14px;font-size:11px;letter-spacing:0.42em;color:#aaa;text-transform:uppercase;}
+.scroll-hint{margin-top:44px;font-size:20px;color:#cfcabf;animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+
+/* GRID */
+.section{max-width:1000px;margin:0 auto;padding:64px 18px 20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 26px;display:flex;flex-direction:column;transition:transform 0.28s ease,box-shadow 0.28s ease,border-color 0.28s;}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(0,0,0,0.08);border-color:#dcd6ca;}
+.card-ico{width:50px;height:50px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:25px;margin-bottom:18px;}
+.card-kr{font-size:13px;font-weight:500;color:var(--red);letter-spacing:0.02em;margin-bottom:2px;font-family:'Noto Sans KR',sans-serif;}
+.card-name{font-size:22px;letter-spacing:0.16em;font-weight:400;}
+.card-cat{font-size:10px;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin:9px 0 12px;font-weight:500;}
+.card-desc{font-size:13.5px;color:var(--muted);line-height:1.65;flex:1;margin-bottom:22px;min-height:44px;font-weight:300;}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;}
+.bt{flex:1;min-width:78px;border-radius:10px;padding:11px 8px;font-size:12px;font-weight:400;text-align:center;cursor:pointer;transition:all 0.2s;border:1px solid var(--line);background:#fff;color:#555;display:flex;align-items:center;justify-content:center;gap:5px;letter-spacing:0.02em;}
+.bt:hover{border-color:var(--ink);color:var(--ink);}
+.bt.primary{background:var(--red);border-color:var(--red);color:#fff;}
+.bt.primary:hover{background:#a82e22;}
+.bt.disabled{opacity:0.38;pointer-events:none;}
+
+/* PRAGUE */
+.prague{max-width:1000px;margin:30px auto 0;padding:0 18px;}
+.prague-card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:30px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.prague-ico{width:54px;height:54px;border-radius:14px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.prague-txt{flex:1;min-width:200px;}
+.prague-txt h3{font-size:17px;font-weight:500;margin-bottom:4px;letter-spacing:0.02em;}
+.prague-txt p{font-size:13px;color:var(--muted);font-weight:300;}
+.prague .bt{flex:0 0 auto;min-width:130px;}
+
+/* FOOTER */
+.footer{text-align:center;padding:70px 22px 50px;margin-top:60px;border-top:1px solid var(--line);background:var(--bg2);}
+.footer-logo{font-size:16px;letter-spacing:0.3em;font-weight:400;color:#999;}
+.footer-logo .c{color:var(--red);}
+.footer-meta{font-size:11px;color:#b0aca4;margin-top:10px;line-height:1.9;letter-spacing:0.02em;}
+.footer-meta a{color:#8a867e;border-bottom:1px solid transparent;}
+.footer-meta a:hover{border-color:#8a867e;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<a href="index.html" class="nav-logo">COMMA<span class="c">,</span> FAMILY</a>
+<div class="nav-right">
+<a href="about.html" class="nav-link" data-ko="회사소개" data-es="Nosotros" data-en="About">회사소개</a>
+<div class="lang-bar">
+<button class="lb active" data-lang="ko" onclick="setLang('ko')">한국어</button>
+<button class="lb" data-lang="es" onclick="setLang('es')">ES</button>
+<button class="lb" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+</div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+<div class="hero-logo">COMMA<span class="c">,</span> <b>FAMILY</b></div>
+<div class="hero-line"></div>
+<div class="hero-tag"
+  data-ko="세비야에서 만나는 한국의 맛과 정(情)"
+  data-es="El sabor y la calidez de Corea, en Sevilla"
+  data-en="The taste and warmth of Korea, in Sevilla">세비야에서 만나는 한국의 맛과 정(情)</div>
+<div class="hero-sub">Sevilla · España</div>
+<div class="scroll-hint">↓</div>
+</header>
+
+<!-- BUSINESSES -->
+<section class="section">
+<div class="grid">
+
+<!-- HOLA SEVILLA -->
+<div class="card">
+<div class="card-ico">🏠</div>
+<div class="card-kr">안녕세비야</div>
+<div class="card-name">HOLA SEVILLA</div>
+<div class="card-cat">Korean Guesthouse</div>
+<div class="card-desc"
+  data-ko="세비야 중심가의 편안한 한인 게스트하우스."
+  data-es="Acogedora guesthouse coreana en el centro de Sevilla."
+  data-en="A comfortable Korean guesthouse in central Sevilla.">세비야 중심가의 편안한 한인 게스트하우스.</div>
+<div class="btn-row">
+<a class="bt" data-href-map="https://maps.app.goo.gl/SFVfg14BCNf8ThVD9" target="_blank" data-ko="📍 위치" data-es="📍 Mapa" data-en="📍 Map">📍 위치</a>
+<a class="bt primary" data-href-book="https://www.theminda.com/main/view.php?goodsno=1310" target="_blank">민다 예약</a>
+<a class="bt primary" data-href-book="https://accommodation.myrealtrip.com/union/products/5008284" target="_blank">마이리얼트립</a>
+</div>
+</div>
+
+<!-- COCODAK -->
+<div class="card">
+<div class="card-ico">🍚</div>
+<div class="card-name">COCODAK</div>
+<div class="card-cat">Korean Restaurant</div>
+<div class="card-desc"
+  data-ko="한국 입맛 그대로인 한식당!"
+  data-es="¡Un restaurante coreano con el sabor de casa!"
+  data-en="A Korean restaurant with the authentic taste of home!">한국 입맛 그대로인 한식당!</div>
+<div class="btn-row">
+<a class="bt" data-href-map="https://maps.app.goo.gl/jbD4xNncL5nuWShM7" target="_blank" data-ko="📍 위치" data-es="📍 Mapa" data-en="📍 Map">📍 위치</a>
+<a class="bt" data-href-ig="https://www.instagram.com/cocodak.sevilla/" target="_blank">📷 Instagram</a>
+<a class="bt primary" data-href-book="https://www.google.com/maps/reserve/v/dine/c/cY5NogY4fLw?source=pa&opi=79508299&hl=ko" target="_blank" data-ko="예약" data-es="Reservar" data-en="Book">예약</a>
+</div>
+</div>
+
+<!-- COCOBUNSIK -->
+<div class="card">
+<div class="card-ico">🍢</div>
+<div class="card-name">COCOBUNSIK</div>
+<div class="card-cat">Korean Bunsik</div>
+<div class="card-desc"
+  data-ko="먹는 재미! 한국식 분식."
+  data-es="¡Diversión al comer! Bunsik coreano."
+  data-en="Fun to eat! Korean bunsik street food.">먹는 재미! 한국식 분식.</div>
+<div class="btn-row">
+<a class="bt" data-href-map="https://maps.app.goo.gl/aTYyfGHhDrxzEVsA8" target="_blank" data-ko="📍 위치" data-es="📍 Mapa" data-en="📍 Map">📍 위치</a>
+<a class="bt" data-href-ig="https://www.instagram.com/kingbap_masitta/" target="_blank">📷 Instagram</a>
+<a class="bt primary" href="coupon.html" data-ko="쿠폰" data-es="Cupón" data-en="Coupon">쿠폰</a>
+</div>
+</div>
+
+<!-- OZIK -->
+<div class="card">
+<div class="card-ico">☕</div>
+<div class="card-name">OZIK</div>
+<div class="card-cat">Korean Café</div>
+<div class="card-desc"
+  data-ko="한국인이 운영하는 한국식 카페 · one and only."
+  data-es="Café coreano gestionado por coreanos · one and only."
+  data-en="A Korean café run by Koreans · one and only.">한국인이 운영하는 한국식 카페 · one and only.</div>
+<div class="btn-row">
+<a class="bt" data-href-map="https://maps.app.goo.gl/GKi4yyCRAfQmHSQa7" target="_blank" data-ko="📍 위치" data-es="📍 Mapa" data-en="📍 Map">📍 위치</a>
+<a class="bt" data-href-ig="https://www.instagram.com/cafeozikoneandonly/" target="_blank">📷 Instagram</a>
+<a class="bt primary" href="ozik.html" data-ko="자세히" data-es="Más info" data-en="Visit">자세히</a>
+</div>
+</div>
+
+<!-- CHALKAK STUDIO -->
+<div class="card">
+<div class="card-ico">📸</div>
+<div class="card-name">CHALKAK STUDIO</div>
+<div class="card-cat">Snapshot Photography</div>
+<div class="card-desc"
+  data-ko="세비야 여행을 인생샷으로. 전문 스냅 촬영."
+  data-es="Tus mejores fotos en Sevilla. Sesiones profesionales."
+  data-en="Your best photos in Sevilla. Professional snapshot sessions.">세비야 여행을 인생샷으로. 전문 스냅 촬영.</div>
+<div class="btn-row">
+<a class="bt" data-href-ig="https://www.instagram.com/chalkak_sevilla/" target="_blank">📷 Instagram</a>
+<a class="bt primary" data-href-book="https://smartstore.naver.com/holasevilla/products/10579285241" target="_blank" data-ko="예약 문의" data-es="Reservar" data-en="Book">예약 문의</a>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-logo">COMMA<span class="c">,</span> FAMILY</div>
+<div class="footer-meta">
+COMMA FAMILY S.L · Sevilla, España<br>
+<a href="about.html" data-ko="회사소개" data-es="Sobre nosotros" data-en="About us">회사소개</a> &nbsp;·&nbsp; hola_sevilla@naver.com<br>
+<span data-ko="ⓒ 2026 COMMA FAMILY S.L. All rights reserved."
+      data-es="ⓒ 2026 COMMA FAMILY S.L. Todos los derechos reservados."
+      data-en="ⓒ 2026 COMMA FAMILY S.L. All rights reserved.">ⓒ 2026 COMMA FAMILY S.L. All rights reserved.</span>
+</div>
+</footer>
+
+<script>
+function setLang(l){
+  document.documentElement.lang=l;
+  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  document.querySelectorAll('[data-'+l+']').forEach(el=>{ el.textContent=el.getAttribute('data-'+l); });
+}
+document.querySelectorAll('[data-href-map],[data-href-ig],[data-href-book]').forEach(a=>{
+  const url=a.dataset.hrefMap||a.dataset.hrefIg||a.dataset.hrefBook;
+  if(url && url!=='#'){a.setAttribute('href',url);}
+  else{a.classList.add('disabled');a.removeAttribute('target');}
+});
+</script>
+</body>
+</html>
