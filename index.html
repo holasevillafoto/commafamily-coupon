@@ -217,8 +217,15 @@ document.querySelectorAll('[data-href-map],[data-href-ig],[data-href-book]').for
   if(url && url!=='#'){a.setAttribute('href',url);}
   else{a.classList.add('disabled');a.removeAttribute('target');}
 });
-const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.15});
-document.querySelectorAll('.row').forEach(r=>io.observe(r));
+function reveal(){
+  document.querySelectorAll('.row:not(.in)').forEach(r=>{
+    if(r.getBoundingClientRect().top < window.innerHeight - 50) r.classList.add('in');
+  });
+}
+reveal();
+window.addEventListener('scroll', reveal, {passive:true});
+window.addEventListener('resize', reveal);
+setTimeout(reveal, 1000);
 </script>
 </body>
 </html>
