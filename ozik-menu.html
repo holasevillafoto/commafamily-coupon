@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZIK · Menu</title>
+<meta name="description" content="OZIK — Korean café in Sevilla. Menu (한국어 · English · Español · 中文).">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1ece1;--ink:#1c1a17;--muted:#7d766b;--line:#d9d2c4;--accent:#1c1a17;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--ink);font-family:'Poppins','Noto Sans KR','Noto Sans SC',sans-serif;font-weight:400;line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+
+.top{position:sticky;top:0;z-index:20;background:rgba(241,236,225,0.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+.topbar{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px;}
+.back{font-size:13px;color:var(--muted);font-weight:500;}
+.langs{display:flex;gap:4px;}
+.lang{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;}
+.lang.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+
+.header{max-width:1040px;margin:0 auto;padding:34px 22px 6px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:2px solid var(--ink);}
+.h-side{flex:1;font-size:13px;font-weight:600;letter-spacing:0.02em;}
+.h-side.right{text-align:right;color:var(--muted);}
+.h-logo img{height:52px;width:auto;display:block;}
+.slogan b{font-weight:700;}
+.price-note{max-width:1040px;margin:0 auto;padding:10px 22px 0;text-align:center;font-size:12px;color:var(--muted);}
+
+.menu{max-width:1040px;margin:0 auto;padding:20px 22px 10px;column-count:2;column-gap:44px;}
+@media(max-width:720px){.menu{column-count:1;}.header{flex-direction:column;gap:10px;}.h-side{text-align:center!important;}}
+.sec{break-inside:avoid;margin-bottom:26px;}
+.sec-h{font-size:23px;font-weight:700;letter-spacing:0.01em;margin-bottom:2px;}
+.sec-sub{font-size:11.5px;color:var(--muted);margin-bottom:10px;}
+.sec-note{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0;margin:6px 0 18px;}
+.item{padding:7px 0;}
+.item-row{display:flex;align-items:baseline;gap:10px;}
+.item-name{font-weight:600;font-size:15px;}
+.new{color:#e0392b;font-size:10px;font-weight:700;margin-left:5px;vertical-align:top;letter-spacing:0.03em;}
+.item-opt{font-size:11px;color:var(--muted);font-weight:500;}
+.dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px);min-width:14px;}
+.item-price{font-weight:700;font-size:15px;white-space:nowrap;}
+.item-desc{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.45;}
+
+.foot{text-align:center;padding:24px 20px 40px;font-size:12px;color:var(--muted);border-top:2px solid var(--ink);max-width:1040px;margin:14px auto 0;}
+.foot b{font-weight:700;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div class="top">
+<div class="topbar">
+<span class="back">OZIK · MENU</span>
+<div class="langs">
+<button class="lang on" data-l="ko" onclick="setLang('ko')">한국어</button>
+<button class="lang" data-l="en" onclick="setLang('en')">EN</button>
+<button class="lang" data-l="es" onclick="setLang('es')">ES</button>
+<button class="lang" data-l="zh" onclick="setLang('zh')">中文</button>
+</div>
+</div>
+</div>
+
+<div class="header">
+<div class="h-side slogan"><b>오직</b> : ONE and ONLY</div>
+<div class="h-logo"><img src="ozik-logo.png" alt="OZIK"></div>
+<div class="h-side right">@cafeozikoneandonly</div>
+</div>
+<div class="price-note" data-t="pricenote">모든 가격 단위는 유로(€)입니다.</div>
+
+<div class="menu" id="menu"></div>
+
+<div class="foot"><b>OZIK</b> · Comma Family · Sevilla</div>
+
+<script>
+const T = {
+  back:{ko:"← 스탬프 카드",en:"← Stamp card",es:"← Tarjeta de sellos",zh:"← 集点卡"},
+  pricenote:{ko:"모든 가격 단위는 유로(€)입니다.",en:"All prices in Euro (€).",es:"Todos los precios en euros (€).",zh:"所有价格均以欧元（€）计。"}
+};
+const OPT = {
+  hotice:{ko:"핫/아이스",en:"HOT/ICE",es:"CAL/FRÍO",zh:"热/冰"},
+  single:{ko:"싱글/더블",en:"Single/Double",es:"Simple/Doble",zh:"单份/双份"},
+  onlyice:{ko:"아이스만",en:"ICE ONLY",es:"SOLO FRÍO",zh:"仅冰"}
+};
+const CREAM = {ko:"크림 추가",en:"with cream",es:"con crema",zh:"加奶油"};
+
+function L(o,l){return (o&&o[l])||o&&o.en||"";}
+
+const SEC = [
+ {t:{ko:"커피",en:"CAFE",es:"CAFÉ",zh:"咖啡"}, items:[
+   {n:{ko:"에스프레소",en:"Espresso",es:"Espresso",zh:"意式浓缩"},o:"single",p:"1.8/2.0"},
+   {n:{ko:"아메리카노",en:"Americano",es:"Americano",zh:"美式咖啡"},o:"hotice",p:"2.5/2.9"},
+   {n:{ko:"카페라떼",en:"Cafe Latte",es:"Café con leche",zh:"拿铁"},o:"hotice",p:"2.7/3.0"},
+   {n:{ko:"플랫화이트",en:"Flat White",es:"Flat White",zh:"馥芮白"},p:"2.7"},
+   {n:{ko:"카페 코르타도",en:"Cafe Cortado",es:"Cortado",zh:"可塔朵"},p:"2.3"},
+   {n:{ko:"카푸치노",en:"Cappuccino",es:"Capuchino",zh:"卡布奇诺"},o:"hotice",p:"2.7/3.2"},
+   {n:{ko:"바닐라라떼",en:"Vanilla Latte",es:"Latte de vainilla",zh:"香草拿铁"},o:"hotice",p:"3.0/3.5"},
+   {n:{ko:"모카라떼",en:"Moca Latte",es:"Latte moca",zh:"摩卡拿铁"},o:"hotice",p:"3.0/3.5"}
+ ]},
+ {t:{ko:"카페 스페셜",en:"CAFE SPECIAL",es:"ESPECIALES",zh:"特调咖啡"}, items:[
+   {n:{ko:"피넛 크림 라떼",en:"Peanut Cream Latte",es:"Latte de crema de cacahuete",zh:"花生奶油拿铁"},o:"hotice",cream:1,p:"3.5/4.0"},
+   {n:{ko:"서울 라떼",en:"Seoul Latte",es:"Seoul Latte",zh:"首尔拿铁"},o:"hotice",p:"3.5/4.0"},
+   {n:{ko:"카페 달고나",en:"Cafe Dalgona",es:"Café Dalgona",zh:"达尔戈纳咖啡"},o:"onlyice",p:"4.0"}
+ ]},
+ {t:{ko:"밀크티 · 라떼",en:"MILKTEA",es:"TÉ CON LECHE",zh:"奶茶"}, items:[
+   {n:{ko:"말차 라떼",en:"Matcha Latte",es:"Latte de matcha",zh:"抹茶拿铁"},o:"hotice",p:"3.5/4.0"},
+   {n:{ko:"딸기 말차 라떼",en:"Strawberry Matcha Latte",es:"Latte de matcha y fresa",zh:"草莓抹茶拿铁"},o:"onlyice",cream:1,p:"4.5"},
+   {n:{ko:"딸기 라떼",en:"Strawberry Latte",es:"Latte de fresa",zh:"草莓拿铁"},o:"onlyice",cream:1,p:"4.0"},
+   {n:{ko:"초코 라떼",en:"Choco Latte",es:"Latte de chocolate",zh:"巧克力拿铁"},o:"hotice",p:"3.3/3.8"}
+ ], note:{ko:"오트밀크 / 아몬드밀크 : 0.3유로 추가",en:"Oat / almond milk : +€0.3",es:"Leche de avena / almendra : +0,3 €",zh:"燕麦奶 / 杏仁奶：加收 0.3 €"}},
+ {t:{ko:"티",en:"TEA",es:"INFUSIONES",zh:"茶"}, items:[
+   {n:{ko:"녹차",en:"Green Tea",es:"Té verde",zh:"绿茶"},p:"2.2"},
+   {n:{ko:"페퍼민트",en:"Pepper Mint",es:"Menta",zh:"薄荷茶"},p:"2.2"},
+   {n:{ko:"캐모마일",en:"Chamomile",es:"Manzanilla",zh:"洋甘菊"},p:"2.2"},
+   {n:{ko:"바닐라 루이보스",en:"Rooibos (vanilla)",es:"Rooibos con vainilla",zh:"香草路易波士茶"},p:"2.2"},
+   {n:{ko:"라임꽃차",en:"Lime Blossom Tea",es:"Tila (flor de tilo)",zh:"菩提花茶"},p:"2.2"}
+ ]},
+ {t:{ko:"주스",en:"JUICE",es:"ZUMO",zh:"果汁"}, items:[
+   {n:{ko:"오렌지 주스",en:"Orange Juice",es:"Zumo de naranja",zh:"鲜榨橙汁"},p:"3.0"}
+ ]},
+ {t:{ko:"베이글",en:"BAGEL",es:"BAGEL",zh:"贝果"}, items:[
+   {n:{ko:"플레인 크림치즈",en:"Plain Cream Cheese",es:"Queso crema",zh:"原味奶油奶酪"},p:"4.7",d:{ko:"크림치즈 베이글",en:"Bagel with cream cheese",es:"Bagel con queso crema",zh:"奶油奶酪贝果"}},
+   {n:{ko:"스캘리언 & 베이컨",en:"Scallion & Bacon",es:"Cebolleta y bacon",zh:"香葱培根"},p:"5.7",d:{ko:"스캘리언·베이컨 크림치즈 베이글",en:"Bagel with scallion & bacon cream cheese",es:"Bagel con queso crema de cebolleta y bacon",zh:"香葱培根奶油奶酪贝果"}},
+   {n:{ko:"월넛 크림",en:"Walnut Cream",es:"Crema de nuez",zh:"核桃奶油"},p:"5.7",d:{ko:"호두 크림치즈 베이글",en:"Bagel with walnut cream cheese",es:"Bagel con queso crema de nuez",zh:"核桃奶油奶酪贝果"}},
+   {n:{ko:"블루베리",en:"Blueberry",es:"Arándanos",zh:"蓝莓"},p:"5.7",d:{ko:"블루베리 크림치즈 베이글",en:"Bagel with blueberry cream cheese",es:"Bagel con queso crema de arándanos",zh:"蓝莓奶油奶酪贝果"}}
+ ]},
+ {t:{ko:"오픈 샌드위치",en:"OPEN-FACED SANDWICH",es:"SÁNDWICH ABIERTO",zh:"开放式三明治"}, sub:{ko:"월–목 오전 9:00 ~ 오후 1:30 / 금–일 ALL DAY",en:"Mon–Thu 9:00 ~ 13:30 / Fri–Sun ALL DAY",es:"Lun–Jue 9:00 ~ 13:30 / Vie–Dom TODO EL DÍA",zh:"周一–周四 9:00 ~ 13:30 / 周五–周日 全天"}, items:[
+   {n:{ko:"바질 & 부라타",en:"Basil & Burrata",es:"Albahaca y burrata",zh:"罗勒布拉塔"},p:"8.5",d:{ko:"부라타 치즈와 방울토마토, 바질 페스토, 발사믹, 루꼴라",en:"Burrata & cherry tomato, basil pesto, balsamic, arugula",es:"Burrata y tomate cherry, pesto de albahaca, balsámico, rúcula",zh:"布拉塔奶酪、樱桃番茄、罗勒青酱、香醋、芝麻菜"}},
+   {n:{ko:"브리 & 하몽",en:"Brie & Jamón",es:"Brie y jamón",zh:"布里奶酪火腿"},p:"7.5",d:{ko:"하몽과 브리 치즈, 루꼴라, 아가베 시럽",en:"Jamón & brie cheese, arugula, agave syrup",es:"Jamón y queso brie, rúcula, sirope de agave",zh:"火腿、布里奶酪、芝麻菜、龙舌兰糖浆"}},
+   {n:{ko:"양념치킨 랩",en:"Yangnyeom Chicken Wrap",es:"Wrap de pollo coreano (yangnyeom)",zh:"韩式甜辣鸡肉卷"},p:"7.5",new:1,d:{ko:"한국식 양념치킨 소스가 들어간 매콤달콤한 치킨랩",en:"Spicy-sweet chicken wrap with Korean yangnyeom sauce",es:"Wrap de pollo agridulce y picante con salsa coreana yangnyeom",zh:"淋上韩式甜辣酱的香辣鸡肉卷"}},
+   {n:{ko:"아보카도 & 연어",en:"Avocado & Salmon",es:"Aguacate y salmón",zh:"牛油果三文鱼"},p:"8.9",d:{ko:"연어와 슬라이스 아보카도, 스페셜 소스",en:"Salmon, sliced avocado & special sauce",es:"Salmón, aguacate y salsa especial",zh:"三文鱼、牛油果片与特制酱汁"}}
+ ]},
+ {t:{ko:"디저트",en:"SWEET",es:"DULCES",zh:"甜点"}, items:[
+   {n:{ko:"팬케이크",en:"Pan Cake",es:"Tortitas",zh:"松饼"},p:"6.0",d:{ko:"딸기·블루베리·바나나, 누텔라, 땅콩버터",en:"Strawberry, blueberry, banana, nutella, peanut butter",es:"Fresa, arándanos, plátano, nutella, mantequilla de cacahuete",zh:"草莓、蓝莓、香蕉、能多益、花生酱"}},
+   {n:{ko:"프렌치토스트",en:"French Toast",es:"Tostada francesa",zh:"法式吐司"},p:"7.5",d:{ko:"딸기·블루베리, 버터, 메이플 시럽",en:"Strawberry, blueberry, butter, maple syrup",es:"Fresa, arándanos, mantequilla, sirope de arce",zh:"草莓、蓝莓、黄油、枫糖浆"}},
+   {n:{ko:"크로플",en:"Croffle",es:"Croffle",zh:"可颂华夫"},p:"4.0",d:{ko:"와플 모양의 크루아상, 바닐라 아이스크림·메이플 시럽",en:"Croissant dough in waffle shape, vanilla ice cream & maple syrup",es:"Masa de croissant en gofre, helado de vainilla y sirope de arce",zh:"华夫造型可颂，配香草冰淇淋与枫糖浆"}},
+   {n:{ko:"요거트볼",en:"Yogurt Bowl",es:"Bowl de yogur",zh:"酸奶碗"},p:"6.5",d:{ko:"딸기·블루베리·바나나, 그래놀라, 아가베 시럽",en:"Strawberry, blueberry, banana, granola, agave syrup",es:"Fresa, arándanos, plátano, granola, sirope de agave",zh:"草莓、蓝莓、香蕉、燕麦脆、龙舌兰糖浆"}}
+ ]},
+ {t:{ko:"케이크",en:"CAKE",es:"TARTAS",zh:"蛋糕"}, items:[
+   {n:{ko:"브라우니 (바닐라 아이스크림)",en:"Brownie (with vanilla ice cream)",es:"Brownie con helado de vainilla",zh:"布朗尼配香草冰淇淋"},p:"3.5"},
+   {n:{ko:"레몬 파운드케이크",en:"Lemon Pound Cake",es:"Bizcocho de limón",zh:"柠檬磅蛋糕"},p:"3.5"},
+   {n:{ko:"오레오 아이스박스 케이크",en:"OREO Icebox Cake",es:"Tarta helada de Oreo",zh:"奥利奥冰盒蛋糕"},p:"5.5"},
+   {n:{ko:"오레오 말차 아이스박스 케이크",en:"OREO Matcha Icebox Cake",es:"Tarta helada de Oreo y matcha",zh:"奥利奥抹茶冰盒蛋糕"},p:"5.7"}
+ ]}
+];
+
+function render(l){
+  let h="";
+  for(const s of SEC){
+    h+='<div class="sec">';
+    h+='<div class="sec-h">'+L(s.t,l)+'</div>';
+    if(s.sub) h+='<div class="sec-sub">'+L(s.sub,l)+'</div>';
+    for(const it of s.items){
+      let opt="";
+      if(it.o) opt=L(OPT[it.o],l);
+      if(it.cream) opt=(opt?opt+" · ":"")+CREAM[l];
+      h+='<div class="item"><div class="item-row"><span class="item-name">'+L(it.n,l)+(it.new?'<span class="new">new</span>':'')+'</span>';
+      if(opt) h+='<span class="item-opt">'+opt+'</span>';
+      h+='<span class="dots"></span><span class="item-price">'+it.p+'</span></div>';
+      if(it.d) h+='<div class="item-desc">'+L(it.d,l)+'</div>';
+      h+='</div>';
+    }
+    if(s.note) h+='<div class="sec-note">'+L(s.note,l)+'</div>';
+    h+='</div>';
+  }
+  document.getElementById("menu").innerHTML=h;
+}
+function setLang(l){
+  document.documentElement.lang=l;
+  document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=T[e.dataset.t][l]);
+  render(l);
+}
+setLang('ko');
+</script>
+</body>
+</html>
