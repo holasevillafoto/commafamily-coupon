@@ -39,6 +39,10 @@ a{text-decoration:none;color:inherit;}
 .item-row{display:flex;align-items:baseline;gap:10px;}
 .item-name{font-weight:600;font-size:15px;}
 .new{color:#e0392b;font-size:10px;font-weight:700;margin-left:5px;vertical-align:top;letter-spacing:0.03em;}
+.alg{font-size:12px;color:var(--muted);margin-left:6px;letter-spacing:1px;white-space:nowrap;}
+.allergy{max-width:1040px;margin:8px auto 0;padding:12px 22px;font-size:11.5px;color:var(--muted);text-align:center;line-height:2;border-top:1px solid var(--line);}
+.allergy b{color:var(--ink);font-weight:700;}
+.allergy .a{white-space:nowrap;margin:0 4px;}
 .item-opt{font-size:11px;color:var(--muted);font-weight:500;}
 .dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px);min-width:14px;}
 .item-price{font-weight:700;font-size:15px;white-space:nowrap;}
@@ -71,13 +75,27 @@ a{text-decoration:none;color:inherit;}
 
 <div class="menu" id="menu"></div>
 
+<div class="allergy" id="allergy"></div>
+
 <div class="foot"><b>OZIK</b> · Comma Family · Sevilla</div>
 
 <script>
 const T = {
   back:{ko:"← 스탬프 카드",en:"← Stamp card",es:"← Tarjeta de sellos",zh:"← 集点卡"},
-  pricenote:{ko:"모든 가격 단위는 유로(€)입니다.",en:"All prices in Euro (€).",es:"Todos los precios en euros (€).",zh:"所有价格均以欧元（€）计。"}
+  pricenote:{ko:"모든 가격 단위는 유로(€)입니다.",en:"All prices in Euro (€).",es:"Todos los precios en euros (€).",zh:"所有价格均以欧元（€）计。"},
+  allergyTitle:{ko:"알레르기 유발 성분",en:"Allergens",es:"Alérgenos",zh:"过敏原信息"}
 };
+const CN=['','①','②','③','④','⑤','⑥','⑦','⑧'];
+const ALG=[null,
+ {ko:"우유",en:"Milk",es:"Leche",zh:"奶"},
+ {ko:"견과류",en:"Tree nuts",es:"Frutos secos",zh:"坚果"},
+ {ko:"땅콩",en:"Peanut",es:"Cacahuete",zh:"花生"},
+ {ko:"달걀",en:"Egg",es:"Huevo",zh:"蛋"},
+ {ko:"밀·글루텐",en:"Gluten",es:"Gluten",zh:"麸质"},
+ {ko:"대두",en:"Soy",es:"Soja",zh:"大豆"},
+ {ko:"참깨",en:"Sesame",es:"Sésamo",zh:"芝麻"},
+ {ko:"생선",en:"Fish",es:"Pescado",zh:"鱼"}
+];
 const OPT = {
   hotice:{ko:"핫/아이스",en:"HOT/ICE",es:"CAL/FRÍO",zh:"热/冰"},
   single:{ko:"싱글/더블",en:"Single/Double",es:"Simple/Doble",zh:"单份/双份"},
@@ -120,28 +138,28 @@ const SEC = [
    {n:{ko:"오렌지 주스",en:"Orange Juice",es:"Zumo de naranja",zh:"鲜榨橙汁"},p:"3.0"}
  ]},
  {t:{ko:"베이글",en:"BAGEL",es:"BAGEL",zh:"贝果"}, items:[
-   {n:{ko:"플레인 크림치즈",en:"Plain Cream Cheese",es:"Queso crema",zh:"原味奶油奶酪"},p:"4.7",d:{ko:"크림치즈 베이글",en:"Bagel with cream cheese",es:"Bagel con queso crema",zh:"奶油奶酪贝果"}},
-   {n:{ko:"스캘리언 & 베이컨",en:"Scallion & Bacon",es:"Cebolleta y bacon",zh:"香葱培根"},p:"5.7",d:{ko:"스캘리언·베이컨 크림치즈 베이글",en:"Bagel with scallion & bacon cream cheese",es:"Bagel con queso crema de cebolleta y bacon",zh:"香葱培根奶油奶酪贝果"}},
-   {n:{ko:"월넛 크림",en:"Walnut Cream",es:"Crema de nuez",zh:"核桃奶油"},p:"5.7",d:{ko:"호두 크림치즈 베이글",en:"Bagel with walnut cream cheese",es:"Bagel con queso crema de nuez",zh:"核桃奶油奶酪贝果"}},
-   {n:{ko:"블루베리",en:"Blueberry",es:"Arándanos",zh:"蓝莓"},p:"5.7",d:{ko:"블루베리 크림치즈 베이글",en:"Bagel with blueberry cream cheese",es:"Bagel con queso crema de arándanos",zh:"蓝莓奶油奶酪贝果"}}
+   {n:{ko:"플레인 크림치즈",en:"Plain Cream Cheese",es:"Queso crema",zh:"原味奶油奶酪"},p:"4.7",a:[1,7],d:{ko:"크림치즈 베이글",en:"Bagel with cream cheese",es:"Bagel con queso crema",zh:"奶油奶酪贝果"}},
+   {n:{ko:"스캘리언 & 베이컨",en:"Scallion & Bacon",es:"Cebolleta y bacon",zh:"香葱培根"},p:"5.7",a:[1,7],d:{ko:"스캘리언·베이컨 크림치즈 베이글",en:"Bagel with scallion & bacon cream cheese",es:"Bagel con queso crema de cebolleta y bacon",zh:"香葱培根奶油奶酪贝果"}},
+   {n:{ko:"월넛 크림",en:"Walnut Cream",es:"Crema de nuez",zh:"核桃奶油"},p:"5.7",a:[1,2,7],d:{ko:"호두 크림치즈 베이글",en:"Bagel with walnut cream cheese",es:"Bagel con queso crema de nuez",zh:"核桃奶油奶酪贝果"}},
+   {n:{ko:"블루베리",en:"Blueberry",es:"Arándanos",zh:"蓝莓"},p:"5.7",a:[1],d:{ko:"블루베리 크림치즈 베이글",en:"Bagel with blueberry cream cheese",es:"Bagel con queso crema de arándanos",zh:"蓝莓奶油奶酪贝果"}}
  ]},
  {t:{ko:"오픈 샌드위치",en:"OPEN-FACED SANDWICH",es:"SÁNDWICH ABIERTO",zh:"开放式三明治"}, sub:{ko:"월–목 오전 9:00 ~ 오후 1:30 / 금–일 ALL DAY",en:"Mon–Thu 9:00 ~ 13:30 / Fri–Sun ALL DAY",es:"Lun–Jue 9:00 ~ 13:30 / Vie–Dom TODO EL DÍA",zh:"周一–周四 9:00 ~ 13:30 / 周五–周日 全天"}, items:[
-   {n:{ko:"바질 & 부라타",en:"Basil & Burrata",es:"Albahaca y burrata",zh:"罗勒布拉塔"},p:"8.5",d:{ko:"부라타 치즈와 방울토마토, 바질 페스토, 발사믹, 루꼴라",en:"Burrata & cherry tomato, basil pesto, balsamic, arugula",es:"Burrata y tomate cherry, pesto de albahaca, balsámico, rúcula",zh:"布拉塔奶酪、樱桃番茄、罗勒青酱、香醋、芝麻菜"}},
-   {n:{ko:"브리 & 하몽",en:"Brie & Jamón",es:"Brie y jamón",zh:"布里奶酪火腿"},p:"7.5",d:{ko:"하몽과 브리 치즈, 루꼴라, 아가베 시럽",en:"Jamón & brie cheese, arugula, agave syrup",es:"Jamón y queso brie, rúcula, sirope de agave",zh:"火腿、布里奶酪、芝麻菜、龙舌兰糖浆"}},
-   {n:{ko:"양념치킨 랩",en:"Yangnyeom Chicken Wrap",es:"Wrap de pollo coreano (yangnyeom)",zh:"韩式甜辣鸡肉卷"},p:"7.5",new:1,d:{ko:"한국식 양념치킨 소스가 들어간 매콤달콤한 치킨랩",en:"Spicy-sweet chicken wrap with Korean yangnyeom sauce",es:"Wrap de pollo agridulce y picante con salsa coreana yangnyeom",zh:"淋上韩式甜辣酱的香辣鸡肉卷"}},
-   {n:{ko:"아보카도 & 연어",en:"Avocado & Salmon",es:"Aguacate y salmón",zh:"牛油果三文鱼"},p:"8.9",d:{ko:"연어와 슬라이스 아보카도, 스페셜 소스",en:"Salmon, sliced avocado & special sauce",es:"Salmón, aguacate y salsa especial",zh:"三文鱼、牛油果片与特制酱汁"}}
+   {n:{ko:"바질 & 부라타",en:"Basil & Burrata",es:"Albahaca y burrata",zh:"罗勒布拉塔"},p:"8.5",a:[1],d:{ko:"부라타 치즈와 방울토마토, 바질 페스토, 발사믹, 루꼴라",en:"Burrata & cherry tomato, basil pesto, balsamic, arugula",es:"Burrata y tomate cherry, pesto de albahaca, balsámico, rúcula",zh:"布拉塔奶酪、樱桃番茄、罗勒青酱、香醋、芝麻菜"}},
+   {n:{ko:"브리 & 하몽",en:"Brie & Jamón",es:"Brie y jamón",zh:"布里奶酪火腿"},p:"7.5",a:[1],d:{ko:"하몽과 브리 치즈, 루꼴라, 아가베 시럽",en:"Jamón & brie cheese, arugula, agave syrup",es:"Jamón y queso brie, rúcula, sirope de agave",zh:"火腿、布里奶酪、芝麻菜、龙舌兰糖浆"}},
+   {n:{ko:"양념치킨 랩",en:"Yangnyeom Chicken Wrap",es:"Wrap de pollo coreano (yangnyeom)",zh:"韩式甜辣鸡肉卷"},p:"7.5",new:1,a:[4,7],d:{ko:"한국식 양념치킨 소스가 들어간 매콤달콤한 치킨랩",en:"Spicy-sweet chicken wrap with Korean yangnyeom sauce",es:"Wrap de pollo agridulce y picante con salsa coreana yangnyeom",zh:"淋上韩式甜辣酱的香辣鸡肉卷"}},
+   {n:{ko:"아보카도 & 연어",en:"Avocado & Salmon",es:"Aguacate y salmón",zh:"牛油果三文鱼"},p:"8.9",a:[8],d:{ko:"연어와 슬라이스 아보카도, 스페셜 소스",en:"Salmon, sliced avocado & special sauce",es:"Salmón, aguacate y salsa especial",zh:"三文鱼、牛油果片与特制酱汁"}}
  ]},
  {t:{ko:"디저트",en:"SWEET",es:"DULCES",zh:"甜点"}, items:[
-   {n:{ko:"팬케이크",en:"Pan Cake",es:"Tortitas",zh:"松饼"},p:"6.0",d:{ko:"딸기·블루베리·바나나, 누텔라, 땅콩버터",en:"Strawberry, blueberry, banana, nutella, peanut butter",es:"Fresa, arándanos, plátano, nutella, mantequilla de cacahuete",zh:"草莓、蓝莓、香蕉、能多益、花生酱"}},
-   {n:{ko:"프렌치토스트",en:"French Toast",es:"Tostada francesa",zh:"法式吐司"},p:"7.5",d:{ko:"딸기·블루베리, 버터, 메이플 시럽",en:"Strawberry, blueberry, butter, maple syrup",es:"Fresa, arándanos, mantequilla, sirope de arce",zh:"草莓、蓝莓、黄油、枫糖浆"}},
-   {n:{ko:"크로플",en:"Croffle",es:"Croffle",zh:"可颂华夫"},p:"4.0",d:{ko:"와플 모양의 크루아상, 바닐라 아이스크림·메이플 시럽",en:"Croissant dough in waffle shape, vanilla ice cream & maple syrup",es:"Masa de croissant en gofre, helado de vainilla y sirope de arce",zh:"华夫造型可颂，配香草冰淇淋与枫糖浆"}},
-   {n:{ko:"요거트볼",en:"Yogurt Bowl",es:"Bowl de yogur",zh:"酸奶碗"},p:"6.5",d:{ko:"딸기·블루베리·바나나, 그래놀라, 아가베 시럽",en:"Strawberry, blueberry, banana, granola, agave syrup",es:"Fresa, arándanos, plátano, granola, sirope de agave",zh:"草莓、蓝莓、香蕉、燕麦脆、龙舌兰糖浆"}}
+   {n:{ko:"팬케이크",en:"Pan Cake",es:"Tortitas",zh:"松饼"},p:"6.0",a:[1,2,3],d:{ko:"딸기·블루베리·바나나, 누텔라, 땅콩버터",en:"Strawberry, blueberry, banana, nutella, peanut butter",es:"Fresa, arándanos, plátano, nutella, mantequilla de cacahuete",zh:"草莓、蓝莓、香蕉、能多益、花生酱"}},
+   {n:{ko:"프렌치토스트",en:"French Toast",es:"Tostada francesa",zh:"法式吐司"},p:"7.5",a:[1,4],d:{ko:"딸기·블루베리, 버터, 메이플 시럽",en:"Strawberry, blueberry, butter, maple syrup",es:"Fresa, arándanos, mantequilla, sirope de arce",zh:"草莓、蓝莓、黄油、枫糖浆"}},
+   {n:{ko:"크로플",en:"Croffle",es:"Croffle",zh:"可颂华夫"},p:"4.0",a:[1],d:{ko:"와플 모양의 크루아상, 바닐라 아이스크림·메이플 시럽",en:"Croissant dough in waffle shape, vanilla ice cream & maple syrup",es:"Masa de croissant en gofre, helado de vainilla y sirope de arce",zh:"华夫造型可颂，配香草冰淇淋与枫糖浆"}},
+   {n:{ko:"요거트볼",en:"Yogurt Bowl",es:"Bowl de yogur",zh:"酸奶碗"},p:"6.5",a:[1,2],d:{ko:"딸기·블루베리·바나나, 그래놀라, 아가베 시럽",en:"Strawberry, blueberry, banana, granola, agave syrup",es:"Fresa, arándanos, plátano, granola, sirope de agave",zh:"草莓、蓝莓、香蕉、燕麦脆、龙舌兰糖浆"}}
  ]},
  {t:{ko:"케이크",en:"CAKE",es:"TARTAS",zh:"蛋糕"}, items:[
-   {n:{ko:"브라우니 (바닐라 아이스크림)",en:"Brownie (with vanilla ice cream)",es:"Brownie con helado de vainilla",zh:"布朗尼配香草冰淇淋"},p:"3.5"},
-   {n:{ko:"레몬 파운드케이크",en:"Lemon Pound Cake",es:"Bizcocho de limón",zh:"柠檬磅蛋糕"},p:"3.5"},
-   {n:{ko:"오레오 아이스박스 케이크",en:"OREO Icebox Cake",es:"Tarta helada de Oreo",zh:"奥利奥冰盒蛋糕"},p:"5.5"},
-   {n:{ko:"오레오 말차 아이스박스 케이크",en:"OREO Matcha Icebox Cake",es:"Tarta helada de Oreo y matcha",zh:"奥利奥抹茶冰盒蛋糕"},p:"5.7"}
+   {n:{ko:"브라우니 (바닐라 아이스크림)",en:"Brownie (with vanilla ice cream)",es:"Brownie con helado de vainilla",zh:"布朗尼配香草冰淇淋"},p:"3.5",a:[1,2,3]},
+   {n:{ko:"레몬 파운드케이크",en:"Lemon Pound Cake",es:"Bizcocho de limón",zh:"柠檬磅蛋糕"},p:"3.5",a:[1,4]},
+   {n:{ko:"오레오 아이스박스 케이크",en:"OREO Icebox Cake",es:"Tarta helada de Oreo",zh:"奥利奥冰盒蛋糕"},p:"5.5",a:[1,4,5,6]},
+   {n:{ko:"오레오 말차 아이스박스 케이크",en:"OREO Matcha Icebox Cake",es:"Tarta helada de Oreo y matcha",zh:"奥利奥抹茶冰盒蛋糕"},p:"5.7",a:[1,4,5,6]}
  ]}
 ];
 
@@ -155,7 +173,7 @@ function render(l){
       let opt="";
       if(it.o) opt=L(OPT[it.o],l);
       if(it.cream) opt=(opt?opt+" · ":"")+CREAM[l];
-      h+='<div class="item"><div class="item-row"><span class="item-name">'+L(it.n,l)+(it.new?'<span class="new">new</span>':'')+'</span>';
+      h+='<div class="item"><div class="item-row"><span class="item-name">'+L(it.n,l)+(it.new?'<span class="new">new</span>':'')+'</span>'+(it.a?'<span class="alg">'+it.a.map(x=>CN[x]).join('')+'</span>':'');
       if(opt) h+='<span class="item-opt">'+opt+'</span>';
       h+='<span class="dots"></span><span class="item-price">'+it.p+'</span></div>';
       if(it.d) h+='<div class="item-desc">'+L(it.d,l)+'</div>';
@@ -171,6 +189,7 @@ function setLang(l){
   document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=T[e.dataset.t][l]);
   render(l);
+  document.getElementById('allergy').innerHTML='<b>'+T.allergyTitle[l]+'</b>&nbsp;&nbsp;'+ALG.map((a,i)=>a?'<span class="a">'+CN[i]+' '+a[l]+'</span>':'').join('');
 }
 setLang('ko');
 </script>
