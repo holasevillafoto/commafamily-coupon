@@ -43,6 +43,7 @@ a{text-decoration:none;color:inherit;}
 .allergy{max-width:1040px;margin:8px auto 0;padding:12px 22px;font-size:11.5px;color:var(--muted);text-align:center;line-height:2;border-top:1px solid var(--line);}
 .allergy b{color:var(--ink);font-weight:700;}
 .allergy .a{white-space:nowrap;margin:0 4px;}
+.gluten-note{margin-top:9px;font-weight:700;color:var(--ink);font-size:12.5px;}
 .item-opt{font-size:11px;color:var(--muted);font-weight:500;}
 .dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px);min-width:14px;}
 .item-price{font-weight:700;font-size:15px;white-space:nowrap;}
@@ -83,7 +84,8 @@ a{text-decoration:none;color:inherit;}
 <script>
 const T = {
   pricenote:{ko:"모든 가격 단위는 유로(€)입니다.",en:"All prices in Euro (€).",es:"Todos los precios en euros (€).",fr:"Tous les prix en euros (€).",zh:"所有价格均以欧元（€）计。"},
-  allergyTitle:{ko:"알레르기 유발 성분",en:"Allergens",es:"Alérgenos",fr:"Allergènes",zh:"过敏原信息"}
+  allergyTitle:{ko:"알레르기 유발 성분",en:"Allergens",es:"Alérgenos",fr:"Allergènes",zh:"过敏原信息"},
+  glutenNote:{ko:"※ 모든 메뉴에는 글루텐이 포함되어 있습니다.",en:"※ All items contain gluten.",es:"※ Todos los platos contienen gluten.",fr:"※ Tous les plats contiennent du gluten.",zh:"※ 所有餐点均含麸质。"}
 };
 const CN=['','①','②','③','④','⑤','⑥','⑦','⑧'];
 const ALG=[null,
@@ -190,7 +192,7 @@ function setLang(l){
   document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=T[e.dataset.t][l]);
   render(l);
-  document.getElementById('allergy').innerHTML='<b>'+T.allergyTitle[l]+'</b>&nbsp;&nbsp;'+ALG.map((a,i)=>a?'<span class="a">'+CN[i]+' '+a[l]+'</span>':'').join('');
+  document.getElementById('allergy').innerHTML='<b>'+T.allergyTitle[l]+'</b>&nbsp;&nbsp;'+ALG.map((a,i)=>a?'<span class="a">'+CN[i]+' '+a[l]+'</span>':'').join('')+'<div class="gluten-note">'+T.glutenNote[l]+'</div>';
 }
 setLang('es');
 </script>
