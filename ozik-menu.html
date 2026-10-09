@@ -51,6 +51,24 @@ a{text-decoration:none;color:inherit;}
 
 .foot{text-align:center;padding:24px 20px 40px;font-size:12px;color:var(--muted);border-top:2px solid var(--ink);max-width:1040px;margin:14px auto 0;}
 .foot b{font-weight:700;color:var(--ink);}
+
+.hangeul{max-width:1040px;margin:30px auto 0;padding:26px 22px 32px;border-top:2px solid var(--ink);}
+.hg-badge{display:inline-block;background:var(--ink);color:var(--bg);font-size:12px;font-weight:700;letter-spacing:0.06em;padding:6px 14px;border-radius:999px;}
+.hg-title{font-size:26px;font-weight:700;margin:12px 0 6px;line-height:1.25;}
+.hg-lead{font-size:13.5px;color:var(--muted);line-height:1.7;max-width:780px;}
+.hg-search{width:100%;max-width:360px;margin:16px 0 18px;padding:11px 16px;border:1px solid var(--line);border-radius:999px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
+.hg-search:focus{outline:none;border-color:var(--ink);}
+.hg-list{column-count:3;column-gap:30px;}
+@media(max-width:720px){.hg-list{column-count:2;column-gap:18px;}.hg-title{font-size:22px;}}
+@media(max-width:460px){.hg-list{column-count:1;}}
+.hg-group{break-inside:avoid;margin-bottom:14px;}
+.hg-letter{font-size:13px;font-weight:700;color:var(--ink);border-bottom:1.5px solid var(--ink);padding-bottom:3px;margin-bottom:6px;}
+.hg-name{display:flex;justify-content:space-between;gap:10px;padding:3.5px 0;align-items:baseline;border-bottom:1px dotted var(--line);}
+.hg-es{font-size:13.5px;font-weight:500;}
+.hg-ko{font-size:14.5px;font-weight:700;color:var(--ink);white-space:nowrap;}
+.hg-empty{font-size:13px;color:var(--muted);padding:6px 0;}
+.hg-notfound{margin-top:16px;font-size:12.5px;font-weight:600;color:var(--ink);}
+.hg-note{margin-top:6px;font-size:11.5px;color:var(--muted);line-height:1.6;}
 </style>
 </head>
 <body>
@@ -79,6 +97,8 @@ a{text-decoration:none;color:inherit;}
 
 <div class="allergy" id="allergy"></div>
 
+<div class="hangeul" id="hangeul"></div>
+
 <div class="foot"><b>OZIK</b> · Comma Family · Sevilla</div>
 
 <script>
@@ -104,6 +124,17 @@ const OPT = {
   onlyice:{ko:"아이스만",en:"ICE ONLY",es:"SOLO FRÍO",fr:"FROID UNIQ.",zh:"仅冰"}
 };
 const CREAM = {ko:"크림 추가",en:"with cream",es:"con crema",fr:"avec crème",zh:"加奶油"};
+
+const HG = {
+ badge:{ko:"10월 9일 · 한글날",en:"October 9 · Hangeul Day",es:"9 de octubre · Día del Hangeul",fr:"9 octobre · Jour du Hangeul",zh:"10月9日 · 韩文日"},
+ title:{ko:"내 이름을 한글로 써보세요",en:"Write your name in Korean",es:"Escribe tu nombre en coreano",fr:"Écris ton nom en coréen",zh:"用韩文写下你的名字"},
+ lead:{ko:"10월 9일은 한글이 만들어진 것을 기념하는 한글날이에요. 아래에서 이름을 찾아 한글로 직접 써보세요 — 원하시면 컵에도 적어드려요!",en:"October 9 is Hangeul Day, celebrating the Korean alphabet. Find your name below and try writing it in Korean — ask us to write it on your cup!",es:"El 9 de octubre es el Día del Hangeul, el alfabeto coreano. Busca tu nombre abajo y escríbelo en coreano — ¡pídenos que lo pongamos en tu vaso!",fr:"Le 9 octobre, c'est le Jour du Hangeul, l'alphabet coréen. Trouve ton nom ci-dessous et écris-le en coréen — demande-nous de l'inscrire sur ton gobelet !",zh:"10月9日是韩文日，纪念韩文字母的诞生。在下方找到你的名字，试着用韩文写下来——也可以让我们写在你的杯子上！"},
+ search:{ko:"이름 검색…",en:"Search your name…",es:"Busca tu nombre…",fr:"Cherche ton nom…",zh:"搜索你的名字…"},
+ empty:{ko:"검색 결과가 없어요.",en:"No results.",es:"Sin resultados.",fr:"Aucun résultat.",zh:"没有结果。"},
+ notfound:{ko:"이름이 목록에 없나요? 직원에게 물어보시면 적어드려요!",en:"Name not listed? Just ask our staff and we'll write it for you!",es:"¿No está tu nombre? Pregúntanos y te lo escribimos.",fr:"Ton nom n'y est pas ? Demande-nous et on te l'écrit !",zh:"没找到你的名字？问问我们，我们帮你写！"},
+ note:{ko:"※ 한글 표기는 스페인식 발음을 기준으로 한 근사치입니다.",en:"※ Korean spelling is an approximation based on Spanish pronunciation.",es:"※ La transcripción en hangeul es una aproximación basada en la pronunciación española.",fr:"※ La transcription en hangeul est une approximation basée sur la prononciation espagnole.",zh:"※ 韩文拼写为基于西班牙语发音的近似值。"}
+};
+const NAMES=[["A","Adrián","아드리안"],["A","Alba","알바"],["A","Alejandro","알레한드로"],["A","Ana","아나"],["A","Antonio","안토니오"],["B","Beatriz","베아트리스"],["B","Blanca","블랑카"],["B","Bruno","브루노"],["C","Carlos","카를로스"],["C","Carmen","카르멘"],["C","Clara","클라라"],["C","Claudia","클라우디아"],["C","Cristina","크리스티나"],["D","Daniel","다니엘"],["D","Daniela","다니엘라"],["D","David","다비드"],["D","Diego","디에고"],["E","Elena","엘레나"],["E","Elisa","엘리사"],["E","Enrique","엔리케"],["E","Eva","에바"],["F","Fernando","페르난도"],["F","Francisco","프란시스코"],["F","Fátima","파티마"],["G","Gabriel","가브리엘"],["G","Gloria","글로리아"],["G","Gonzalo","곤살로"],["H","Hugo","우고"],["H","Héctor","엑토르"],["I","Ignacio","이그나시오"],["I","Irene","이레네"],["I","Isabel","이사벨"],["I","Iván","이반"],["J","Javier","하비에르"],["J","Jorge","호르헤"],["J","José","호세"],["J","Juan","후안"],["J","Julia","훌리아"],["L","Laura","라우라"],["L","Lola","롤라"],["L","Lucas","루카스"],["L","Lucía","루시아"],["L","Luis","루이스"],["M","Manuel","마누엘"],["M","Marina","마리나"],["M","Mario","마리오"],["M","Marta","마르타"],["M","María","마리아"],["M","Miguel","미겔"],["N","Natalia","나탈리아"],["N","Nicolás","니콜라스"],["N","Noelia","노엘리아"],["N","Nuria","누리아"],["O","Olivia","올리비아"],["O","Óscar","오스카르"],["P","Pablo","파블로"],["P","Patricia","파트리시아"],["P","Paula","파울라"],["P","Pedro","페드로"],["Q","Quique","키케"],["R","Rafael","라파엘"],["R","Ramón","라몬"],["R","Raquel","라켈"],["R","Rocío","로시오"],["R","Rubén","루벤"],["S","Samuel","사무엘"],["S","Sara","사라"],["S","Sergio","세르히오"],["S","Silvia","실비아"],["S","Sofía","소피아"],["T","Teresa","테레사"],["T","Tomás","토마스"],["T","Triana","트리아나"],["U","Unai","우나이"],["U","Úrsula","우르술라"],["V","Valeria","발레리아"],["V","Vanessa","바네사"],["V","Victoria","빅토리아"],["V","Víctor","빅토르"],["W","Wendy","웬디"],["X","Xavi","차비"],["X","Xavier","차비에르"],["Y","Yago","야고"],["Y","Yolanda","욜란다"],["Z","Zaira","사이라"],["Z","Zoe","소에"]];
 
 function L(o,l){return (o&&o[l])||o&&o.en||"";}
 
@@ -187,12 +218,47 @@ function render(l){
   }
   document.getElementById("menu").innerHTML=h;
 }
+function renderHangeul(l){
+  const groups={};
+  for(const [L,es,ko] of NAMES){(groups[L]=groups[L]||[]).push([es,ko]);}
+  let list='';
+  for(const L of Object.keys(groups)){
+    list+='<div class="hg-group"><div class="hg-letter">'+L+'</div>';
+    for(const [es,ko] of groups[L]){
+      list+='<div class="hg-name" data-s="'+es.toLowerCase()+'"><span class="hg-es">'+es+'</span><span class="hg-ko">'+ko+'</span></div>';
+    }
+    list+='</div>';
+  }
+  document.getElementById('hangeul').innerHTML=
+    '<div class="hg-badge">'+HG.badge[l]+'</div>'+
+    '<h2 class="hg-title">'+HG.title[l]+'</h2>'+
+    '<p class="hg-lead">'+HG.lead[l]+'</p>'+
+    '<input class="hg-search" id="hgSearch" placeholder="'+HG.search[l]+'">'+
+    '<div class="hg-empty" id="hgEmpty" style="display:none">'+HG.empty[l]+'</div>'+
+    '<div class="hg-list" id="hgList">'+list+'</div>'+
+    '<div class="hg-notfound">'+HG.notfound[l]+'</div>'+
+    '<div class="hg-note">'+HG.note[l]+'</div>';
+  const inp=document.getElementById('hgSearch');
+  inp.addEventListener('input',()=>{
+    const q=inp.value.trim().toLowerCase();
+    let shown=0;
+    document.querySelectorAll('#hgList .hg-name').forEach(n=>{
+      const ok=!q||n.dataset.s.includes(q); n.style.display=ok?'':'none'; if(ok)shown++;
+    });
+    document.querySelectorAll('#hgList .hg-group').forEach(g=>{
+      const any=[...g.querySelectorAll('.hg-name')].some(n=>n.style.display!=='none');
+      g.style.display=any?'':'none';
+    });
+    document.getElementById('hgEmpty').style.display=shown?'none':'block';
+  });
+}
 function setLang(l){
   document.documentElement.lang=l;
   document.querySelectorAll('.lang').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
   document.querySelectorAll('[data-t]').forEach(e=>e.textContent=T[e.dataset.t][l]);
   render(l);
   document.getElementById('allergy').innerHTML='<b>'+T.allergyTitle[l]+'</b>&nbsp;&nbsp;'+ALG.map((a,i)=>a?'<span class="a">'+CN[i]+' '+a[l]+'</span>':'').join('')+'<div class="gluten-note">'+T.glutenNote[l]+'</div>';
+  renderHangeul(l);
 }
 setLang('es');
 </script>
