@@ -124,7 +124,7 @@ const OPT = {
   single:{ko:"싱글/더블",en:"Single/Double",es:"Simple/Doble",fr:"Simple/Double",zh:"单份/双份"},
   onlyice:{ko:"아이스만",en:"ICE ONLY",es:"SOLO FRÍO",fr:"FROID UNIQ.",zh:"仅冰"}
 };
-const CREAM = {ko:"크림 추가",en:"with cream",es:"con crema",fr:"avec crème",zh:"加奶油"};
+const CREAM = {ko:"",en:"with cream",es:"con crema",fr:"avec crème",zh:"加奶油"};
 
 const HG = {
  badge:{ko:"10월 9일 · 한글날",en:"October 9 · Hangeul Day",es:"9 de octubre · Día del Hangeul",fr:"9 octobre · Jour du Hangeul",zh:"10月9日 · 韩文日"},
@@ -208,7 +208,7 @@ function render(l){
     for(const it of s.items){
       let opt="";
       if(it.o) opt=L(OPT[it.o],l);
-      if(it.cream) opt=(opt?opt+" · ":"")+CREAM[l];
+      if(it.cream && CREAM[l]) opt=(opt?opt+" · ":"")+CREAM[l];
       h+='<div class="item"><div class="item-row"><span class="item-name">'+L(it.n,l)+(it.new?'<span class="new">new</span>':'')+'</span>'+(it.a?'<span class="alg">'+it.a.map(x=>CN[x]).join('')+'</span>':'');
       if(opt) h+='<span class="item-opt">'+opt+'</span>';
       h+='<span class="dots"></span><span class="item-price">'+it.p+'</span></div>';
